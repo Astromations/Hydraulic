@@ -213,7 +213,10 @@ function _setPreviewSeekProgress() {
 
 function _setPreviewVolumeProgress() {
   if (!previewVolume) return;
-  const pct = Math.max(0, Math.min(100, parseFloat(previewVolume.value) * 100 || 0));
+  const pct = Math.max(
+    0,
+    Math.min(100, parseFloat(previewVolume.value) * 100 || 0),
+  );
   previewVolume.style.setProperty("--volume-progress", `${pct}%`);
 }
 
