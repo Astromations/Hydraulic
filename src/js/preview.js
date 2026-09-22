@@ -211,6 +211,12 @@ function _setPreviewSeekProgress() {
   previewSeek.style.setProperty("--seek-progress", `${pct}%`);
 }
 
+function _setPreviewVolumeProgress() {
+  if (!previewVolume) return;
+  const pct = Math.max(0, Math.min(100, parseFloat(previewVolume.value) * 100 || 0));
+  previewVolume.style.setProperty("--volume-progress", `${pct}%`);
+}
+
 function togglePreviewFullscreen() {
   _setPreviewWindowFullscreen(!previewWindowFullscreen);
 }
@@ -287,6 +293,7 @@ previewSeek.addEventListener("input", () => {
 previewVolume.addEventListener("input", () => {
   previewVideo.volume = parseFloat(previewVolume.value);
   previewVideo.muted = previewVideo.volume <= 0;
+  _setPreviewVolumeProgress();
 });
 
 previewVideo.addEventListener("volumechange", () => {
@@ -295,6 +302,7 @@ previewVideo.addEventListener("volumechange", () => {
   } else if (previewVideo.volume > 0 && parseFloat(previewVolume.value) === 0) {
     previewVolume.value = previewVideo.volume.toFixed(2);
   }
+  _setPreviewVolumeProgress();
 });
 
 previewOverlay.addEventListener("click", (e) => {

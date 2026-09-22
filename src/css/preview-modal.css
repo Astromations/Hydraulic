@@ -287,11 +287,18 @@
 }
 
 .preview-volume {
+  --volume-progress: 100%;
   width: 100%;
   appearance: none;
   -webkit-appearance: none;
   height: 6px;
-  background: rgba(255, 255, 255, 0.24);
+  background: linear-gradient(
+    to right,
+    var(--brand) 0%,
+    var(--brand) var(--volume-progress),
+    rgba(255, 255, 255, 0.24) var(--volume-progress),
+    rgba(255, 255, 255, 0.24) 100%
+  );
   border-radius: 999px;
 }
 
