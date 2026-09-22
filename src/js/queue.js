@@ -6,6 +6,8 @@
 // ── File browsing / drag-drop ─────────────────────────────────────
 let queueViewMode = "list";
 let dragSourceId = null;
+let dragTargetId = null;
+let dragPlaceBefore = false;
 
 async function browseFiles() {
   if (isRunning) return;
@@ -181,10 +183,9 @@ function renderQueueItem(id, name, path) {
   const el = document.createElement("div");
   el.className = "qi";
   el.id = id;
-  el.draggable = false;
   el.innerHTML = `
     <div class="qi-main">
-      <button class="qi-drag-handle" title="Drag to reorder" aria-label="Drag to reorder" draggable="true">
+      <div class="qi-drag-handle" role="button" tabindex="0" title="Drag to reorder" aria-label="Drag to reorder">
         <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
           <circle cx="2" cy="2" r="1" fill="currentColor"/>
           <circle cx="9" cy="2" r="1" fill="currentColor"/>
@@ -193,7 +194,7 @@ function renderQueueItem(id, name, path) {
           <circle cx="2" cy="9" r="1" fill="currentColor"/>
           <circle cx="9" cy="9" r="1" fill="currentColor"/>
         </svg>
-      </button>
+      </div>
       <button class="qi-thumb-hit" onclick="previewQueueItem('${id}')" title="Preview video">
         <div class="qi-thumb"><div class="thumb-spinner"></div></div>
         <span class="qi-thumb-play" aria-hidden="true">
@@ -233,8 +234,6 @@ function renderQueueItem(id, name, path) {
     }
     dragSourceId = id;
     el.classList.add("dragging");
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", id);
   };
 
   const endDrag = () => {
@@ -247,31 +246,60 @@ function renderQueueItem(id, name, path) {
       );
     });
     dragSourceId = null;
+    dragTargetId = null;
     syncQueueOrderFromDom();
   };
 
-  handle?.addEventListener("dragstart", startDrag);
-  handle?.addEventListener("dragend", endDrag);
-
-  el.addEventListener("dragstart", (e) => {
-    if (queueViewMode !== "grid") {
-      e.preventDefault();
-      return;
-    }
-
-    // In grid mode, only allow drag from non-interactive empty card space.
-    const interactive = e.target.closest(
-      "button, a, input, textarea, select, .qi-status-row",
-    );
-    if (interactive) {
-      e.preventDefault();
-      return;
-    }
-
+  handle?.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0 || isRunning) return;
+    e.preventDefault();
+    handle.setPointerCapture(e.pointerId);
     startDrag(e);
   });
 
-  el.addEventListener("dragend", endDrag);
+  handle?.addEventListener("pointermove", (e) => {
+    if (dragSourceId !== id || !handle.hasPointerCapture(e.pointerId)) return;
+
+    const hovered = getHoveredQueueItem(e.clientX, e.clientY, wrap);
+    clearDragTargets(wrap);
+    if (!hovered) {
+      dragTargetId = null;
+      return;
+    }
+
+    const rect = hovered.getBoundingClientRect();
+    let placeBefore = e.clientY < rect.top + rect.height / 2;
+    if (queueViewMode === "grid") {
+      const nearRowMid =
+        Math.abs(e.clientY - (rect.top + rect.height / 2)) < rect.height * 0.25;
+      placeBefore = nearRowMid
+        ? e.clientX < rect.left + rect.width / 2
+        : e.clientY < rect.top + rect.height / 2;
+    }
+
+    dragTargetId = hovered.id;
+    dragPlaceBefore = placeBefore;
+    hovered.classList.add(
+      "drag-target",
+      placeBefore ? "drag-target-before" : "drag-target-after",
+    );
+  });
+
+  handle?.addEventListener("pointerup", (e) => {
+    if (dragSourceId !== id) return;
+    const source = document.getElementById(dragSourceId);
+    const target = document.getElementById(dragTargetId);
+    if (source && target && source !== target) {
+      queueWrap.insertBefore(
+        source,
+        dragPlaceBefore ? target : target.nextSibling,
+      );
+    }
+    handle.releasePointerCapture(e.pointerId);
+    endDrag();
+  });
+
+  handle?.addEventListener("pointercancel", endDrag);
 
   wrap.insertBefore(el, empty);
   empty.style.display = "none";
@@ -281,11 +309,9 @@ function setQueueDragEnabled(enabled) {
   const wrap = document.getElementById("queueWrap");
   if (!wrap) return;
   wrap.classList.toggle("queue-locked", !enabled);
-  const isGrid = wrap.classList.contains("queue-grid");
   wrap.querySelectorAll(".qi").forEach((item) => {
-    item.draggable = enabled && isGrid;
     const handle = item.querySelector(".qi-drag-handle");
-    if (handle) handle.draggable = enabled && !isGrid;
+    if (handle) handle.setAttribute("aria-disabled", String(!enabled));
   });
 }
 
@@ -340,56 +366,20 @@ const queueWrap = document.getElementById("queueWrap");
 queueWrap.addEventListener("dragover", (e) => {
   if (isRunning) return;
 
-  if (!dragSourceId) {
-    if (isExternalFileDrag(e.dataTransfer)) {
-      e.preventDefault();
-      dz.classList.add("hover");
-    }
-    return;
+  if (isExternalFileDrag(e.dataTransfer)) {
+    e.preventDefault();
+    dz.classList.add("hover");
   }
-
-  e.preventDefault();
-
-  const hovered = getHoveredQueueItem(e.clientX, e.clientY, queueWrap);
-  clearDragTargets(queueWrap);
-  if (!hovered) return;
-
-  const rect = hovered.getBoundingClientRect();
-  let placeBefore = e.clientY < rect.top + rect.height / 2;
-
-  if (queueViewMode === "grid") {
-    const nearRowMid =
-      Math.abs(e.clientY - (rect.top + rect.height / 2)) < rect.height * 0.25;
-    placeBefore = nearRowMid
-      ? e.clientX < rect.left + rect.width / 2
-      : e.clientY < rect.top + rect.height / 2;
-  }
-
-  hovered.classList.add(
-    "drag-target",
-    placeBefore ? "drag-target-before" : "drag-target-after",
-  );
-  queueWrap.insertBefore(
-    document.getElementById(dragSourceId),
-    placeBefore ? hovered : hovered.nextSibling,
-  );
 });
 
 queueWrap.addEventListener("drop", (e) => {
   if (isRunning) return;
 
-  if (!dragSourceId) {
-    if (isExternalFileDrag(e.dataTransfer)) {
-      e.preventDefault();
-      dz.classList.remove("hover");
-      void handleDroppedDataTransfer(e.dataTransfer);
-    }
-    return;
+  if (isExternalFileDrag(e.dataTransfer)) {
+    e.preventDefault();
+    dz.classList.remove("hover");
+    void handleDroppedDataTransfer(e.dataTransfer);
   }
-
-  e.preventDefault();
-  clearDragTargets(queueWrap);
-  syncQueueOrderFromDom();
 });
 
 queueWrap.addEventListener("dragleave", () => {
