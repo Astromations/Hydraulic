@@ -414,6 +414,11 @@
   color: var(--brand);
   background: rgba(88, 101, 242, 0.15);
 }
+
+.qi-btn.trim-btn {
+  padding-bottom: 2px;
+}
+
 .qi-btn.remove:hover {
   background: rgba(242, 63, 66, 0.2);
   color: var(--danger);
@@ -456,8 +461,22 @@
   cursor: grabbing;
 }
 
+.queue-wrap.queue-grid .qi.drag-target-before {
+  box-shadow: inset 2px 0 0 0 var(--brand);
+}
+
+.queue-wrap.queue-grid .qi.drag-target-after {
+  box-shadow: inset -2px 0 0 0 var(--brand);
+}
+
 .queue-wrap.queue-grid .qi-drag-handle {
-  display: none;
+  display: flex;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.45);
+  color: white;
 }
 
 .queue-wrap.queue-grid .qi-thumb {

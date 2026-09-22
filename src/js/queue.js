@@ -270,11 +270,14 @@ function renderQueueItem(id, name, path) {
     const rect = hovered.getBoundingClientRect();
     let placeBefore = e.clientY < rect.top + rect.height / 2;
     if (queueViewMode === "grid") {
-      const nearRowMid =
-        Math.abs(e.clientY - (rect.top + rect.height / 2)) < rect.height * 0.25;
-      placeBefore = nearRowMid
-        ? e.clientX < rect.left + rect.width / 2
-        : e.clientY < rect.top + rect.height / 2;
+      const horizontalOffset =
+        Math.abs(e.clientX - (rect.left + rect.width / 2)) / rect.width;
+      const verticalOffset =
+        Math.abs(e.clientY - (rect.top + rect.height / 2)) / rect.height;
+      placeBefore =
+        horizontalOffset > verticalOffset
+          ? e.clientX < rect.left + rect.width / 2
+          : e.clientY < rect.top + rect.height / 2;
     }
 
     dragTargetId = hovered.id;
