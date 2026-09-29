@@ -136,7 +136,10 @@ function applySettings(settings) {
           : "Select a folder below"
         : "Off — saves next to source file";
     // Format
-    currentFormat = settings.format || "mp4";
+    const supportedFormats = ["original", "mp4", "mkv", "mov", "gif"];
+    currentFormat = supportedFormats.includes(settings.format)
+      ? settings.format
+      : "mp4";
     const fmtOption = document.querySelector(
       `.fmt-option[data-value="${currentFormat}"]`,
     );
