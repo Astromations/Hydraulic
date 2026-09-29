@@ -384,6 +384,7 @@
 
 .preview-mode-head small {
   color: var(--text-muted);
+  font-size: 10px;
 }
 
 .preview-mode-toggle {
