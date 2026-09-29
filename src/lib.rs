@@ -848,7 +848,7 @@ fn do_compress(
     }
 
     let audio_map: Vec<String> = if use_gif {
-        vec!["-map".into(), "0:v".into()]
+        vec![]
     } else if combine_audio && n_active > 1 {
         let filter_in: String = active.iter().map(|i| format!("[0:a:{}]", i)).collect();
         vec![
@@ -914,10 +914,14 @@ fn do_compress(
 
     let gif_args: Vec<String> = if use_gif {
         vec![
+            "-filter_complex".into(),
+            "fps=15,scale=480:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse[v]".into(),
+            "-map".into(),
+            "[v]".into(),
             "-f".into(),
             "gif".into(),
-            "-vf".into(),
-            "fps=15,scale=trunc(iw/2)*2:trunc(ih/2)*2:flags=lanczos".into(),
+            "-pix_fmt".into(),
+            "rgb8".into(),
             "-loop".into(),
             "0".into(),
             "-an".into(),

@@ -5,7 +5,7 @@ use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fs;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Read};
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
 use std::sync::{
@@ -152,7 +152,7 @@ fn run_pass(
     let mut child = media_command(&cmd[0])
         .args(&cmd[1..])
         .stdout(Stdio::piped())
-        .stderr(Stdio::null())
+        .stderr(Stdio::piped())
         .spawn()
         .map_err(|e| format!("Failed to spawn ffmpeg: {}", e))?;
 
@@ -162,6 +162,16 @@ fn run_pass(
         .stdout
         .take()
         .ok_or_else(|| "Could not capture ffmpeg stdout".to_string())?;
+    let stderr = child
+        .stderr
+        .take()
+        .ok_or_else(|| "Could not capture ffmpeg stderr".to_string())?;
+    let stderr_thread = std::thread::spawn(move || {
+        let mut output = String::new();
+        let mut reader = BufReader::new(stderr);
+        let _ = reader.read_to_string(&mut output);
+        output
+    });
 
     {
         let mut guard = active_proc.lock().map_err(|e| e.to_string())?;
@@ -210,11 +220,16 @@ fn run_pass(
     }
 
     if !exit_status.success() {
-        return Err(format!(
-            "FFmpeg exited with code {:?}",
-            exit_status.code()
-        ));
+        let stderr = stderr_thread.join().unwrap_or_default();
+        let details = stderr.trim();
+        return Err(if details.is_empty() {
+            format!("FFmpeg exited with code {:?}", exit_status.code())
+        } else {
+            format!("FFmpeg exited with code {:?}: {}", exit_status.code(), details)
+        });
     }
+
+    let _ = stderr_thread.join();
 
     Ok(())
 }
@@ -772,6 +787,7 @@ fn do_compress(
         format!(".{}", format_ext)
     };
     let use_webm = out_ext == ".webm";
+    let use_gif = out_ext == ".gif";
 
     // ── Bitrate budget ───────────────────────────────────────────────────────
     let target_bits = target_size_mb * 8.0 * 1024.0 * 1024.0 * 0.96; // 4% safety margin
@@ -849,7 +865,9 @@ fn do_compress(
         dur_args.extend(["-t".into(), eff_duration.to_string()]);
     }
 
-    let audio_map: Vec<String> = if combine_audio && n_active > 1 {
+    let audio_map: Vec<String> = if use_gif {
+        vec![]
+    } else if combine_audio && n_active > 1 {
         let filter_in: String = active.iter().map(|i| format!("[0:a:{}]", i)).collect();
         vec![
             "-filter_complex".into(),
@@ -872,7 +890,7 @@ fn do_compress(
         vec!["-map".into(), "0:v".into()]
     };
 
-    let audio_encode: Vec<String> = if n_active > 0 {
+    let audio_encode: Vec<String> = if n_active > 0 && !use_gif {
         if use_webm {
             vec![
                 "-c:a".into(),
@@ -893,17 +911,39 @@ fn do_compress(
     };
 
     let bv = video_bitrate.to_string();
-    let bv_flags: Vec<String> = vec![
-        "-b:v".into(),
-        bv.clone(),
-        "-maxrate".into(),
-        bv.clone(),
-        "-bufsize".into(),
-        (video_bitrate * 2).to_string(),
-    ];
+    let bv_flags: Vec<String> = if use_gif {
+        vec![]
+    } else {
+        vec![
+            "-b:v".into(),
+            bv.clone(),
+            "-maxrate".into(),
+            bv.clone(),
+            "-bufsize".into(),
+            (video_bitrate * 2).to_string(),
+        ]
+    };
 
-    let faststart: Vec<String> = if !use_webm {
+    let faststart: Vec<String> = if !use_webm && !use_gif {
         vec!["-movflags".into(), "+faststart".into()]
+    } else {
+        vec![]
+    };
+
+    let gif_args: Vec<String> = if use_gif {
+        vec![
+            "-filter_complex".into(),
+            "fps=15,scale=480:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse[v]".into(),
+            "-map".into(),
+            "[v]".into(),
+            "-f".into(),
+            "gif".into(),
+            "-pix_fmt".into(),
+            "rgb8".into(),
+            "-loop".into(),
+            "0".into(),
+            "-an".into(),
+        ]
     } else {
         vec![]
     };
@@ -913,7 +953,9 @@ fn do_compress(
         .to_string_lossy()
         .to_string();
 
-    let (p1_codec, p2_codec, s_codec): (Vec<String>, Vec<String>, Vec<String>) = if use_webm {
+    let (p1_codec, p2_codec, s_codec): (Vec<String>, Vec<String>, Vec<String>) = if use_gif {
+        (vec![], vec![], vec!["-c:v".into(), "gif".into()])
+    } else if use_webm {
         (
             vec![
                 "-c:v".into(), "libvpx-vp9".into(),
@@ -956,7 +998,7 @@ fn do_compress(
     ];
 
     // ── Run passes ───────────────────────────────────────────────────────────
-    if two_pass {
+    if two_pass && !use_gif {
         // ── Pass 1 ──────────────────────────────────────────────────────────
         let p1: Vec<String> = [
             base_args.clone(),
@@ -993,6 +1035,7 @@ fn do_compress(
             audio_map,
             audio_encode,
             faststart,
+            gif_args,
             vec![output_file.clone()],
         ]
         .concat();
@@ -1028,6 +1071,7 @@ fn do_compress(
             audio_map,
             audio_encode,
             faststart,
+            gif_args,
             vec![output_file.clone()],
         ]
         .concat();
