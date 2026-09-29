@@ -24,7 +24,7 @@ async function browseFiles() {
 }
 
 const dz = document.getElementById("dropZone");
-const videoExts = /\.(mp4|mkv|mov|avi|webm)$/i;
+const videoExts = /\.(mp4|mkv|mov)$/i;
 
 function handleDroppedPaths(paths) {
   if (isRunning || !Array.isArray(paths)) return;

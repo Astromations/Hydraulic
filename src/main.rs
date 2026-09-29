@@ -631,7 +631,7 @@ async fn open_file_dialog(app: AppHandle) -> Vec<String> {
         .file()
         .add_filter(
             "Video Files",
-            &["mp4", "mkv", "mov", "avi", "webm"],
+            &["mp4", "mkv", "mov"],
         )
         .pick_files(move |result| {
             let _ = tx.send(result);
