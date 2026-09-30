@@ -684,18 +684,6 @@
             <span class="trim-time-sep">/</span>
             <span class="trim-time" id="trimTotalTime">–:––</span>
           </div>
-          <div class="trim-vol-wrap">
-            <img src="ui-icons/Volume.svg" alt="" class="trim-vol-icon" />
-            <input
-              type="range"
-              class="trim-vol styled"
-              id="trimVol"
-              min="0"
-              max="1"
-              step="0.05"
-              value="1"
-            />
-          </div>
           <div class="trim-transport-actions">
             <button class="trim-btn-cancel" onclick="closeTrimModal()">
               Cancel
@@ -707,14 +695,16 @@
         <!-- Timeline and audio lanes -->
         <div class="trim-timeline-section">
           <div class="trim-timeline-header">
-            <span>Timeline</span>
-            <div class="tl-labels">
-              <span id="tlLabelIn">0:00</span>
-              <span id="tlLabelOut">–:––</span>
+            <span class="tl-header-title">Timeline</span>
+            <div class="tl-header-main">
+              <div class="tl-labels">
+                <span id="tlLabelIn">0:00</span>
+                <span id="tlLabelOut">–:––</span>
+              </div>
+              <span class="trim-audio-note"
+                >Click a lane to include or mute it on export</span
+              >
             </div>
-            <span class="trim-audio-note"
-              >Click a lane to include or mute it on export</span
-            >
           </div>
           <div class="tl-grid">
             <div class="tl-track-info" id="tlTrackInfo"></div>

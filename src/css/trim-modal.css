@@ -201,53 +201,6 @@
   color: var(--text-muted);
 }
 
-.trim-vol-wrap {
-  display: flex;
-  align-items: center;
-  /* gap: 6px; */
-  margin-left: auto;
-}
-.trim-vol-icon {
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-.trim-vol {
-  width: 72px;
-  height: 4px;
-  cursor: pointer;
-}
-
-.trim-vol-wrap input {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 100%;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
-}
-
-.trim-vol-wrap input[type="range"].styled {
-  background: linear-gradient(
-    to right,
-    var(--brand) var(--val, 0%),
-    var(--bg-secondary) var(--val, 0%)
-  );
-}
-.trim-vol-wrap input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
-  background: white;
-  border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.32);
-  transition: transform 0.12s;
-}
-.trim-vol-wrap input[type="range"]:hover::-webkit-slider-thumb {
-  transform: scale(1.1);
-}
-
 .trim-transport-actions {
   display: flex;
   gap: 8px;
@@ -292,16 +245,27 @@
 }
 
 .trim-timeline-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 8px;
   color: var(--text-normal);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+}
+
+.tl-header-title {
+  padding: 0 8px;
+}
+
+.tl-header-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
 }
 
 .trim-timeline-header .trim-audio-note {
@@ -338,6 +302,12 @@
   line-height: 1.1;
   overflow: hidden;
 }
+.tl-info-audio {
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  gap: 7px;
+}
 .tl-info-video {
   color: #a4e9b8;
   font-weight: 700;
@@ -348,11 +318,91 @@
   color: var(--text-normal);
   font-size: 10px;
 }
-.tl-info-row small {
-  margin-top: 2px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+
+.tl-info-volume-btn {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  padding: 3px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.65;
+}
+.tl-info-volume-btn:hover,
+.tl-info-audio.volume-open .tl-info-volume-btn {
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+.tl-info-volume-btn img {
+  width: 13px;
+  height: 13px;
+}
+.tl-info-volume-popover {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  z-index: 8;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  width: 132px;
+  padding: 7px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+.tl-info-audio.volume-open {
+  position: relative;
+  overflow: visible;
+  z-index: 9;
+}
+.tl-info-audio.volume-open .tl-info-volume-popover {
+  display: flex;
+}
+.tl-info-volume-value {
+  width: 32px;
+  color: var(--text-normal);
+  font:
+    10px "Consolas",
+    "Courier New",
+    monospace;
+  text-align: right;
+}
+.tl-info-volume-slider {
+  width: 86px;
+  height: 4px;
+  accent-color: var(--brand);
+  cursor: pointer;
+}
+
+.tl-info-track-check {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  border-radius: 5px;
+  background: var(--bg-tertiary);
+  border: 1.5px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.tl-info-track-check.on {
+  background: var(--brand);
+  border-color: var(--brand);
+}
+.tl-info-track-check:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }
 
 .tl-track-column {
@@ -428,7 +478,6 @@
   background: rgba(0, 0, 0, 0.18);
 }
 
-.trim-track-check,
 .trim-track-wave {
   position: relative;
   z-index: 1;
@@ -467,11 +516,11 @@
 .tl-selection {
   position: absolute;
   top: 4px;
-  bottom: 38px;
+  bottom: 0;
   z-index: 2;
   background: rgba(255, 255, 255, 0.035);
-  border-left: 1px solid rgba(255, 255, 255, 0.42);
-  border-right: 1px solid rgba(255, 255, 255, 0.42);
+  border-left: 2px dashed rgba(255, 255, 255, 0.4);
+  border-right: 2px dashed rgba(255, 255, 255, 0.4);
   pointer-events: none;
 }
 
@@ -515,19 +564,19 @@
 
 .tl-playhead {
   position: absolute;
-  top: 4px;
-  bottom: 38px;
-  width: 2px;
+  width: 1px;
   margin-left: -1px;
-  height: 100%;
+  height: 102px;
   background: #ffffff;
   z-index: 4;
   cursor: grab;
   pointer-events: auto;
   border-radius: 1px;
+  transition: left 70ms linear;
 }
 .tl-playhead.dragging {
   cursor: grabbing;
+  transition: none;
 }
 .tl-playhead::before {
   content: "";
@@ -555,7 +604,7 @@
 .tl-ruler {
   position: relative;
   height: 22px;
-  margin: 0 1px 4px;
+  margin-bottom: -8px;
   color: var(--text-muted);
   font-family: "Consolas", "Courier New", monospace;
   font-size: 9px;
@@ -582,7 +631,7 @@
 .tl-ruler-tick i {
   display: block;
   width: 1px;
-  height: 6px;
+  height: 4px;
   margin-top: 3px;
   background: rgba(255, 255, 255, 0.28);
 }
@@ -599,30 +648,6 @@
   opacity: 0.78;
 }
 
-.trim-track-check {
-  width: 16px;
-  height: 16px;
-  border-radius: 5px;
-  flex-shrink: 0;
-  background: var(--bg-tertiary);
-  border: 1.5px solid var(--border-strong);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
-}
-.trim-track.on .trim-track-check {
-  background: var(--brand);
-  border-color: var(--brand);
-}
-
-.trim-track-check:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-}
-
 @media (max-width: 760px) {
   .trim-card {
     max-width: 100%;
@@ -630,15 +655,16 @@
     border-radius: 12px;
   }
 
-  .trim-vol-wrap {
-    display: none;
-  }
-
   .trim-timeline-header .trim-audio-note {
     max-width: 52%;
   }
 
   .tl-grid {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .trim-timeline-header {
     grid-template-columns: 76px minmax(0, 1fr);
     gap: 6px;
   }
