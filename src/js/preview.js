@@ -12,7 +12,8 @@ const previewVideo = document.getElementById("previewVideo");
 const previewTitle = document.getElementById("previewTitle");
 const previewSeek = document.getElementById("previewSeek");
 const previewVolume = document.getElementById("previewVolume");
-const previewTimeText = document.getElementById("previewTimeText");
+const previewElapsedTime = document.getElementById("previewElapsedTime");
+const previewDurationTime = document.getElementById("previewDurationTime");
 const previewPlayIcon = document.getElementById("previewPlayIcon");
 const previewVideoError = document.getElementById("previewVideoError");
 const previewPlayerShell = document.getElementById("previewPlayerShell");
@@ -54,7 +55,8 @@ async function _openPreviewForItem(item, autoplay) {
   previewItemId = item.id;
   previewDuration = 0;
   previewTitle.textContent = item.name;
-  previewTimeText.textContent = "0:00 / 0:00";
+  previewElapsedTime.textContent = "0:00";
+  previewDurationTime.textContent = "0:00";
   previewSeek.value = 0;
   previewVideoError.classList.remove("show");
   _updatePreviewNavButtons();
@@ -198,7 +200,8 @@ function _updatePreviewTime() {
   const cur = isFinite(previewVideo.currentTime) ? previewVideo.currentTime : 0;
   const dur =
     isFinite(previewDuration) && previewDuration > 0 ? previewDuration : 0;
-  previewTimeText.textContent = `${fmtTimeShort(cur)} / ${fmtTimeShort(dur)}`;
+  previewElapsedTime.textContent = fmtTimeShort(cur);
+  previewDurationTime.textContent = fmtTimeShort(dur);
   if (dur > 0) {
     previewSeek.value = ((cur / dur) * 100).toFixed(2);
   }

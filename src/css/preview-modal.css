@@ -54,7 +54,7 @@
   width: min(980px, 100%);
   background: #111214;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: 8px;
   box-shadow: 0 20px 64px rgba(0, 0, 0, 0.75);
   overflow: hidden;
 }
@@ -203,7 +203,7 @@
 .preview-controls-right {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -212,6 +212,7 @@
   min-width: 90px;
   display: flex;
   align-items: center;
+  gap: 8px;
   padding: 0 6px;
 }
 
@@ -253,7 +254,7 @@
   width: 26px;
   height: 26px;
   border: none;
-  border-radius: 50%;
+  border-radius: 4px;
   background: transparent;
   color: #f2f3f5;
   cursor: pointer;
@@ -282,7 +283,8 @@
   color: #f2f3f5;
   font-size: 12px;
   font-weight: 600;
-  min-width: 96px;
+  flex-shrink: 0;
+  min-width: 32px;
 }
 
 .preview-volume-wrap {
@@ -346,6 +348,7 @@
   }
 
   .preview-progress-wrap {
+    gap: 4px;
     padding: 0 2px;
   }
 
