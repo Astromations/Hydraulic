@@ -696,72 +696,40 @@
               value="1"
             />
           </div>
+          <div class="trim-transport-actions">
+            <button class="trim-btn-cancel" onclick="closeTrimModal()">
+              Cancel
+            </button>
+            <button class="trim-btn-apply" onclick="applyTrim()">Apply</button>
+          </div>
         </div>
 
-        <!-- Timeline -->
+        <!-- Timeline and audio lanes -->
         <div class="trim-timeline-section">
-          <div class="tl-track" id="tlTrack">
-            <div class="tl-bar"></div>
-            <div class="tl-selection" id="tlSelection"></div>
-            <div class="tl-handle" id="tlHandleIn" data-handle="in"></div>
-            <div class="tl-handle" id="tlHandleOut" data-handle="out"></div>
-            <div class="tl-playhead" id="tlPlayhead"></div>
-          </div>
-          <div class="tl-labels">
-            <span id="tlLabelIn">0:00</span>
-            <span id="tlLabelOut">–:––</span>
-          </div>
-        </div>
-
-        <!-- Trim point inputs — 2-column grid: In on left, Out on right, each with inline Set button -->
-        <div class="trim-inputs-row">
-          <div class="trim-point">
-            <span class="trim-point-label">In</span>
-            <input
-              class="trim-point-input"
-              id="trimInInput"
-              placeholder="0:00.000"
-            />
-            <button
-              class="trim-set-btn"
-              onclick="setPointToCurrent('in')"
-              title="Set In to current position"
+          <div class="trim-timeline-header">
+            <span>Timeline</span>
+            <div class="tl-labels">
+              <span id="tlLabelIn">0:00</span>
+              <span id="tlLabelOut">–:––</span>
+            </div>
+            <span class="trim-audio-note"
+              >Click a lane to include or mute it on export</span
             >
-              Set
-            </button>
           </div>
-          <div class="trim-point">
-            <span class="trim-point-label">Out</span>
-            <input
-              class="trim-point-input"
-              id="trimOutInput"
-              placeholder="end"
-            />
-            <button
-              class="trim-set-btn"
-              onclick="setPointToCurrent('out')"
-              title="Set Out to current position"
-            >
-              Set
-            </button>
+          <div class="tl-grid">
+            <div class="tl-track-info" id="tlTrackInfo"></div>
+            <div class="tl-track-column">
+              <div class="tl-ruler" id="tlRuler" aria-hidden="true"></div>
+              <div class="tl-track" id="tlTrack">
+                <div class="tl-bar"></div>
+                <div class="trim-track-list" id="trimTrackList"></div>
+                <div class="tl-selection" id="tlSelection"></div>
+                <div class="tl-handle" id="tlHandleIn" data-handle="in"></div>
+                <div class="tl-handle" id="tlHandleOut" data-handle="out"></div>
+                <div class="tl-playhead" id="tlPlayhead"></div>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <!-- Audio tracks -->
-        <div class="trim-audio-section" id="trimAudioSection">
-          <div class="trim-audio-header">
-            Audio Tracks
-            <span class="trim-audio-note">· affects export only</span>
-          </div>
-          <div class="trim-track-list" id="trimTrackList"></div>
-        </div>
-
-        <!-- Footer -->
-        <div class="trim-modal-footer">
-          <button class="trim-btn-cancel" onclick="closeTrimModal()">
-            Cancel
-          </button>
-          <button class="trim-btn-apply" onclick="applyTrim()">Apply</button>
         </div>
       </div>
     </div>

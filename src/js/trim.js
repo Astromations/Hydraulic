@@ -34,8 +34,6 @@ async function openTrimModal(id) {
   // Reset UI to loading state — avoids showing stale -1:-1 values
   document.getElementById("trimTotalTime").textContent = "–:––";
   document.getElementById("trimCurrentTime").textContent = "0:00.000";
-  document.getElementById("trimInInput").value = "";
-  document.getElementById("trimOutInput").value = "";
   document.getElementById("trimVideoError").classList.remove("show");
 
   // Reset timeline
@@ -45,8 +43,12 @@ async function openTrimModal(id) {
   tlSelection.style.left = "0%";
   tlSelection.style.width = "100%";
   tlPlayhead.style.left = "0%";
+  tlTrack.style.setProperty("--trim-in", "0%");
+  tlTrack.style.setProperty("--trim-out", "100%");
   document.getElementById("tlLabelIn").textContent = "0:00";
   document.getElementById("tlLabelOut").textContent = "–:––";
+  renderTrackInfo();
+  renderTimeRuler();
 
   document.getElementById("trimOverlay").classList.add("open");
 
@@ -82,10 +84,9 @@ trimVideo.addEventListener("loadedmetadata", () => {
 
   document.getElementById("trimTotalTime").textContent =
     fmtTimeFull(trimDuration);
-  document.getElementById("trimInInput").value = fmtTimeFull(trimIn);
-  document.getElementById("trimOutInput").value = fmtTimeFull(trimOut);
   document.getElementById("trimVideoError").classList.remove("show");
   updateTimeline();
+  renderTimeRuler();
   seekTrimVideo(trimIn);
 });
 
@@ -184,16 +185,26 @@ tlTrack.addEventListener("pointerdown", (e) => {
   }
 });
 
+tlPlayhead.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (trimDuration <= 0) return;
+  trimDragging = "playhead";
+  tlPlayhead.classList.add("dragging");
+  tlTrack.setPointerCapture(e.pointerId);
+  seekTrimVideo(getTrackFrac(e) * trimDuration);
+});
+
 tlTrack.addEventListener("pointermove", (e) => {
   if (!trimDragging) return;
   const t = getTrackFrac(e) * trimDuration;
-  if (trimDragging === "in") {
+  if (trimDragging === "playhead") {
+    seekTrimVideo(t);
+  } else if (trimDragging === "in") {
     trimIn = Math.max(0, Math.min(t, trimOut - 0.1));
-    document.getElementById("trimInInput").value = fmtTimeFull(trimIn);
     seekTrimVideo(trimIn);
   } else {
     trimOut = Math.min(trimDuration, Math.max(t, trimIn + 0.1));
-    document.getElementById("trimOutInput").value = fmtTimeFull(trimOut);
     seekTrimVideo(trimOut);
   }
   updateTimeline();
@@ -203,6 +214,7 @@ tlTrack.addEventListener("pointerup", () => {
   if (trimDragging) {
     tlHandleIn.classList.remove("dragging");
     tlHandleOut.classList.remove("dragging");
+    tlPlayhead.classList.remove("dragging");
     trimDragging = null;
     updateTimelineLabels();
   }
@@ -212,6 +224,8 @@ function updateTimeline() {
   if (trimDuration <= 0) return;
   const inPct = ((trimIn / trimDuration) * 100).toFixed(3) + "%";
   const outPct = ((trimOut / trimDuration) * 100).toFixed(3) + "%";
+  tlTrack.style.setProperty("--trim-in", inPct);
+  tlTrack.style.setProperty("--trim-out", outPct);
   tlHandleIn.style.left = inPct;
   tlHandleOut.style.left = outPct;
   tlSelection.style.left = inPct;
@@ -225,49 +239,22 @@ function updateTimelineLabels() {
   document.getElementById("tlLabelOut").textContent = fmtTimeShort(trimOut);
 }
 
-// ── Trim input fields ─────────────────────────────────────────────
+function renderTimeRuler() {
+  const ruler = document.getElementById("tlRuler");
+  ruler.innerHTML = "";
+  if (trimDuration <= 0) return;
 
-document.getElementById("trimInInput").addEventListener("change", (e) => {
-  const t = parseTimeJS(e.target.value);
-  if (t !== null && t >= 0 && t < trimOut) {
-    trimIn = Math.max(0, t);
-    e.target.value = fmtTimeFull(trimIn);
-    updateTimeline();
-    seekTrimVideo(trimIn);
-  } else {
-    e.target.value = fmtTimeFull(trimIn); // revert
+  const tickCount = Math.min(10, Math.max(2, Math.ceil(trimDuration / 10)));
+  const step = trimDuration / tickCount;
+
+  for (let index = 0; index <= tickCount; index++) {
+    const time = index === tickCount ? trimDuration : index * step;
+    const tick = document.createElement("span");
+    tick.className = "tl-ruler-tick";
+    tick.style.left = `${(time / trimDuration) * 100}%`;
+    tick.innerHTML = `<b>${fmtTimeShort(time)}</b><i></i>`;
+    ruler.appendChild(tick);
   }
-});
-
-document.getElementById("trimOutInput").addEventListener("change", (e) => {
-  const t = parseTimeJS(e.target.value);
-  if (t !== null && t > trimIn) {
-    trimOut = Math.min(trimDuration, t);
-    e.target.value = fmtTimeFull(trimOut);
-    updateTimeline();
-    seekTrimVideo(trimOut);
-  } else {
-    e.target.value = fmtTimeFull(trimOut); // revert
-  }
-});
-
-// Allow text selection inside inputs
-["trimInInput", "trimOutInput"].forEach((id) => {
-  const el = document.getElementById(id);
-  el.addEventListener("click", (e) => e.stopPropagation());
-  el.addEventListener("mousedown", (e) => e.stopPropagation());
-});
-
-function setPointToCurrent(which) {
-  const t = trimVideo.currentTime;
-  if (which === "in") {
-    trimIn = Math.max(0, Math.min(t, trimOut - 0.1));
-    document.getElementById("trimInInput").value = fmtTimeFull(trimIn);
-  } else {
-    trimOut = Math.min(trimDuration, Math.max(t, trimIn + 0.1));
-    document.getElementById("trimOutInput").value = fmtTimeFull(trimOut);
-  }
-  updateTimeline();
 }
 
 // ── Audio tracks ──────────────────────────────────────────────────
@@ -275,15 +262,15 @@ function setPointToCurrent(which) {
 // so per-track preview isolation is not possible. Toggles here affect export only.
 
 function renderAudioTracks() {
-  const section = document.getElementById("trimAudioSection");
   const list = document.getElementById("trimTrackList");
 
   if (!trimAudioTracks || trimAudioTracks.length === 0) {
-    section.style.display = "none";
+    list.style.display = "none";
     return;
   }
-  section.style.display = "";
+  list.style.display = "";
   list.innerHTML = "";
+  renderTrackInfo();
 
   trimAudioTracks.forEach((track) => {
     const exportEnabled =
@@ -301,15 +288,13 @@ function renderAudioTracks() {
     row.className = "trim-track" + (exportEnabled ? " on" : "");
     row.dataset.index = track.index;
     row.innerHTML = `
-      <div class="trim-track-check">
+      <div class="trim-track-fill"></div>
+      <div class="trim-track-check" role="checkbox" aria-checked="${exportEnabled}" tabindex="0">
         <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <div class="trim-track-info">
-        <div class="trim-track-name">Track ${track.index + 1}</div>
-        <div class="trim-track-meta">${esc(meta) || "No metadata"}</div>
-      </div>`;
+      <span class="trim-track-wave" aria-hidden="true"></span>`;
 
-    row.addEventListener("click", () => {
+    const toggleTrack = () => {
       const idx = parseInt(row.dataset.index);
       if (trimEnabledTracks === null) {
         trimEnabledTracks = new Set(
@@ -328,9 +313,45 @@ function renderAudioTracks() {
         "on",
         trimEnabledTracks === null || trimEnabledTracks.has(idx),
       );
+      row
+        .querySelector(".trim-track-check")
+        .setAttribute(
+          "aria-checked",
+          trimEnabledTracks === null || trimEnabledTracks.has(idx),
+        );
+    };
+
+    row.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleTrack();
+    });
+    row.addEventListener("pointerdown", (e) => e.stopPropagation());
+    row.querySelector(".trim-track-check").addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleTrack();
+      }
     });
 
     list.appendChild(row);
+  });
+}
+
+function renderTrackInfo() {
+  const info = document.getElementById("tlTrackInfo");
+  info.innerHTML = `<div class="tl-info-row tl-info-video">Video</div>`;
+
+  trimAudioTracks.forEach((track) => {
+    const parts = [
+      track.codec,
+      track.channels,
+      track.language && track.language !== "und" ? track.language : null,
+      track.title,
+    ].filter(Boolean);
+    const row = document.createElement("div");
+    row.className = "tl-info-row";
+    row.innerHTML = `<strong>Track ${track.index + 1}</strong><small>${esc(parts.join(" · ")) || "No metadata"}</small>`;
+    info.appendChild(row);
   });
 }
 
