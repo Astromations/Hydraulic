@@ -296,7 +296,15 @@
                   lower quality.</span
                 >
                 <div class="toggle-info">
-                  <strong>GPU</strong><small>NVENC only</small>
+                  <div class="toggle-info-label">
+                    <img
+                      src="ui-icons/GPU.svg"
+                      alt=""
+                      class="toggle-info-icon"
+                    />
+                    <strong>GPU</strong>
+                  </div>
+                  <small>NVENC only</small>
                 </div>
                 <div class="toggle-switch">
                   <input type="checkbox" id="gpuToggle" /><span
@@ -314,7 +322,15 @@
                   tracks separate.</span
                 >
                 <div class="toggle-info">
-                  <strong>Merge</strong><small>Multi-audio</small>
+                  <div class="toggle-info-label">
+                    <img
+                      src="ui-icons/MergeAudio.svg"
+                      alt=""
+                      class="toggle-info-icon"
+                    />
+                    <strong>Merge Audio</strong>
+                  </div>
+                  <small>Multi-audio</small>
                 </div>
                 <div class="toggle-switch">
                   <input type="checkbox" id="combineAudioToggle" checked /><span
@@ -332,7 +348,15 @@
                   size, takes longer.</span
                 >
                 <div class="toggle-info">
-                  <strong>2-Pass</strong><small>Better size</small>
+                  <div class="toggle-info-label">
+                    <img
+                      src="ui-icons/2Pass.svg"
+                      alt=""
+                      class="toggle-info-icon"
+                    />
+                    <strong>2-Pass</strong>
+                  </div>
+                  <small>Better size</small>
                 </div>
                 <div class="toggle-switch">
                   <input type="checkbox" id="twoPassToggle" checked /><span
@@ -462,7 +486,14 @@
                 onclick="toggleOutputDir()"
               >
                 <div class="toggle-info">
-                  <strong>Custom Output Folder</strong>
+                  <div class="toggle-info-label">
+                    <img
+                      src="ui-icons/Folder.svg"
+                      alt=""
+                      class="toggle-info-icon"
+                    />
+                    <strong>Custom Output Folder</strong>
+                  </div>
                   <small id="outputDirSubtitle"
                     >Off — saves next to source file</small
                   >
@@ -486,7 +517,14 @@
 
             <div class="preview-mode-section">
               <div class="preview-mode-head">
-                <strong>Thumbnail Preview</strong>
+                <div class="preview-mode-title">
+                  <img
+                    src="ui-icons/Preview.svg"
+                    alt=""
+                    class="toggle-info-icon"
+                  />
+                  <strong>Thumbnail Preview</strong>
+                </div>
                 <small>Choose how videos open when clicking a thumbnail</small>
               </div>
               <div
@@ -864,17 +902,7 @@
                   onclick="previewPrevClip()"
                   title="Previous clip"
                 >
-                  <svg
-                    width="46"
-                    height="46"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M10.134 17.798A1.2 1.2 0 0 0 12 16.8v-3.358l6.534 4.356A1.2 1.2 0 0 0 20.4 16.8V7.2a1.2 1.2 0 0 0-1.866-.998L12 10.558V7.2a1.2 1.2 0 0 0-1.866-.998l-7.2 4.8a1.2 1.2 0 0 0 0 1.996l7.2 4.8Z"
-                    ></path>
-                  </svg>
+                  <img src="ui-icons/NextorPrior.svg" alt="" />
                 </button>
 
                 <button
@@ -904,17 +932,7 @@
                   onclick="previewNextClip()"
                   title="Next clip"
                 >
-                  <svg
-                    width="46"
-                    height="46"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M5.466 6.202A1.2 1.2 0 0 0 3.6 7.2v9.6a1.2 1.2 0 0 0 1.866.998L12 13.442V16.8a1.2 1.2 0 0 0 1.866.998l7.2-4.8a1.2 1.2 0 0 0 0-1.996l-7.2-4.8A1.2 1.2 0 0 0 12 7.2v3.358L5.466 6.202Z"
-                    ></path>
-                  </svg>
+                  <img src="ui-icons/NextorPrior.svg" alt="" />
                 </button>
 
                 <span class="preview-time" id="previewTimeText"
