@@ -183,9 +183,14 @@
     rgba(0, 0, 0, 0) 100%
   );
 }
-.preview-controls svg {
-  width: 10px;
-  height: 16px;
+
+.preview-controls img {
+  width: 18px;
+  height: 18px;
+}
+
+#previewPrevBtn {
+  transform: scaleX(-1);
 }
 
 .preview-controls-row {
@@ -306,7 +311,7 @@
   -webkit-appearance: none;
   width: 10px;
   height: 10px;
-  border-radius: 50%;
+  border-radius: 4px;
   background: #fff;
 }
 
