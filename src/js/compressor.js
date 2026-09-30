@@ -164,7 +164,7 @@ function onItemDone(id, outputPath) {
     const name = outputPath.split(/[/\\]/).pop();
     sr.innerHTML = `
       <span class="chip chip-done">✓ Done</span>
-      <button class="qi-file-link" id="${id}-outlink" onclick="openOutputFile('${id}')" title="${esc(outputPath)}">${esc(name)}</button>`;
+      <button class="qi-file-link" id="${id}-outlink" onclick="openOutputFile('${id}')" title="${esc(outputPath)}"><img src="..ui-icons/Linkto.svg"/></button>`;
   }
   const renameBtn = document.getElementById(`${id}-renamebtn`);
   if (renameBtn) renameBtn.disabled = false;
