@@ -10,7 +10,10 @@ let trimOut = 0;
 let trimDragging = null; // 'in' | 'out' | null
 let trimAudioTracks = [];
 let trimEnabledTracks = null; // null = all, or Set of indices (export selection)
+let trimAudioVolumes = [];
 let trimPreviewTmp = null; // temp file path created for mixed-audio preview
+let playheadAnimationFrame = null;
+let trimPreviewRefreshTimer = null;
 
 const trimVideo = document.getElementById("trimVideo");
 const tlTrack = document.getElementById("tlTrack");
@@ -28,6 +31,7 @@ async function openTrimModal(id) {
   trimOut = item.trimEnd ? parseTimeJS(item.trimEnd) : -1; // -1 = end (resolved after metadata)
   trimAudioTracks = item.audioTracks || [];
   trimEnabledTracks = item.enabledTracks ? new Set(item.enabledTracks) : null;
+  trimAudioVolumes = item.audioVolumes || [];
 
   document.getElementById("trimModalTitle").textContent = item.name;
 
@@ -56,9 +60,13 @@ async function openTrimModal(id) {
   // so all tracks are audible simultaneously during preview (Chromium only
   // exposes one audio stream natively from a multi-track container).
   trimPreviewTmp = null;
-  const result = await invoke("get_mixed_preview_url", { filepath: item.path });
+  const result = await invoke("get_mixed_preview_url", {
+    filepath: item.path,
+    audioVolumes: trimAudioVolumes,
+  });
   trimPreviewTmp = result.tmp; // null if single-track or fallback
   trimVideo.src = result.url ? convertFileSrc(result.url) : "";
+  trimVideo.volume = trimAudioVolumes[0] ?? 1;
   trimVideo.load();
 
   // Fetch audio tracks if not yet loaded
@@ -67,6 +75,7 @@ async function openTrimModal(id) {
       trimAudioTracks = tracks;
       item.audioTracks = tracks;
       renderAudioTracks();
+      if (tracks.length === 1) trimVideo.volume = trimAudioVolumes[0] ?? 1;
     });
   } else {
     renderAudioTracks();
@@ -98,9 +107,7 @@ trimVideo.addEventListener("error", () => {
 trimVideo.addEventListener("timeupdate", () => {
   const t = trimVideo.currentTime;
   document.getElementById("trimCurrentTime").textContent = fmtTimeFull(t);
-  if (trimDuration > 0) {
-    tlPlayhead.style.left = (t / trimDuration) * 100 + "%";
-  }
+  updatePlayheadPosition(t);
   // Loop within trim range when playing
   if (!trimVideo.paused && t >= trimOut - 0.05) {
     trimVideo.currentTime = trimIn;
@@ -110,8 +117,33 @@ trimVideo.addEventListener("timeupdate", () => {
 trimVideo.addEventListener("play", updatePlayBtn);
 trimVideo.addEventListener("pause", updatePlayBtn);
 
+function updatePlayheadPosition(time) {
+  if (trimDuration > 0) {
+    tlPlayhead.style.left = (time / trimDuration) * 100 + "%";
+  }
+}
+
+function animatePlayhead() {
+  updatePlayheadPosition(trimVideo.currentTime);
+  if (!trimVideo.paused) {
+    playheadAnimationFrame = requestAnimationFrame(animatePlayhead);
+  } else {
+    playheadAnimationFrame = null;
+  }
+}
+
+function syncPlayheadAnimation() {
+  if (!trimVideo.paused && playheadAnimationFrame === null) {
+    playheadAnimationFrame = requestAnimationFrame(animatePlayhead);
+  } else if (trimVideo.paused && playheadAnimationFrame !== null) {
+    cancelAnimationFrame(playheadAnimationFrame);
+    playheadAnimationFrame = null;
+  }
+}
+
 function updatePlayBtn() {
   const playing = !trimVideo.paused;
+  syncPlayheadAnimation();
   const icon = document.getElementById("trimPlayIcon");
   icon.innerHTML = playing
     ? `<svg width="38" height="43" viewBox="0 0 38 43" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -220,6 +252,15 @@ tlTrack.addEventListener("pointerup", () => {
   }
 });
 
+tlTrack.addEventListener("pointercancel", () => {
+  if (trimDragging) {
+    tlHandleIn.classList.remove("dragging");
+    tlHandleOut.classList.remove("dragging");
+    tlPlayhead.classList.remove("dragging");
+    trimDragging = null;
+  }
+});
+
 function updateTimeline() {
   if (trimDuration <= 0) return;
   const inPct = ((trimIn / trimDuration) * 100).toFixed(3) + "%";
@@ -275,66 +316,48 @@ function renderAudioTracks() {
   trimAudioTracks.forEach((track) => {
     const exportEnabled =
       trimEnabledTracks === null || trimEnabledTracks.has(track.index);
-    // Filter out uninformative "und" (undetermined) language tag
-    const parts = [
-      track.codec,
-      track.channels,
-      track.language && track.language !== "und" ? track.language : null,
-      track.title,
-    ].filter(Boolean);
-    const meta = parts.join(" · ");
 
     const row = document.createElement("div");
     row.className = "trim-track" + (exportEnabled ? " on" : "");
     row.dataset.index = track.index;
     row.innerHTML = `
       <div class="trim-track-fill"></div>
-      <div class="trim-track-check" role="checkbox" aria-checked="${exportEnabled}" tabindex="0">
-        <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
       <span class="trim-track-wave" aria-hidden="true"></span>`;
-
-    const toggleTrack = () => {
-      const idx = parseInt(row.dataset.index);
-      if (trimEnabledTracks === null) {
-        trimEnabledTracks = new Set(
-          trimAudioTracks.map((t) => t.index).filter((i) => i !== idx),
-        );
-      } else {
-        if (trimEnabledTracks.has(idx)) {
-          trimEnabledTracks.delete(idx);
-        } else {
-          trimEnabledTracks.add(idx);
-          if (trimEnabledTracks.size === trimAudioTracks.length)
-            trimEnabledTracks = null;
-        }
-      }
-      row.classList.toggle(
-        "on",
-        trimEnabledTracks === null || trimEnabledTracks.has(idx),
-      );
-      row
-        .querySelector(".trim-track-check")
-        .setAttribute(
-          "aria-checked",
-          trimEnabledTracks === null || trimEnabledTracks.has(idx),
-        );
-    };
 
     row.addEventListener("click", (e) => {
       e.stopPropagation();
-      toggleTrack();
+      toggleAudioTrack(parseInt(row.dataset.index));
     });
     row.addEventListener("pointerdown", (e) => e.stopPropagation());
-    row.querySelector(".trim-track-check").addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        toggleTrack();
-      }
-    });
 
     list.appendChild(row);
   });
+}
+
+function toggleAudioTrack(index) {
+  if (trimEnabledTracks === null) {
+    trimEnabledTracks = new Set(
+      trimAudioTracks
+        .map((track) => track.index)
+        .filter((trackIndex) => trackIndex !== index),
+    );
+  } else if (trimEnabledTracks.has(index)) {
+    trimEnabledTracks.delete(index);
+  } else {
+    trimEnabledTracks.add(index);
+    if (trimEnabledTracks.size === trimAudioTracks.length)
+      trimEnabledTracks = null;
+  }
+
+  const enabled = trimEnabledTracks === null || trimEnabledTracks.has(index);
+  document
+    .querySelector(`.trim-track[data-index="${index}"]`)
+    ?.classList.toggle("on", enabled);
+  const checkbox = document.querySelector(
+    `.tl-info-track-check[data-track-index="${index}"]`,
+  );
+  checkbox?.setAttribute("aria-checked", enabled);
+  checkbox?.classList.toggle("on", enabled);
 }
 
 function renderTrackInfo() {
@@ -342,17 +365,94 @@ function renderTrackInfo() {
   info.innerHTML = `<div class="tl-info-row tl-info-video">Video</div>`;
 
   trimAudioTracks.forEach((track) => {
-    const parts = [
-      track.codec,
-      track.channels,
-      track.language && track.language !== "und" ? track.language : null,
-      track.title,
-    ].filter(Boolean);
+    const exportEnabled =
+      trimEnabledTracks === null || trimEnabledTracks.has(track.index);
     const row = document.createElement("div");
-    row.className = "tl-info-row";
-    row.innerHTML = `<strong>Track ${track.index + 1}</strong><small>${esc(parts.join(" · ")) || "No metadata"}</small>`;
+    row.className = "tl-info-row tl-info-audio";
+    row.innerHTML = `
+      <div class="tl-info-track-check ${exportEnabled ? "on" : ""}" role="checkbox" aria-checked="${exportEnabled}" data-track-index="${track.index}" tabindex="0">
+        <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <strong>Track ${track.index + 1}</strong>
+      <button class="tl-info-volume-btn" type="button" title="Adjust track volume" aria-label="Adjust volume for track ${track.index + 1}" aria-expanded="false">
+        <img src="ui-icons/Volume.svg" alt="" />
+      </button>
+      <div class="tl-info-volume-popover">
+        <span class="tl-info-volume-value">${Math.round((trimAudioVolumes[track.index] ?? 1) * 100)}%</span>
+        <input class="tl-info-volume-slider" type="range" min="0" max="2" step="0.05" value="${trimAudioVolumes[track.index] ?? 1}" aria-label="Track ${track.index + 1} volume" />
+      </div>`;
+    const checkbox = row.querySelector(".tl-info-track-check");
+    checkbox.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleAudioTrack(track.index);
+    });
+    checkbox.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleAudioTrack(track.index);
+      }
+    });
+    const volumeButton = row.querySelector(".tl-info-volume-btn");
+    const volumePopover = row.querySelector(".tl-info-volume-popover");
+    const volumeSlider = row.querySelector(".tl-info-volume-slider");
+    volumeButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const isOpen = row.classList.toggle("volume-open");
+      volumeButton.setAttribute("aria-expanded", isOpen);
+    });
+    volumeSlider.addEventListener("input", (event) => {
+      const value = parseFloat(event.target.value);
+      trimAudioVolumes[track.index] = value;
+      volumePopover.querySelector(".tl-info-volume-value").textContent =
+        `${Math.round(value * 100)}%`;
+      if (trimAudioTracks.length === 1) {
+        trimVideo.volume = value;
+      } else {
+        scheduleTrimPreviewRefresh();
+      }
+    });
+    volumePopover.addEventListener("click", (event) => event.stopPropagation());
     info.appendChild(row);
   });
+}
+
+function scheduleTrimPreviewRefresh() {
+  clearTimeout(trimPreviewRefreshTimer);
+  trimPreviewRefreshTimer = setTimeout(refreshTrimPreview, 250);
+}
+
+async function refreshTrimPreview() {
+  const item = queue.find((queueItem) => queueItem.id === trimItemId);
+  if (!item || trimAudioTracks.length <= 1) return;
+  const refreshItemId = trimItemId;
+
+  const wasPlaying = !trimVideo.paused;
+  const currentTime = trimVideo.currentTime;
+  const oldPreview = trimPreviewTmp;
+  const result = await invoke("get_mixed_preview_url", {
+    filepath: item.path,
+    audioVolumes: trimAudioVolumes,
+  });
+  if (trimItemId !== refreshItemId) {
+    if (result.tmp) {
+      invoke("delete_temp_file", { tmp_path: result.tmp }).catch(() => {});
+    }
+    return;
+  }
+  trimPreviewTmp = result.tmp;
+  trimVideo.src = result.url ? convertFileSrc(result.url) : "";
+  trimVideo.load();
+  trimVideo.addEventListener(
+    "loadedmetadata",
+    () => {
+      seekTrimVideo(currentTime);
+      if (wasPlaying) trimVideo.play();
+    },
+    { once: true },
+  );
+  if (oldPreview) {
+    invoke("delete_temp_file", { tmp_path: oldPreview }).catch(() => {});
+  }
 }
 
 // ── Apply / close ─────────────────────────────────────────────────
@@ -372,6 +472,7 @@ function applyTrim() {
   item.enabledTracks =
     trimEnabledTracks === null ? null : [...trimEnabledTracks];
   item.audioTracks = trimAudioTracks;
+  item.audioVolumes = trimAudioVolumes;
 
   const statusRow = document.getElementById(`${trimItemId}-status`);
   const badge = statusRow?.querySelector(".qi-trim-badge");
@@ -408,6 +509,7 @@ function applyTrim() {
 }
 
 function closeTrimModal() {
+  clearTimeout(trimPreviewRefreshTimer);
   trimVideo.pause();
   trimVideo.src = "";
   document.getElementById("trimOverlay").classList.remove("open");

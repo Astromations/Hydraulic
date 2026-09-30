@@ -97,7 +97,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initSlider("sizeSlider", "sizeVal", (v) => `${v} MB`, 1, 200);
   initSlider("audioSlider", "audioVal", (v) => `${v} kbps`, 8, 320);
-  initSlider("trimVol", null, null, 0, 1);
 
   // Load persistent settings after sliders init
   setTimeout(async () => {

@@ -17,12 +17,6 @@ function initSlider(id, labelId, fmt, min, max) {
       );
   }
   slider.addEventListener("input", refresh);
-  if (id === "trimVol") {
-    slider.addEventListener("input", () => {
-      const v = document.getElementById("trimVideo");
-      if (v) v.volume = parseFloat(slider.value);
-    });
-  }
   refresh();
 }
 

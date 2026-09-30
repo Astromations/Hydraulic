@@ -389,7 +389,10 @@ struct MixedPreviewResult {
 }
 
 #[tauri::command]
-fn get_mixed_preview_url(filepath: String) -> MixedPreviewResult {
+fn get_mixed_preview_url(
+    filepath: String,
+    audio_volumes: Option<Vec<f64>>,
+) -> MixedPreviewResult {
     let fallback = MixedPreviewResult {
         url: filepath.clone(),
         tmp: None,
@@ -427,8 +430,22 @@ fn get_mixed_preview_url(filepath: String) -> MixedPreviewResult {
         src_ext
     ));
 
-    let filter_in: String = (0..n).map(|i| format!("[0:a:{}]", i)).collect();
-    let amix = format!("{}amix=inputs={}:normalize=0[aout]", filter_in, n);
+    let filter_in: String = (0..n)
+        .enumerate()
+        .map(|(output_index, input_index)| {
+            let volume = audio_volumes
+                .as_ref()
+                .and_then(|volumes| volumes.get(input_index).copied())
+                .unwrap_or(1.0)
+                .clamp(0.0, 2.0);
+            format!(
+                "[0:a:{}]volume={}[a{}];",
+                input_index, volume, output_index
+            )
+        })
+        .collect();
+    let inputs: String = (0..n).map(|i| format!("[a{}]", i)).collect();
+    let amix = format!("{}{}amix=inputs={}:normalize=0[aout]", filter_in, inputs, n);
 
     let status = media_command("ffmpeg")
         .args([
