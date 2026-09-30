@@ -112,6 +112,7 @@ function processNext() {
     trimStart: next.trimStart || null,
     trimEnd: next.trimEnd || null,
     enabledTracks: next.enabledTracks,
+    audioVolumes: next.audioVolumes,
   }).catch((err) => {
     onItemError(next.id, err?.message || String(err));
   });

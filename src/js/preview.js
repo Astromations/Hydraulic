@@ -71,6 +71,7 @@ async function _openPreviewForItem(item, autoplay) {
   try {
     const result = await invoke("get_mixed_preview_url", {
       filepath: item.path,
+      audioVolumes: null,
     });
     previewTmpPath = result?.tmp || null;
     previewVideo.src = result?.url ? convertFileSrc(result.url) : "";

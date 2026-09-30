@@ -93,6 +93,7 @@ function addToQueue(path) {
     trimEnd: "",
     enabledTracks: null,
     audioTracks: [],
+    audioVolumes: [],
   });
   renderQueueItem(id, name, path);
   setQueueDragEnabled(!isRunning);
