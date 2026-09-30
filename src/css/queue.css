@@ -163,6 +163,7 @@
   width: 140px;
   height: 79px;
   min-height: 60px;
+  position: relative;
   border-radius: 4px;
   background: var(--bg-tertiary);
   overflow: hidden;
