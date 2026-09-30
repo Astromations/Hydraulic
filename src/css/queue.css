@@ -189,6 +189,11 @@
   transform: scale(1);
 }
 
+.qi-thumb-play img {
+  width: 18px;
+  height: 18px;
+}
+
 .qi-thumb-hit:focus-visible .qi-thumb-play {
   opacity: 1;
   transform: scale(1);
@@ -405,22 +410,17 @@
   background: var(--bg-modifier);
   color: var(--text-normal);
 }
-.qi-btn svg {
-  width: 10px;
-  height: 10px;
-  margin-top: 1px;
+.qi-btn img {
+  width: 16px;
+  height: 16px;
 }
 .qi-btn.active {
   color: var(--brand);
   background: rgba(88, 101, 242, 0.15);
 }
 
-.qi-btn.trim-btn {
-  padding-bottom: 2px;
-}
-
 .qi-btn.remove:hover {
-  background: rgba(242, 63, 66, 0.2);
+  background: rgba(218, 55, 60, 0.2);
   color: var(--danger);
 }
 .qi-btn:disabled {

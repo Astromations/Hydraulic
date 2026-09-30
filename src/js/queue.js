@@ -198,9 +198,7 @@ function renderQueueItem(id, name, path) {
       <button class="qi-thumb-hit" onclick="previewQueueItem('${id}')" title="Preview video">
         <div class="qi-thumb"><div class="thumb-spinner"></div></div>
         <span class="qi-thumb-play" aria-hidden="true">
-<svg width="38" height="43" viewBox="0 0 38 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.5351 0.697925C4.20193 -1.26277 0 1.14049 0 5.00759V37.5235C0 41.3905 4.20193 43.7938 7.5351 41.8331L35.1737 25.5751C38.46 23.6419 38.46 18.8891 35.1737 16.9558L7.5351 0.697925Z" fill="white" fill-opacity="0.6"/>
-</svg>
+<img src="ui-icons/Play.svg" alt="Play"/></span
 </span>
       </button>
       <div class="qi-body">
@@ -211,15 +209,10 @@ function renderQueueItem(id, name, path) {
       </div>
       <div class="qi-actions">
         <button class="qi-btn rename" id="${id}-renamebtn" onclick="renameFile('${id}')" title="Rename output file" disabled>
-          <svg width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M40.7323 17.0752L42.3523 15.4574C45.8825 11.9271 45.8825 6.18039 42.3523 2.64776C38.8218 -0.882587 33.073 -0.882587 29.5425 2.64776L27.9247 4.26781L40.7323 17.0752ZM24.7405 7.44266L5.46172 26.727L18.2712 39.533L37.5502 20.2485L24.7405 7.44266ZM2.79627 44.9265L14.3976 42.0285L2.9673 30.598L0.0669492 42.1995C-0.124301 42.9645 0.100699 43.7767 0.658724 44.3347C1.21672 44.8927 2.029 45.1155 2.79627 44.9265Z" fill="white" fill-opacity="0.6"/>
-</svg>
+          <img src="ui-icons/Rename.svg" alt="Rename"/>
         </button>
-        <button class="qi-btn remove" onclick="removeFromQueue('${id}')" title="Remove"><svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M36 0L20 16L4 0L0 4L16 20L0 36L4 40L20 24L36 40L40 36L24 20L40 4L36 0Z" fill="white" fill-opacity="0.6"/>
-</svg>
-</button>
-<button class="qi-btn trim-btn" id="${id}-trimbtn" onclick="openTrimModal('${id}')" title="Trim / preview">✂</button>
+        <button class="qi-btn remove" onclick="removeFromQueue('${id}')" title="Remove"><img src="ui-icons/Remove.svg" alt="Remove"/></button>
+        <button class="qi-btn trim-btn" id="${id}-trimbtn" onclick="openTrimModal('${id}')" title="Trim / preview"><img src="ui-icons/Trim.svg" alt="Trim"/></button>
       </div>
     </div>`;
 
