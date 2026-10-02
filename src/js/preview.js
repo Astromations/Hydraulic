@@ -25,6 +25,7 @@ const previewFsCloseBtn = document.getElementById("previewFsCloseBtn");
 let previewFsCloseTimer = null;
 let previewClosing = false;
 let previewWindowFullscreen = false;
+const previewFrameDuration = 1 / 30;
 
 function _findPreviewItem(id) {
   return queue.find((i) => i.id === id) || null;
@@ -143,6 +144,17 @@ function togglePreviewPlay() {
 
 function togglePreviewMute() {
   previewVideo.muted = !previewVideo.muted;
+}
+
+function skipPreview(secs) {
+  previewVideo.currentTime = Math.max(
+    0,
+    Math.min(previewDuration, previewVideo.currentTime + secs),
+  );
+}
+
+function stepPreviewFrame(direction) {
+  skipPreview(direction * previewFrameDuration);
 }
 
 function openPreviewInExternal() {
@@ -327,10 +339,16 @@ document.addEventListener("keydown", (e) => {
     togglePreviewFullscreen();
   } else if (e.key === "ArrowLeft") {
     e.preventDefault();
-    previewPrevClip();
+    skipPreview(-5);
   } else if (e.key === "ArrowRight") {
     e.preventDefault();
-    previewNextClip();
+    skipPreview(5);
+  } else if (e.key === ",") {
+    e.preventDefault();
+    stepPreviewFrame(-1);
+  } else if (e.key === ".") {
+    e.preventDefault();
+    stepPreviewFrame(1);
   }
 });
 
