@@ -59,11 +59,12 @@ body.is-resizing * {
     flex: 1;
     min-width: 240px;
     padding-left: 8px;
+    padding-right: 6px;
   }
 
   .panel-right {
     width: calc(var(--right-panel-width, 390px) - 30px);
-    padding: 0 14px;
+    padding: 0 6px;
   }
 
   .app-body.resized .panel-left {
