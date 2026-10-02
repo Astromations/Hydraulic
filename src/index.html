@@ -183,35 +183,49 @@
 
           <div class="queue-toolbar">
             <span class="queue-toolbar-label">Video Tray</span>
-            <div
-              class="tray-view-toggle"
-              role="group"
-              aria-label="Queue view mode"
-            >
+            <div class="queue-toolbar-actions">
               <button
-                class="tray-view-btn active"
-                id="queueViewListBtn"
-                onclick="setQueueView('list')"
+                class="queue-clear-btn"
+                id="clearQueueBtn"
+                type="button"
+                onclick="clearQueue()"
+                title="Clear queue"
+                aria-label="Clear queue"
+                disabled
               >
-                <span
-                  class="ui-icon"
-                  data-icon="list"
-                  aria-hidden="true"
-                ></span>
-                List
+                <span class="ui-icon" data-icon="remove" aria-hidden="true"></span>
+                Clear
               </button>
-              <button
-                class="tray-view-btn"
-                id="queueViewGridBtn"
-                onclick="setQueueView('grid')"
+              <div
+                class="tray-view-toggle"
+                role="group"
+                aria-label="Queue view mode"
               >
-                <span
-                  class="ui-icon"
-                  data-icon="grid"
-                  aria-hidden="true"
-                ></span>
-                Grid
-              </button>
+                <button
+                  class="tray-view-btn active"
+                  id="queueViewListBtn"
+                  onclick="setQueueView('list')"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="list"
+                    aria-hidden="true"
+                  ></span>
+                  List
+                </button>
+                <button
+                  class="tray-view-btn"
+                  id="queueViewGridBtn"
+                  onclick="setQueueView('grid')"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="grid"
+                    aria-hidden="true"
+                  ></span>
+                  Grid
+                </button>
+              </div>
             </div>
           </div>
 

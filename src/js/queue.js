@@ -113,9 +113,19 @@ function removeFromQueue(id) {
   updateCompressBtn();
 }
 
+function clearQueue() {
+  if (isRunning) return;
+  queue = [];
+  document.querySelectorAll("#queueWrap .qi").forEach((item) => item.remove());
+  updateQueueEmpty();
+  updateCompressBtn();
+}
+
 function updateQueueEmpty() {
   document.getElementById("queueEmpty").style.display =
     queue.length === 0 ? "flex" : "none";
+  const clearBtn = document.getElementById("clearQueueBtn");
+  if (clearBtn) clearBtn.disabled = isRunning || queue.length === 0;
 }
 
 function updateCompressBtn() {
@@ -202,7 +212,7 @@ function renderQueueItem(id, name, path) {
         </div>
       </div>
       <div class="qi-actions">
-        <button class="qi-btn rename" id="${id}-renamebtn" onclick="renameFile('${id}')" title="Rename output file" disabled>
+        <button class="qi-btn rename" id="${id}-renamebtn" onclick="renameFile('${id}')" title="Rename Export" disabled>
           <span class="ui-icon" data-icon="rename" aria-label="Rename"></span>
         </button>
         <button class="qi-btn requeue" id="${id}-requeuebtn" onclick="requeueItem('${id}')" title="Requeue" aria-label="Re-export">
