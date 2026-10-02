@@ -114,11 +114,23 @@ body {
   --icon-url: url("../ui-icons/ExitFullscreen.svg");
 }
 .ui-icon[data-icon="rename"] {
-  --icon-url: url("../ui-icons/Rename.svg");
+  --icon-url: url("../ui-icons/Rename2.svg");
 }
 .ui-icon[data-icon="remove"] {
   --icon-url: url("../ui-icons/Remove.svg");
 }
 .ui-icon[data-icon="link-to"] {
   --icon-url: url("../ui-icons/Linkto.svg");
+}
+.ui-icon[data-icon="list"] {
+  --icon-url: url("../ui-icons/List.svg");
+}
+.ui-icon[data-icon="grid"] {
+  --icon-url: url("../ui-icons/Grid.svg");
+}
+.ui-icon[data-icon="track-icon"] {
+  --icon-url: url("../ui-icons/Track.svg");
+}
+.ui-icon[data-icon="requeue"] {
+  --icon-url: url("../ui-icons/Requeue.svg");
 }

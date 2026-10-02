@@ -35,6 +35,9 @@
 }
 
 .tray-view-btn {
+  display: flex;
+  align-items: center;
+  gap: 2px;
   border: none;
   background: transparent;
   color: var(--text-muted);
@@ -47,7 +50,9 @@
     background 0.12s,
     color 0.12s;
 }
-
+.tray-view-btn .ui-icon {
+  height: 14px;
+}
 .tray-view-btn:hover {
   color: var(--text-normal);
 }
