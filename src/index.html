@@ -201,6 +201,11 @@
                 onclick="setQueueView('list')"
                 title="List view"
               >
+                <span
+                  class="ui-icon"
+                  data-icon="list"
+                  aria-hidden="true"
+                ></span>
                 List
               </button>
               <button
@@ -209,6 +214,11 @@
                 onclick="setQueueView('grid')"
                 title="Grid view"
               >
+                <span
+                  class="ui-icon"
+                  data-icon="grid"
+                  aria-hidden="true"
+                ></span>
                 Grid
               </button>
             </div>
@@ -706,17 +716,11 @@
         <!-- Transport -->
         <div class="trim-transport">
           <button class="trim-ctrl-btn" onclick="skipVideo(-5)" title="−5s">
-            <svg
-              width="46"
-              height="46"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M10.134 17.798A1.2 1.2 0 0 0 12 16.8v-3.358l6.534 4.356A1.2 1.2 0 0 0 20.4 16.8V7.2a1.2 1.2 0 0 0-1.866-.998L12 10.558V7.2a1.2 1.2 0 0 0-1.866-.998l-7.2 4.8a1.2 1.2 0 0 0 0 1.996l7.2 4.8Z"
-              ></path>
-            </svg>
+            <span
+              class="ui-icon"
+              data-icon="next-or-prior"
+              aria-hidden="true"
+            ></span>
           </button>
           <button
             class="trim-ctrl-btn primary"
@@ -726,17 +730,11 @@
             <span class="ui-icon" data-icon="play" aria-hidden="true"></span>
           </button>
           <button class="trim-ctrl-btn" onclick="skipVideo(5)" title="+5s">
-            <svg
-              width="46"
-              height="46"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M5.466 6.202A1.2 1.2 0 0 0 3.6 7.2v9.6a1.2 1.2 0 0 0 1.866.998L12 13.442V16.8a1.2 1.2 0 0 0 1.866.998l7.2-4.8a1.2 1.2 0 0 0 0-1.996l-7.2-4.8A1.2 1.2 0 0 0 12 7.2v3.358L5.466 6.202Z"
-              ></path>
-            </svg>
+            <span
+              class="ui-icon"
+              data-icon="next-or-prior"
+              aria-hidden="true"
+            ></span>
           </button>
           <div class="trim-time-group">
             <span class="trim-time" id="trimCurrentTime">0:00.000</span>
@@ -756,10 +754,6 @@
           <div class="trim-timeline-header">
             <span class="tl-header-title">Timeline</span>
             <div class="tl-header-main">
-              <div class="tl-labels">
-                <span id="tlLabelIn">0:00</span>
-                <span id="tlLabelOut">–:––</span>
-              </div>
               <span class="trim-audio-note"
                 >Click a lane to include or mute it on export</span
               >

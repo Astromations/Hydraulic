@@ -51,8 +51,6 @@ async function openTrimModal(id) {
   tlPlayhead.style.left = "0%";
   tlTrack.style.setProperty("--trim-in", "0%");
   tlTrack.style.setProperty("--trim-out", "100%");
-  document.getElementById("tlLabelIn").textContent = "0:00";
-  document.getElementById("tlLabelOut").textContent = "–:––";
   renderTrackInfo();
   renderTimeRuler();
 
@@ -148,14 +146,9 @@ function updatePlayBtn() {
   syncPlayheadAnimation();
   const icon = document.getElementById("trimPlayBtn");
   icon.innerHTML = playing
-    ? `<svg width="38" height="43" viewBox="0 0 38 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0 35.2334H10V0H0V35.2334ZM20 0V35.2334H30V0H20Z" fill="white" fill-opacity="0.6"/>
-</svg>
-`
+    ? `<span class="ui-icon" data-icon="pause" aria-hidden="true"></span>`
     : `
-<svg width="38" height="43" viewBox="0 0 38 43" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.5351 0.697925C4.20193 -1.26277 0 1.14049 0 5.00759V37.5235C0 41.3905 4.20193 43.7938 7.5351 41.8331L35.1737 25.5751C38.46 23.6419 38.46 18.8891 35.1737 16.9558L7.5351 0.697925Z" fill="white" fill-opacity="0.6"/>
-</svg>
+<span class="ui-icon" data-icon="play" aria-hidden="true"></span>
 `;
   showPlayOverlay(playing ? "pause" : "play");
 }
@@ -165,8 +158,8 @@ function showPlayOverlay(type) {
   const icon = document.getElementById("trimPlayOverlayIcon");
   icon.innerHTML =
     type === "play"
-      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M5 3l14 9-14 9V3z"/></svg>'
-      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>';
+      ? '<span class="ui-icon" data-icon="play" aria-hidden="true"></span>'
+      : '<span class="ui-icon" data-icon="pause" aria-hidden="true"></span>';
   overlay.classList.add("show");
   setTimeout(() => overlay.classList.remove("show"), 500);
 }
@@ -364,7 +357,14 @@ function toggleAudioTrack(index) {
 
 function renderTrackInfo() {
   const info = document.getElementById("tlTrackInfo");
-  info.innerHTML = `<div class="tl-info-row tl-info-video">Video</div>`;
+  info.innerHTML = `<div class="tl-info-row tl-info-video">
+    <span>Video</span>
+    <div class="tl-labels">
+      <span id="tlLabelIn">0:00</span>
+      <span aria-hidden="true">→</span>
+      <span id="tlLabelOut">–:––</span>
+    </div>
+  </div>`;
 
   trimAudioTracks.forEach((track) => {
     const exportEnabled =
@@ -377,7 +377,7 @@ function renderTrackInfo() {
       </div>
       <strong>Track ${track.index + 1}</strong>
       <button class="tl-info-volume-btn" type="button" title="Adjust track volume" aria-label="Adjust volume for track ${track.index + 1}" aria-haspopup="true">
-        <span class="ui-icon" data-icon="volume" aria-hidden="true"></span>
+        <span class="ui-icon" data-icon="track-icon" aria-hidden="true"></span>
       </button>
       <div class="tl-info-volume-popover">
         <span class="tl-info-volume-value">${Math.round((trimAudioVolumes[track.index] ?? 1) * 100)}%</span>
