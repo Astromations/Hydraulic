@@ -109,7 +109,7 @@ function applySettings(settings) {
   if (!settings) return;
   try {
     // Sliders
-    document.getElementById("sizeSlider").value = settings.targetSize || 10;
+    document.getElementById("sizeSlider").value = settings.targetSize || 20;
     document.getElementById("audioSlider").value = settings.audioBitrate || 128;
     document.getElementById("sizeSlider").dispatchEvent(new Event("input"));
     document.getElementById("audioSlider").dispatchEvent(new Event("input"));
