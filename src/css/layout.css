@@ -64,7 +64,7 @@ body.is-resizing * {
 
   .panel-right {
     width: calc(var(--right-panel-width, 390px) - 30px);
-    padding: 0 6px;
+    padding: 0 16px 0 8px;
   }
 
   .app-body.resized .panel-left {
