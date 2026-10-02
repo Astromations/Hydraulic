@@ -222,7 +222,6 @@
   font-size: 12px;
   font-weight: 700;
   color: var(--text-normal);
-  font-family: "Consolas", "Courier New", monospace;
   white-space: nowrap;
 }
 .trim-time-group {
