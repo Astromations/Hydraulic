@@ -420,6 +420,11 @@
   background: rgba(88, 101, 242, 0.15);
 }
 
+.qi-btn.requeue:hover {
+  background: rgba(35, 165, 90, 0.16);
+  color: var(--positive);
+}
+
 .qi-btn.remove:hover {
   background: rgba(218, 55, 60, 0.2);
   color: var(--danger);

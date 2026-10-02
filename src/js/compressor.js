@@ -74,6 +74,26 @@ function restartCancelledCompression() {
   startQueue();
 }
 
+function requeueItem(id) {
+  if (isRunning) return;
+  const item = queue.find((i) => i.id === id);
+  if (!item || item.status === "waiting") return;
+
+  item.status = "waiting";
+  delete outputPaths[id];
+  const main = document.querySelector(`#${id} .qi-main`);
+  if (main) main.style.removeProperty("--row-progress");
+  const sr = document.getElementById(`${id}-status`);
+  if (sr) sr.innerHTML = `<span class="chip chip-waiting">Waiting</span>`;
+  const renameBtn = document.getElementById(`${id}-renamebtn`);
+  if (renameBtn) renameBtn.disabled = true;
+  document
+    .querySelectorAll(`#${id} .qi-btn`)
+    .forEach((button) => (button.disabled = false));
+  if (renameBtn) renameBtn.disabled = true;
+  updateCompressBtn();
+}
+
 function processNext() {
   if (cancelRequested) {
     finishCancelledSession();

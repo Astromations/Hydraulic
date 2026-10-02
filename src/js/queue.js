@@ -212,6 +212,13 @@ function renderQueueItem(id, name, path) {
         <button class="qi-btn rename" id="${id}-renamebtn" onclick="renameFile('${id}')" title="Rename output file" disabled>
           <img src="ui-icons/Rename.svg" alt="Rename"/>
         </button>
+        <button class="qi-btn requeue" id="${id}-requeuebtn" onclick="requeueItem('${id}')" title="Re-export" aria-label="Re-export">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M20 11a8.1 8.1 0 0 0-14.7-4.7L3 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 4v5h5M4 13a8.1 8.1 0 0 0 14.7 4.7L21 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 20v-5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
         <button class="qi-btn remove" onclick="removeFromQueue('${id}')" title="Remove"><img src="ui-icons/Remove.svg" alt="Remove"/></button>
         <button class="qi-btn trim-btn" id="${id}-trimbtn" onclick="openTrimModal('${id}')" title="Trim / preview"><img src="ui-icons/Trim.svg" alt="Trim"/></button>
       </div>
