@@ -25,6 +25,44 @@
   font-weight: 700;
 }
 
+.queue-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.queue-clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 4px 7px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+
+.queue-clear-btn .ui-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.queue-clear-btn:hover:not(:disabled) {
+  background: rgba(242, 63, 66, 0.12);
+  color: var(--danger);
+}
+
+.queue-clear-btn:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
 .tray-view-toggle {
   display: inline-flex;
   align-items: center;
@@ -344,7 +382,7 @@
   border: 1px solid rgba(35, 165, 90, 0.32);
   border-radius: 7px;
   font-family: inherit;
-  padding: 4px 10px;
+  padding: 3px 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -354,6 +392,11 @@
   color: #d8f6e3;
   background: rgba(35, 165, 90, 0.2);
   border-color: rgba(35, 165, 90, 0.48);
+}
+.qi-file-link .ui-icon {
+  width: 14px;
+  height: 14px;
+  transform: translateY(2px);
 }
 
 .qi-rename-btn {
