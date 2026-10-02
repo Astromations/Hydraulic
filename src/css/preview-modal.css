@@ -262,6 +262,11 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
+.preview-icon-btn:focus-visible,
+.preview-seek:focus-visible {
+  outline: none;
+}
+
 .preview-icon-btn {
   width: 26px;
   height: 26px;
