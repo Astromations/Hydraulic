@@ -1,6 +1,6 @@
-/* ══════════════════════════════════════════
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
    TRIM MODAL
-   ══════════════════════════════════════════ */
+   Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 
 .trim-overlay {
   display: none;
@@ -31,7 +31,7 @@
   position: relative;
 }
 
-/* ── Modal header ── */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Modal header Ã¢â€â‚¬Ã¢â€â‚¬ */
 
 .trim-modal-header {
   display: flex;
@@ -75,7 +75,7 @@
   color: #ff7a7d;
 }
 
-/* ── Video player ── */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Video player Ã¢â€â‚¬Ã¢â€â‚¬ */
 
 .trim-video-wrap {
   background: #000;
@@ -140,7 +140,7 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-/* ── Transport controls ── */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Transport controls Ã¢â€â‚¬Ã¢â€â‚¬ */
 
 .trim-transport {
   display: flex;
@@ -235,7 +235,7 @@
   background: var(--brand-hover);
 }
 
-/* ── Timeline ── */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Timeline Ã¢â€â‚¬Ã¢â€â‚¬ */
 
 .trim-timeline-section {
   padding: 12px 16px 8px;
@@ -332,9 +332,13 @@
   background: transparent;
   cursor: pointer;
   opacity: 0.65;
+  transition:
+    background 0.12s,
+    opacity 0.12s;
 }
 .tl-info-volume-btn:hover,
-.tl-info-audio.volume-open .tl-info-volume-btn {
+.tl-info-audio:hover .tl-info-volume-btn,
+.tl-info-audio:focus-within .tl-info-volume-btn {
   background: rgba(255, 255, 255, 0.1);
   opacity: 1;
 }
@@ -344,41 +348,67 @@
 }
 .tl-info-volume-popover {
   position: absolute;
-  top: 32px;
-  right: 0;
+  left: 98%;
   z-index: 8;
   display: none;
   align-items: center;
   gap: 8px;
-  width: 132px;
-  padding: 7px 8px;
-  border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  background: var(--bg-secondary);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  width: 170px;
+  padding: 8px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  background: var(--bg-base);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition:
+    opacity 0.12s,
+    transform 0.12s;
 }
-.tl-info-audio.volume-open {
+.tl-info-audio:hover {
   position: relative;
   overflow: visible;
   z-index: 9;
 }
-.tl-info-audio.volume-open .tl-info-volume-popover {
+.tl-info-audio:hover .tl-info-volume-popover {
   display: flex;
+  transform: translateY(0);
+  opacity: 1;
 }
 .tl-info-volume-value {
-  width: 32px;
+  width: 0px;
   color: var(--text-normal);
-  font:
-    10px "Consolas",
-    "Courier New",
-    monospace;
   text-align: right;
 }
 .tl-info-volume-slider {
-  width: 86px;
-  height: 4px;
-  accent-color: var(--brand);
+  --volume-progress: 50%;
+  width: 120px;
+  margin-left: 20px;
+  appearance: none;
+  -webkit-appearance: none;
+  height: 6px;
+  background: linear-gradient(
+    to right,
+    var(--brand) 0%,
+    var(--brand) var(--volume-progress),
+    rgba(255, 255, 255, 0.24) var(--volume-progress),
+    rgba(255, 255, 255, 0.24) 100%
+  );
+  border-radius: 999px;
   cursor: pointer;
+}
+.tl-info-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 4px;
+  background: #fff;
+}
+.tl-info-volume-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: 0;
+  border-radius: 4px;
+  background: #fff;
 }
 
 .tl-info-track-check {
@@ -537,10 +567,11 @@
   top: 4px;
   width: 5px;
   height: 30px;
-  background: #a4e9b8;
+  background: rgba(72, 190, 113, 0.82);
   border-radius: 2px;
   cursor: ew-resize;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.38);
+  border: 2px solid #a4e9b8;
   display: flex;
   align-items: center;
   justify-content: center;

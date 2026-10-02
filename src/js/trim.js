@@ -374,7 +374,7 @@ function renderTrackInfo() {
         <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <strong>Track ${track.index + 1}</strong>
-      <button class="tl-info-volume-btn" type="button" title="Adjust track volume" aria-label="Adjust volume for track ${track.index + 1}" aria-expanded="false">
+      <button class="tl-info-volume-btn" type="button" title="Adjust track volume" aria-label="Adjust volume for track ${track.index + 1}" aria-haspopup="true">
         <img src="ui-icons/Volume.svg" alt="" />
       </button>
       <div class="tl-info-volume-popover">
@@ -392,17 +392,19 @@ function renderTrackInfo() {
         toggleAudioTrack(track.index);
       }
     });
-    const volumeButton = row.querySelector(".tl-info-volume-btn");
     const volumePopover = row.querySelector(".tl-info-volume-popover");
     const volumeSlider = row.querySelector(".tl-info-volume-slider");
-    volumeButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const isOpen = row.classList.toggle("volume-open");
-      volumeButton.setAttribute("aria-expanded", isOpen);
-    });
+    volumeSlider.style.setProperty(
+      "--volume-progress",
+      `${Math.min(100, (parseFloat(volumeSlider.value) / 2) * 100)}%`,
+    );
     volumeSlider.addEventListener("input", (event) => {
       const value = parseFloat(event.target.value);
       trimAudioVolumes[track.index] = value;
+      volumeSlider.style.setProperty(
+        "--volume-progress",
+        `${Math.min(100, (value / 2) * 100)}%`,
+      );
       volumePopover.querySelector(".tl-info-volume-value").textContent =
         `${Math.round(value * 100)}%`;
       if (trimAudioTracks.length === 1) {
@@ -464,6 +466,13 @@ function applyTrim() {
     return;
   }
 
+  const previousTrim = {
+    trimStart: item.trimStart,
+    trimEnd: item.trimEnd,
+    enabledTracks: item.enabledTracks ? [...item.enabledTracks] : null,
+    audioVolumes: item.audioVolumes ? [...item.audioVolumes] : [],
+  };
+
   const inIsZero = trimIn <= 0.001;
   const outIsEnd = Math.abs(trimOut - trimDuration) <= 0.1;
 
@@ -473,6 +482,17 @@ function applyTrim() {
     trimEnabledTracks === null ? null : [...trimEnabledTracks];
   item.audioTracks = trimAudioTracks;
   item.audioVolumes = trimAudioVolumes;
+
+  const trimChanged =
+    previousTrim.trimStart !== item.trimStart ||
+    previousTrim.trimEnd !== item.trimEnd ||
+    JSON.stringify(previousTrim.enabledTracks) !==
+      JSON.stringify(item.enabledTracks) ||
+    JSON.stringify(previousTrim.audioVolumes) !==
+      JSON.stringify(item.audioVolumes);
+  if (trimChanged && ["done", "error", "cancelled"].includes(item.status)) {
+    requeueItem(item.id);
+  }
 
   const statusRow = document.getElementById(`${trimItemId}-status`);
   const badge = statusRow?.querySelector(".qi-trim-badge");
