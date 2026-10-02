@@ -565,8 +565,7 @@
 .tl-playhead {
   position: absolute;
   width: 1px;
-  margin-left: -1px;
-  height: 102px;
+  height: calc(100% - 4px);
   background: #ffffff;
   z-index: 4;
   cursor: grab;

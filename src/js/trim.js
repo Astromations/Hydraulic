@@ -144,7 +144,7 @@ function syncPlayheadAnimation() {
 function updatePlayBtn() {
   const playing = !trimVideo.paused;
   syncPlayheadAnimation();
-  const icon = document.getElementById("trimPlayIcon");
+  const icon = document.getElementById("trimPlayBtn");
   icon.innerHTML = playing
     ? `<svg width="38" height="43" viewBox="0 0 38 43" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M0 35.2334H10V0H0V35.2334ZM20 0V35.2334H30V0H20Z" fill="white" fill-opacity="0.6"/>
