@@ -621,7 +621,14 @@
               stroke-linejoin="round"
             />
           </svg>
-          <span class="trim-modal-title" id="trimModalTitle">Trim</span>
+          <button
+            class="trim-modal-title"
+            id="trimModalTitle"
+            onclick="revealSourceFile(trimItemPath)"
+            title="Reveal in explorer"
+          >
+            Trim
+          </button>
           <button class="trim-modal-close" onclick="closeTrimModal()">✕</button>
         </div>
 
@@ -785,7 +792,14 @@
       >
         <div class="preview-header">
           <div class="preview-title-wrap">
-            <div class="preview-title" id="previewTitle">Preview</div>
+            <button
+              class="preview-title"
+              id="previewTitle"
+              onclick="revealSourceFile(previewItemPath)"
+              title="Reveal in explorer"
+            >
+              Preview
+            </button>
             <div class="preview-subtitle">
               All audio tracks mixed for preview
             </div>

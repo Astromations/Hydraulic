@@ -4,6 +4,7 @@
 // Thumbnail preview modal with Discord-like controls.
 
 let previewItemId = null;
+let previewItemPath = null;
 let previewTmpPath = null;
 let previewDuration = 0;
 
@@ -53,6 +54,7 @@ async function _openPreviewForItem(item, autoplay) {
   if (!item) return;
 
   previewItemId = item.id;
+  previewItemPath = item.path;
   previewDuration = 0;
   previewTitle.textContent = item.name;
   previewElapsedTime.textContent = "0:00";

@@ -74,12 +74,24 @@
 }
 
 .preview-title {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
   color: white;
   font-size: 13px;
   font-weight: 700;
+  cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.preview-title:hover {
+  color: var(--accent);
+  text-decoration: underline;
 }
 
 .preview-subtitle {
