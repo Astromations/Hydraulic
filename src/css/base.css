@@ -134,3 +134,6 @@ body {
 .ui-icon[data-icon="requeue"] {
   --icon-url: url("../ui-icons/Requeue.svg");
 }
+.ui-icon[data-icon="skip"] {
+  --icon-url: url("../ui-icons/Skip.svg");
+}

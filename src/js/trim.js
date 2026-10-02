@@ -22,6 +22,8 @@ const tlHandleIn = document.getElementById("tlHandleIn");
 const tlHandleOut = document.getElementById("tlHandleOut");
 const tlPlayhead = document.getElementById("tlPlayhead");
 const tlSelection = document.getElementById("tlSelection");
+const trimPrevBtn = document.getElementById("trimPrevBtn");
+const trimNextBtn = document.getElementById("trimNextBtn");
 
 async function openTrimModal(id) {
   const item = queue.find((i) => i.id === id);
@@ -34,12 +36,13 @@ async function openTrimModal(id) {
   trimAudioTracks = item.audioTracks || [];
   trimEnabledTracks = item.enabledTracks ? new Set(item.enabledTracks) : null;
   trimAudioVolumes = item.audioVolumes || [];
+  updateTrimNavButtons();
 
   document.getElementById("trimModalTitle").textContent = item.name;
 
   // Reset UI to loading state — avoids showing stale -1:-1 values
   document.getElementById("trimTotalTime").textContent = "–:––";
-  document.getElementById("trimCurrentTime").textContent = "0:00.000";
+  document.getElementById("trimCurrentTime").textContent = "0:00.00";
   document.getElementById("trimVideoError").classList.remove("show");
 
   // Reset timeline
@@ -92,7 +95,7 @@ trimVideo.addEventListener("loadedmetadata", () => {
   if (trimIn > trimDuration) trimIn = 0;
 
   document.getElementById("trimTotalTime").textContent =
-    fmtTimeFull(trimDuration);
+    fmtTimeHundredths(trimDuration);
   document.getElementById("trimVideoError").classList.remove("show");
   updateTimeline();
   renderTimeRuler();
@@ -106,7 +109,7 @@ trimVideo.addEventListener("error", () => {
 
 trimVideo.addEventListener("timeupdate", () => {
   const t = trimVideo.currentTime;
-  document.getElementById("trimCurrentTime").textContent = fmtTimeFull(t);
+  document.getElementById("trimCurrentTime").textContent = fmtTimeHundredths(t);
   updatePlayheadPosition(t);
   // Loop within trim range when playing
   if (!trimVideo.paused && t >= trimOut - 0.05) {
@@ -183,6 +186,42 @@ function skipVideo(secs) {
 
 function seekTrimVideo(t) {
   trimVideo.currentTime = Math.max(0, Math.min(trimDuration || 0, t));
+}
+
+function getTrimQueueIndex() {
+  if (!trimItemId) return -1;
+  return queue.findIndex((item) => item.id === trimItemId);
+}
+
+function updateTrimNavButtons() {
+  const index = getTrimQueueIndex();
+  if (trimPrevBtn) trimPrevBtn.disabled = index <= 0;
+  if (trimNextBtn)
+    trimNextBtn.disabled = index < 0 || index >= queue.length - 1;
+}
+
+async function navigateTrimClip(step) {
+  const index = getTrimQueueIndex();
+  const nextIndex = index + step;
+  if (index < 0 || nextIndex < 0 || nextIndex >= queue.length) return;
+
+  const target = queue[nextIndex];
+  if (target) await openTrimModal(target.id);
+}
+
+function trimPrevClip() {
+  navigateTrimClip(-1);
+}
+
+function trimNextClip() {
+  navigateTrimClip(1);
+}
+
+function fmtTimeHundredths(s) {
+  if (!isFinite(s) || s < 0) return "0:00.00";
+  const minutes = Math.floor(s / 60);
+  const seconds = (s % 60).toFixed(2).padStart(5, "0");
+  return `${minutes}:${seconds}`;
 }
 
 // ── Timeline drag ─────────────────────────────────────────────────

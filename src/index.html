@@ -715,31 +715,57 @@
 
         <!-- Transport -->
         <div class="trim-transport">
-          <button class="trim-ctrl-btn" onclick="skipVideo(-5)" title="−5s">
-            <span
-              class="ui-icon"
-              data-icon="next-or-prior"
-              aria-hidden="true"
-            ></span>
-          </button>
-          <button
-            class="trim-ctrl-btn primary"
-            id="trimPlayBtn"
-            onclick="toggleTrimPlay()"
-          >
-            <span class="ui-icon" data-icon="play" aria-hidden="true"></span>
-          </button>
-          <button class="trim-ctrl-btn" onclick="skipVideo(5)" title="+5s">
-            <span
-              class="ui-icon"
-              data-icon="next-or-prior"
-              aria-hidden="true"
-            ></span>
-          </button>
           <div class="trim-time-group">
-            <span class="trim-time" id="trimCurrentTime">0:00.000</span>
+            <span class="trim-time" id="trimCurrentTime">0:00.00</span>
             <span class="trim-time-sep">/</span>
             <span class="trim-time" id="trimTotalTime">–:––</span>
+          </div>
+          <div class="trim-transport-controls">
+            <button
+              class="trim-ctrl-btn trim-nav-btn previous"
+              id="trimPrevBtn"
+              onclick="trimPrevClip()"
+              title="Previous clip"
+            >
+              <span
+                class="ui-icon"
+                data-icon="next-or-prior"
+                aria-hidden="true"
+              ></span>
+            </button>
+            <button
+              class="trim-ctrl-btn trim-skip-btn previous"
+              onclick="skipVideo(-5)"
+              title="−5s"
+            >
+              <span class="ui-icon" data-icon="skip" aria-hidden="true"></span>
+            </button>
+            <button
+              class="trim-ctrl-btn primary"
+              id="trimPlayBtn"
+              onclick="toggleTrimPlay()"
+            >
+              <span class="ui-icon" data-icon="play" aria-hidden="true"></span>
+            </button>
+            <button
+              class="trim-ctrl-btn trim-skip-btn"
+              onclick="skipVideo(5)"
+              title="+5s"
+            >
+              <span class="ui-icon" data-icon="skip" aria-hidden="true"></span>
+            </button>
+            <button
+              class="trim-ctrl-btn trim-nav-btn"
+              id="trimNextBtn"
+              onclick="trimNextClip()"
+              title="Next clip"
+            >
+              <span
+                class="ui-icon"
+                data-icon="next-or-prior"
+                aria-hidden="true"
+              ></span>
+            </button>
           </div>
           <div class="trim-transport-actions">
             <button class="trim-btn-cancel" onclick="closeTrimModal()">

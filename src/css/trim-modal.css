@@ -153,7 +153,8 @@
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Transport controls Ã¢â€â‚¬Ã¢â€â‚¬ */
 
 .trim-transport {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 9px;
   padding: 10px 16px;
@@ -164,6 +165,13 @@
 .trim-transport svg {
   /* width: 14px; */
   height: 14px;
+}
+
+.trim-transport-controls {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  justify-self: center;
 }
 
 .trim-ctrl-btn {
@@ -180,11 +188,21 @@
   transition: background 0.12s;
   flex-shrink: 0;
 }
-.trim-ctrl-btn[title="−5s"] {
+.trim-skip-btn.previous {
+  transform: scaleX(-1);
+}
+.trim-nav-btn.previous {
   transform: scaleX(-1);
 }
 .trim-ctrl-btn:hover {
   background: rgba(255, 255, 255, 0.14);
+}
+.trim-ctrl-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.trim-ctrl-btn:disabled:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 .trim-ctrl-btn.primary {
   width: 34px;
@@ -217,7 +235,7 @@
 .trim-transport-actions {
   display: flex;
   gap: 8px;
-  margin-left: 4px;
+  justify-self: end;
   flex-shrink: 0;
 }
 
@@ -258,11 +276,11 @@
 }
 
 .trim-timeline-header {
-  display: grid;
+  display: flex;
   grid-template-columns: 112px minmax(0, 1fr);
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  margin-bottom: 4px;
   color: var(--text-normal);
   font-size: 10px;
   font-weight: 700;
@@ -271,7 +289,7 @@
 }
 
 .tl-header-title {
-  padding: 0 8px;
+  padding: 0 0;
 }
 
 .tl-header-main {
@@ -571,11 +589,11 @@
 }
 
 #tlHandleIn {
-  margin-left: -2px;
+  transform: translateX(-2px);
 }
 
 #tlHandleOut {
-  margin-left: -3px;
+  transform: translateX(-3px);
 }
 
 .tl-handle {
@@ -721,7 +739,6 @@
 
   .trim-transport-actions {
     gap: 5px;
-    margin-left: auto;
   }
 
   .trim-transport-actions button {
