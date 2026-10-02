@@ -62,3 +62,63 @@ body {
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
+
+/* SVG assets are masks so their color follows the owning control. */
+.ui-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-url) center / contain no-repeat;
+  mask: var(--icon-url) center / contain no-repeat;
+}
+
+.ui-icon[data-icon="gpu"] {
+  --icon-url: url("../ui-icons/GPU.svg");
+}
+.ui-icon[data-icon="merge-audio"] {
+  --icon-url: url("../ui-icons/MergeAudio.svg");
+}
+.ui-icon[data-icon="2-pass"] {
+  --icon-url: url("../ui-icons/2Pass.svg");
+}
+.ui-icon[data-icon="folder"] {
+  --icon-url: url("../ui-icons/Folder.svg");
+}
+.ui-icon[data-icon="clips"] {
+  --icon-url: url("../ui-icons/Clips.svg");
+}
+.ui-icon[data-icon="play"] {
+  --icon-url: url("../ui-icons/Play.svg");
+}
+.ui-icon[data-icon="pause"] {
+  --icon-url: url("../ui-icons/Pause.svg");
+}
+.ui-icon[data-icon="next-or-prior"] {
+  --icon-url: url("../ui-icons/NextorPrior.svg");
+}
+.ui-icon[data-icon="volume"] {
+  --icon-url: url("../ui-icons/Volume.svg");
+}
+.ui-icon[data-icon="external"] {
+  --icon-url: url("../ui-icons/External.svg");
+}
+.ui-icon[data-icon="trim"] {
+  --icon-url: url("../ui-icons/Trim.svg");
+}
+.ui-icon[data-icon="fullscreen"] {
+  --icon-url: url("../ui-icons/Fullscreen.svg");
+}
+.ui-icon[data-icon="exit-fullscreen"] {
+  --icon-url: url("../ui-icons/ExitFullscreen.svg");
+}
+.ui-icon[data-icon="rename"] {
+  --icon-url: url("../ui-icons/Rename.svg");
+}
+.ui-icon[data-icon="remove"] {
+  --icon-url: url("../ui-icons/Remove.svg");
+}
+.ui-icon[data-icon="link-to"] {
+  --icon-url: url("../ui-icons/Linkto.svg");
+}

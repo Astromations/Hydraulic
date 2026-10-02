@@ -377,7 +377,7 @@ function renderTrackInfo() {
       </div>
       <strong>Track ${track.index + 1}</strong>
       <button class="tl-info-volume-btn" type="button" title="Adjust track volume" aria-label="Adjust volume for track ${track.index + 1}" aria-haspopup="true">
-        <img src="ui-icons/Volume.svg" alt="" />
+        <span class="ui-icon" data-icon="volume" aria-hidden="true"></span>
       </button>
       <div class="tl-info-volume-popover">
         <span class="tl-info-volume-value">${Math.round((trimAudioVolumes[track.index] ?? 1) * 100)}%</span>

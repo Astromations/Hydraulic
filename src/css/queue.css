@@ -190,7 +190,7 @@
   transform: scale(1);
 }
 
-.qi-thumb-play img {
+.qi-thumb-play .ui-icon {
   width: 18px;
   height: 18px;
 }
@@ -411,7 +411,7 @@
   background: var(--bg-modifier);
   color: var(--text-normal);
 }
-.qi-btn img {
+.qi-btn .ui-icon {
   width: 16px;
   height: 16px;
 }

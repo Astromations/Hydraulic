@@ -349,11 +349,11 @@
                 >
                 <div class="toggle-info">
                   <div class="toggle-info-label">
-                    <img
-                      src="ui-icons/GPU.svg"
-                      alt=""
-                      class="toggle-info-icon"
-                    />
+                    <span
+                      class="ui-icon toggle-info-icon"
+                      data-icon="gpu"
+                      aria-hidden="true"
+                    ></span>
                     <strong>GPU</strong>
                   </div>
                   <small>NVENC only</small>
@@ -375,11 +375,11 @@
                 >
                 <div class="toggle-info">
                   <div class="toggle-info-label">
-                    <img
-                      src="ui-icons/MergeAudio.svg"
-                      alt=""
-                      class="toggle-info-icon"
-                    />
+                    <span
+                      class="ui-icon toggle-info-icon"
+                      data-icon="merge-audio"
+                      aria-hidden="true"
+                    ></span>
                     <strong>Merge Audio</strong>
                   </div>
                   <small>Unify audio tracks</small>
@@ -401,11 +401,11 @@
                 >
                 <div class="toggle-info">
                   <div class="toggle-info-label">
-                    <img
-                      src="ui-icons/2Pass.svg"
-                      alt=""
-                      class="toggle-info-icon"
-                    />
+                    <span
+                      class="ui-icon toggle-info-icon"
+                      data-icon="2-pass"
+                      aria-hidden="true"
+                    ></span>
                     <strong>2-Pass</strong>
                   </div>
                   <small>Smaller file size</small>
@@ -539,11 +539,11 @@
               >
                 <div class="toggle-info">
                   <div class="toggle-info-label">
-                    <img
-                      src="ui-icons/Folder.svg"
-                      alt=""
-                      class="toggle-info-icon"
-                    />
+                    <span
+                      class="ui-icon toggle-info-icon"
+                      data-icon="folder"
+                      aria-hidden="true"
+                    ></span>
                     <strong>Custom Output Folder</strong>
                   </div>
                   <small id="outputDirSubtitle"
@@ -570,11 +570,11 @@
             <div class="preview-mode-section">
               <div class="preview-mode-head">
                 <div class="preview-mode-title">
-                  <img
-                    src="ui-icons/Clips.svg"
-                    alt=""
-                    class="toggle-info-icon"
-                  />
+                  <span
+                    class="ui-icon toggle-info-icon"
+                    data-icon="clips"
+                    aria-hidden="true"
+                  ></span>
                   <strong>Preview Player</strong>
                 </div>
                 <small>Choose how videos open when clicking a thumbnail</small>
@@ -723,7 +723,7 @@
             id="trimPlayBtn"
             onclick="toggleTrimPlay()"
           >
-            <img src="ui-icons/Play.svg" alt="" />
+            <span class="ui-icon" data-icon="play" aria-hidden="true"></span>
           </button>
           <button class="trim-ctrl-btn" onclick="skipVideo(5)" title="+5s">
             <svg
@@ -900,7 +900,11 @@
                   onclick="previewPrevClip()"
                   title="Previous clip"
                 >
-                  <img src="ui-icons/NextorPrior.svg" alt="" />
+                  <span
+                    class="ui-icon"
+                    data-icon="next-or-prior"
+                    aria-hidden="true"
+                  ></span>
                 </button>
 
                 <button
@@ -909,7 +913,11 @@
                   onclick="togglePreviewPlay()"
                   title="Play / pause"
                 >
-                  <img src="ui-icons/Play.svg" alt="" />
+                  <span
+                    class="ui-icon"
+                    data-icon="play"
+                    aria-hidden="true"
+                  ></span>
                 </button>
 
                 <button
@@ -918,7 +926,11 @@
                   onclick="previewNextClip()"
                   title="Next clip"
                 >
-                  <img src="ui-icons/NextorPrior.svg" alt="" />
+                  <span
+                    class="ui-icon"
+                    data-icon="next-or-prior"
+                    aria-hidden="true"
+                  ></span>
                 </button>
               </div>
 
@@ -944,7 +956,11 @@
                     onclick="togglePreviewMute()"
                     title="Mute / unmute"
                   >
-                    <img src="ui-icons/Volume.svg" alt="" />
+                    <span
+                      class="ui-icon"
+                      data-icon="volume"
+                      aria-hidden="true"
+                    ></span>
                   </button>
                   <input
                     type="range"
@@ -962,14 +978,22 @@
                   onclick="openPreviewInExternal()"
                   title="Open in default player"
                 >
-                  <img src="ui-icons/External.svg" alt="" />
+                  <span
+                    class="ui-icon"
+                    data-icon="external"
+                    aria-hidden="true"
+                  ></span>
                 </button>
                 <button
                   class="preview-icon-btn"
                   id="previewTrimBtn"
                   onclick="openPreviewTrimModal()"
                 >
-                  <img src="ui-icons/Trim.svg" alt="" />
+                  <span
+                    class="ui-icon"
+                    data-icon="trim"
+                    aria-hidden="true"
+                  ></span>
                 </button>
                 <button
                   class="preview-icon-btn"
@@ -977,7 +1001,11 @@
                   onclick="togglePreviewFullscreen()"
                   title="Fullscreen"
                 >
-                  <img src="ui-icons/Fullscreen.svg" alt="" />
+                  <span
+                    class="ui-icon"
+                    data-icon="fullscreen"
+                    aria-hidden="true"
+                  ></span>
                 </button>
               </div>
             </div>

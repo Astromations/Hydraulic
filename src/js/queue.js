@@ -199,7 +199,7 @@ function renderQueueItem(id, name, path) {
       <button class="qi-thumb-hit" onclick="previewQueueItem('${id}')" title="Preview video">
         <div class="qi-thumb"><div class="thumb-spinner"></div></div>
         <span class="qi-thumb-play" aria-hidden="true">
-<img src="ui-icons/Play.svg" alt="Play"/></span
+<span class="ui-icon" data-icon="play" aria-label="Play"></span></span
 </span>
       </button>
       <div class="qi-body">
@@ -210,7 +210,7 @@ function renderQueueItem(id, name, path) {
       </div>
       <div class="qi-actions">
         <button class="qi-btn rename" id="${id}-renamebtn" onclick="renameFile('${id}')" title="Rename output file" disabled>
-          <img src="ui-icons/Rename.svg" alt="Rename"/>
+          <span class="ui-icon" data-icon="rename" aria-label="Rename"></span>
         </button>
         <button class="qi-btn requeue" id="${id}-requeuebtn" onclick="requeueItem('${id}')" title="Re-export" aria-label="Re-export">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -219,8 +219,8 @@ function renderQueueItem(id, name, path) {
             <path d="M21 20v-5h-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
-        <button class="qi-btn remove" onclick="removeFromQueue('${id}')" title="Remove"><img src="ui-icons/Remove.svg" alt="Remove"/></button>
-        <button class="qi-btn trim-btn" id="${id}-trimbtn" onclick="openTrimModal('${id}')" title="Trim / preview"><img src="ui-icons/Trim.svg" alt="Trim"/></button>
+        <button class="qi-btn remove" onclick="removeFromQueue('${id}')" title="Remove"><span class="ui-icon" data-icon="remove" aria-label="Remove"></span></button>
+        <button class="qi-btn trim-btn" id="${id}-trimbtn" onclick="openTrimModal('${id}')" title="Trim / preview"><span class="ui-icon" data-icon="trim" aria-label="Trim"></span></button>
       </div>
     </div>`;
 

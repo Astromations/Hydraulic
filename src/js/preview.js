@@ -160,8 +160,8 @@ async function openPreviewTrimModal() {
 
 function _setPreviewPlayIcon(playing) {
   previewPlayIcon.innerHTML = playing
-    ? '<img src="../ui-icons/Pause.svg" alt="Pause"/>'
-    : '<img src="../ui-icons/Play.svg" alt="Play"/>';
+    ? '<span class="ui-icon" data-icon="pause" aria-label="Pause"></span>'
+    : '<span class="ui-icon" data-icon="play" aria-label="Play"></span>';
 }
 
 function _getPreviewQueueIndex() {
@@ -237,8 +237,8 @@ function _updateFullscreenIcon() {
   previewOverlay?.classList.toggle("window-fullscreen", isFs);
 
   previewFullscreenIcon.innerHTML = isFs
-    ? `<img src="../ui-icons/ExitFullscreen.svg" alt="Exit Fullscreen"/>`
-    : `<img src="../ui-icons/Fullscreen.svg" alt="Fullscreen"/>`;
+    ? `<span class="ui-icon" data-icon="exit-fullscreen" aria-label="Exit Fullscreen"></span>`
+    : `<span class="ui-icon" data-icon="fullscreen" aria-label="Fullscreen"></span>`;
 
   if (!isFs) {
     _hidePreviewFsClose();
