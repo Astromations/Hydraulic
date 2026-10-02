@@ -186,17 +186,10 @@ function renderQueueItem(id, name, path) {
   el.id = id;
   el.innerHTML = `
     <div class="qi-main">
-      <div class="qi-drag-handle" role="button" tabindex="0" title="Drag to reorder" aria-label="Drag to reorder">
-        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
-          <circle cx="2" cy="2" r="1" fill="currentColor"/>
-          <circle cx="9" cy="2" r="1" fill="currentColor"/>
-          <circle cx="2" cy="5.5" r="1" fill="currentColor"/>
-          <circle cx="9" cy="5.5" r="1" fill="currentColor"/>
-          <circle cx="2" cy="9" r="1" fill="currentColor"/>
-          <circle cx="9" cy="9" r="1" fill="currentColor"/>
-        </svg>
+      <div class="qi-drag-handle" role="button" tabindex="0" aria-label="Drag to reorder">
+        <span class="ui-icon" data-icon="drag" aria-hidden="true"></span>
       </div>
-      <button class="qi-thumb-hit" onclick="previewQueueItem('${id}')" title="Preview video">
+      <button class="qi-thumb-hit" onclick="previewQueueItem('${id}')">
         <div class="qi-thumb"><div class="thumb-spinner"></div></div>
         <span class="qi-thumb-play" aria-hidden="true">
 <span class="ui-icon" data-icon="play" aria-label="Play"></span></span
@@ -212,11 +205,11 @@ function renderQueueItem(id, name, path) {
         <button class="qi-btn rename" id="${id}-renamebtn" onclick="renameFile('${id}')" title="Rename output file" disabled>
           <span class="ui-icon" data-icon="rename" aria-label="Rename"></span>
         </button>
-        <button class="qi-btn requeue" id="${id}-requeuebtn" onclick="requeueItem('${id}')" title="Re-export" aria-label="Re-export">
+        <button class="qi-btn requeue" id="${id}-requeuebtn" onclick="requeueItem('${id}')" title="Requeue" aria-label="Re-export">
           <span class="ui-icon" data-icon="requeue" aria-hidden="true"></span>
         </button>
         <button class="qi-btn remove" onclick="removeFromQueue('${id}')" title="Remove"><span class="ui-icon" data-icon="remove" aria-label="Remove"></span></button>
-        <button class="qi-btn trim-btn" id="${id}-trimbtn" onclick="openTrimModal('${id}')" title="Trim / preview"><span class="ui-icon" data-icon="trim" aria-label="Trim"></span></button>
+        <button class="qi-btn trim-btn" id="${id}-trimbtn" onclick="openTrimModal('${id}')" title="Trim"><span class="ui-icon" data-icon="trim" aria-label="Trim"></span></button>
       </div>
     </div>`;
 

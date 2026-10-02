@@ -35,7 +35,6 @@
           class="window-ctrl-btn"
           id="winMinBtn"
           type="button"
-          title="Minimize"
           aria-label="Minimize window"
         >
           <svg
@@ -57,7 +56,6 @@
           class="window-ctrl-btn"
           id="winMaxBtn"
           type="button"
-          title="Maximize"
           aria-label="Maximize or restore window"
         >
           <svg
@@ -81,7 +79,6 @@
           class="window-ctrl-btn close"
           id="winCloseBtn"
           type="button"
-          title="Close"
           aria-label="Close window"
         >
           <svg
@@ -125,11 +122,7 @@
           </p>
         </div>
         <div class="header-actions">
-          <button
-            class="header-icon-btn"
-            onclick="openChangelog()"
-            title="Changelog"
-          >
+          <button class="header-icon-btn" onclick="openChangelog()">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
               <circle
                 cx="12"
@@ -199,7 +192,6 @@
                 class="tray-view-btn active"
                 id="queueViewListBtn"
                 onclick="setQueueView('list')"
-                title="List view"
               >
                 <span
                   class="ui-icon"
@@ -212,7 +204,6 @@
                 class="tray-view-btn"
                 id="queueViewGridBtn"
                 onclick="setQueueView('grid')"
-                title="Grid view"
               >
                 <span
                   class="ui-icon"
@@ -237,7 +228,6 @@
           role="separator"
           aria-orientation="vertical"
           aria-label="Resize video tray and settings panels"
-          title="Drag to resize panels"
         ></div>
 
         <!-- Right panel: settings + compress + status -->
@@ -268,10 +258,7 @@
               <div class="slider-row">
                 <div class="slider-header">
                   <span class="slider-label">Target Size</span>
-                  <label
-                    class="slider-value slider-value-edit"
-                    title="Edit target size"
-                  >
+                  <label class="slider-value slider-value-edit">
                     <input
                       id="sizeVal"
                       type="number"
@@ -306,10 +293,7 @@
               <div class="slider-row">
                 <div class="slider-header">
                   <span class="slider-label">Audio Bitrate</span>
-                  <label
-                    class="slider-value slider-value-edit"
-                    title="Edit audio bitrate"
-                  >
+                  <label class="slider-value slider-value-edit">
                     <input
                       id="audioVal"
                       type="number"
@@ -366,7 +350,7 @@
                     ></span>
                     <strong>GPU</strong>
                   </div>
-                  <small>NVENC only</small>
+                  <small>Faster compression</small>
                 </div>
                 <div class="toggle-switch">
                   <input type="checkbox" id="gpuToggle" /><span
@@ -598,7 +582,6 @@
                   class="preview-mode-btn active"
                   id="previewModeInternalBtn"
                   onclick="setPreviewMode('internal', true)"
-                  title="Play inside Peak"
                 >
                   In Peak
                 </button>
@@ -606,7 +589,6 @@
                   class="preview-mode-btn"
                   id="previewModeExternalBtn"
                   onclick="setPreviewMode('external', true)"
-                  title="Play in your default media player"
                 >
                   Default Player
                 </button>
@@ -839,11 +821,7 @@
           </svg>
           <h2>Changelog</h2>
           <div class="changelog-header-info">
-            <button
-              class="changelog-github-btn"
-              onclick="openProjectUrl()"
-              title="View on GitHub"
-            >
+            <button class="changelog-github-btn" onclick="openProjectUrl()">
               <svg
                 width="14"
                 height="14"
@@ -890,11 +868,7 @@
               All audio tracks mixed for preview
             </div>
           </div>
-          <button
-            class="preview-close"
-            onclick="closePreviewModal()"
-            title="Close"
-          >
+          <button class="preview-close" onclick="closePreviewModal()">
             <svg
               width="40"
               height="40"
@@ -920,7 +894,6 @@
             class="preview-fs-close"
             id="previewFsCloseBtn"
             onclick="closePreviewModal()"
-            title="Close preview"
           >
             ✕
           </button>
@@ -945,7 +918,6 @@
                   class="preview-icon-btn"
                   id="previewPlayBtn"
                   onclick="togglePreviewPlay()"
-                  title="Play / pause"
                 >
                   <span
                     class="ui-icon"
@@ -988,7 +960,6 @@
                     class="preview-icon-btn"
                     id="previewMuteBtn"
                     onclick="togglePreviewMute()"
-                    title="Mute / unmute"
                   >
                     <span
                       class="ui-icon"
@@ -1010,7 +981,6 @@
                 <button
                   class="preview-icon-btn"
                   onclick="openPreviewInExternal()"
-                  title="Open in default player"
                 >
                   <span
                     class="ui-icon"
@@ -1033,7 +1003,6 @@
                   class="preview-icon-btn"
                   id="previewFullscreenBtn"
                   onclick="togglePreviewFullscreen()"
-                  title="Fullscreen"
                 >
                   <span
                     class="ui-icon"

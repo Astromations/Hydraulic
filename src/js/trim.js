@@ -420,7 +420,7 @@ function renderTrackInfo() {
         <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <strong>Track ${track.index + 1}</strong>
-      <button class="tl-info-volume-btn" type="button" title="Adjust track volume" aria-label="Adjust volume for track ${track.index + 1}" aria-haspopup="true">
+      <button class="tl-info-volume-btn" type="button" aria-label="Adjust volume for track ${track.index + 1}" aria-haspopup="true">
         <span class="ui-icon" data-icon="track-icon" aria-hidden="true"></span>
       </button>
       <div class="tl-info-volume-popover">
