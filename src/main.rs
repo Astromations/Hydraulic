@@ -712,6 +712,7 @@ fn compress(
     trim_start: Option<String>,
     trim_end: Option<String>,
     enabled_tracks: Option<Vec<usize>>,
+    audio_volumes: Option<Vec<f64>>,
 ) {
     // Reset cancel flag before starting
     state.cancel_flag.store(false, Ordering::SeqCst);
@@ -734,6 +735,7 @@ fn compress(
             trim_start.as_deref(),
             trim_end.as_deref(),
             enabled_tracks.as_deref(),
+            audio_volumes.as_deref(),
             cancel_flag,
             active_proc,
         ) {
@@ -773,6 +775,7 @@ fn do_compress(
     trim_start: Option<&str>,
     trim_end: Option<&str>,
     enabled_tracks: Option<&[usize]>,
+    audio_volumes: Option<&[f64]>,
     cancel_flag: Arc<AtomicBool>,
     active_proc: Arc<Mutex<Option<Child>>>,
 ) -> Result<String, String> {
@@ -882,21 +885,47 @@ fn do_compress(
         dur_args.extend(["-t".into(), eff_duration.to_string()]);
     }
 
+    let volume_for = |index: usize| {
+        audio_volumes
+            .and_then(|volumes| volumes.get(index).copied())
+            .unwrap_or(1.0)
+            .clamp(0.0, 2.0)
+    };
+    let has_custom_volume = active
+        .iter()
+        .any(|&index| (volume_for(index) - 1.0).abs() > 0.001);
+
     let audio_map: Vec<String> = if use_gif {
         vec![]
-    } else if combine_audio && n_active > 1 {
-        let filter_in: String = active.iter().map(|i| format!("[0:a:{}]", i)).collect();
-        vec![
-            "-filter_complex".into(),
-            format!(
-                "{}amix=inputs={}:dropout_transition=0[aout]",
-                filter_in, n_active
-            ),
-            "-map".into(),
-            "0:v".into(),
-            "-map".into(),
-            "[aout]".into(),
-        ]
+    } else if (combine_audio && n_active > 1) || has_custom_volume {
+        let filter_in: String = active
+            .iter()
+            .enumerate()
+            .map(|(output_index, input_index)| {
+                let volume = volume_for(*input_index);
+                format!("[0:a:{}]volume={}[a{}];", input_index, volume, output_index)
+            })
+            .collect();
+        let inputs = (0..n_active)
+            .map(|index| format!("[a{}]", index))
+            .collect::<String>();
+        if combine_audio && n_active > 1 {
+            vec![
+                "-filter_complex".into(),
+                format!("{}{}amix=inputs={}:dropout_transition=0[aout]", filter_in, inputs, n_active),
+                "-map".into(),
+                "0:v".into(),
+                "-map".into(),
+                "[aout]".into(),
+            ]
+        } else {
+            let mut mapped = vec!["-filter_complex".into(), filter_in];
+            mapped.extend(["-map".into(), "0:v".into()]);
+            for index in 0..n_active {
+                mapped.extend(["-map".into(), format!("[a{}]", index)]);
+            }
+            mapped
+        }
     } else if n_active > 0 {
         let mut m = vec!["-map".into(), "0:v".into()];
         for i in &active {

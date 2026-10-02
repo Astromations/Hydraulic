@@ -884,7 +884,7 @@ fn do_compress(
             .map(|(output_index, input_index)| {
                 let label = format!("[a{}]", output_index);
                 let volume = volume_for(*input_index);
-                format!("[0:a:{}]volume={}{}", input_index, volume, label)
+                format!("[0:a:{}]volume={}{};", input_index, volume, label)
             })
             .collect();
         let inputs = (0..n_active)
@@ -893,14 +893,17 @@ fn do_compress(
         if combine_audio && n_active > 1 {
             vec![
                 "-filter_complex".into(),
-                format!("{}amix=inputs={}:dropout_transition=0[aout]", filter_in, n_active),
+                format!(
+                    "{}{}amix=inputs={}:dropout_transition=0[aout]",
+                    filter_in, inputs, n_active
+                ),
                 "-map".into(),
                 "0:v".into(),
                 "-map".into(),
                 "[aout]".into(),
             ]
         } else {
-            let mut mapped = vec!["-filter_complex".into(), format!("{}{}", filter_in, inputs)];
+            let mut mapped = vec!["-filter_complex".into(), filter_in];
             mapped.extend(["-map".into(), "0:v".into()]);
             for index in 0..n_active {
                 mapped.extend(["-map".into(), format!("[a{}]", index)]);
