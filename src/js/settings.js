@@ -139,7 +139,7 @@ function applySettings(settings) {
     const supportedFormats = ["original", "mp4", "mkv", "mov", "gif"];
     currentFormat = supportedFormats.includes(settings.format)
       ? settings.format
-      : "mp4";
+      : "original";
     const fmtOption = document.querySelector(
       `.fmt-option[data-value="${currentFormat}"]`,
     );

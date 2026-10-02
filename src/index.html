@@ -419,7 +419,7 @@
                   id="fmtBtn"
                   onclick="toggleFmtMenu(event)"
                 >
-                  <span id="fmtBtnLabel">MP4</span>
+                  <span id="fmtBtnLabel">Original</span>
                   <svg width="9" height="6" viewBox="0 0 9 6" fill="none">
                     <path
                       d="M1 1l3.5 3.5L8 1"
@@ -433,7 +433,7 @@
                 <div class="fmt-menu" id="fmtMenu">
                   <div class="fmt-menu-header">Output Format</div>
                   <div
-                    class="fmt-option"
+                    class="fmt-option selected"
                     data-value="original"
                     onclick="selectFmt(this)"
                   >
@@ -451,7 +451,7 @@
                     Original<span class="fmt-desc">Keep source</span>
                   </div>
                   <div
-                    class="fmt-option selected"
+                    class="fmt-option"
                     data-value="mp4"
                     onclick="selectFmt(this)"
                   >
