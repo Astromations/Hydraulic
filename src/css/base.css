@@ -95,6 +95,9 @@ body {
 .ui-icon[data-icon="pause"] {
   --icon-url: url("../ui-icons/Pause.svg");
 }
+.ui-icon[data-icon="seek"] {
+  --icon-url: url("../ui-icons/Seek.svg");
+}
 .ui-icon[data-icon="next-or-prior"] {
   --icon-url: url("../ui-icons/NextorPrior.svg");
 }
@@ -136,4 +139,7 @@ body {
 }
 .ui-icon[data-icon="skip"] {
   --icon-url: url("../ui-icons/Skip.svg");
+}
+.ui-icon[data-icon="drag"] {
+  --icon-url: url("../ui-icons/Drag.svg");
 }

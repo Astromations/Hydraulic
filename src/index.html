@@ -741,11 +741,25 @@
               <span class="ui-icon" data-icon="skip" aria-hidden="true"></span>
             </button>
             <button
+              class="trim-ctrl-btn trim-frame-btn previous"
+              onclick="stepTrimFrame(-1)"
+              title="Previous frame"
+            >
+              <span class="ui-icon" data-icon="seek" aria-hidden="true"></span>
+            </button>
+            <button
               class="trim-ctrl-btn primary"
               id="trimPlayBtn"
               onclick="toggleTrimPlay()"
             >
               <span class="ui-icon" data-icon="play" aria-hidden="true"></span>
+            </button>
+            <button
+              class="trim-ctrl-btn trim-frame-btn"
+              onclick="stepTrimFrame(1)"
+              title="Next frame"
+            >
+              <span class="ui-icon" data-icon="seek" aria-hidden="true"></span>
             </button>
             <button
               class="trim-ctrl-btn trim-skip-btn"

@@ -191,6 +191,9 @@
 .trim-skip-btn.previous {
   transform: scaleX(-1);
 }
+.trim-frame-btn.previous {
+  transform: scaleX(-1);
+}
 .trim-nav-btn.previous {
   transform: scaleX(-1);
 }
