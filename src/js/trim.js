@@ -15,6 +15,7 @@ let trimAudioVolumes = [];
 let trimPreviewTmp = null; // temp file path created for mixed-audio preview
 let playheadAnimationFrame = null;
 let trimPreviewRefreshTimer = null;
+const trimFrameDuration = 1 / 30;
 
 const trimVideo = document.getElementById("trimVideo");
 const tlTrack = document.getElementById("tlTrack");
@@ -182,6 +183,10 @@ function skipVideo(secs) {
     0,
     Math.min(trimDuration, trimVideo.currentTime + secs),
   );
+}
+
+function stepTrimFrame(direction) {
+  skipVideo(direction * trimFrameDuration);
 }
 
 function seekTrimVideo(t) {
@@ -583,4 +588,28 @@ function closeTrimModal() {
 
 document.getElementById("trimOverlay").addEventListener("click", (e) => {
   if (e.target === document.getElementById("trimOverlay")) closeTrimModal();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (!document.getElementById("trimOverlay").classList.contains("open"))
+    return;
+
+  if (e.key === "Escape") {
+    closeTrimModal();
+  } else if (e.key === " ") {
+    e.preventDefault();
+    toggleTrimPlay();
+  } else if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    skipVideo(-5);
+  } else if (e.key === "ArrowRight") {
+    e.preventDefault();
+    skipVideo(5);
+  } else if (e.key === ",") {
+    e.preventDefault();
+    stepTrimFrame(-1);
+  } else if (e.key === ".") {
+    e.preventDefault();
+    stepTrimFrame(1);
+  }
 });
