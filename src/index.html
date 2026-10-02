@@ -258,30 +258,82 @@
               <div class="slider-row">
                 <div class="slider-header">
                   <span class="slider-label">Target Size</span>
-                  <span class="slider-value" id="sizeVal">10 MB</span>
+                  <label
+                    class="slider-value slider-value-edit"
+                    title="Edit target size"
+                  >
+                    <input
+                      id="sizeVal"
+                      type="number"
+                      min="1"
+                      max="200"
+                      value="20"
+                      aria-label="Target size in megabytes"
+                    />
+                    <span>MB</span>
+                  </label>
                 </div>
-                <input
-                  type="range"
-                  class="styled"
-                  id="sizeSlider"
-                  min="1"
-                  max="200"
-                  value="10"
-                />
+                <div class="slider-track-wrap">
+                  <input
+                    type="range"
+                    class="styled"
+                    id="sizeSlider"
+                    min="1"
+                    max="200"
+                    value="20"
+                    list="sizeMarks"
+                  />
+                  <div class="slider-marks" aria-hidden="true">
+                    <span class="slider-mark" data-value="20">20</span>
+                    <span class="slider-mark" data-value="50">50</span>
+                  </div>
+                </div>
+                <datalist id="sizeMarks">
+                  <option value="20" label="20 MB"></option>
+                  <option value="50" label="50 MB"></option>
+                </datalist>
               </div>
               <div class="slider-row">
                 <div class="slider-header">
                   <span class="slider-label">Audio Bitrate</span>
-                  <span class="slider-value" id="audioVal">128 kbps</span>
+                  <label
+                    class="slider-value slider-value-edit"
+                    title="Edit audio bitrate"
+                  >
+                    <input
+                      id="audioVal"
+                      type="number"
+                      min="8"
+                      max="320"
+                      value="128"
+                      aria-label="Audio bitrate in kilobits per second"
+                    />
+                    <span>kbps</span>
+                  </label>
                 </div>
-                <input
-                  type="range"
-                  class="styled"
-                  id="audioSlider"
-                  min="8"
-                  max="320"
-                  value="128"
-                />
+                <div class="slider-track-wrap">
+                  <input
+                    type="range"
+                    class="styled"
+                    id="audioSlider"
+                    min="8"
+                    max="320"
+                    value="128"
+                    list="audioMarks"
+                  />
+                  <div class="slider-marks" aria-hidden="true">
+                    <span class="slider-mark" data-value="128">128</span>
+                    <span class="slider-mark" data-value="192">192</span>
+                    <span class="slider-mark" data-value="256">256</span>
+                    <span class="slider-mark" data-value="320">320</span>
+                  </div>
+                </div>
+                <datalist id="audioMarks">
+                  <option value="128" label="128 kbps"></option>
+                  <option value="192" label="192 kbps"></option>
+                  <option value="256" label="256 kbps"></option>
+                  <option value="320" label="320 kbps"></option>
+                </datalist>
               </div>
             </div>
 

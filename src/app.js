@@ -95,8 +95,15 @@ function openProjectUrl() {
 document.addEventListener("DOMContentLoaded", async () => {
   bindWindowTitlebarControls();
 
-  initSlider("sizeSlider", "sizeVal", (v) => `${v} MB`, 1, 200);
-  initSlider("audioSlider", "audioVal", (v) => `${v} kbps`, 8, 320);
+  initSlider("sizeSlider", "sizeVal", (v) => `${v} MB`, 1, 200, [20, 50]);
+  initSlider(
+    "audioSlider",
+    "audioVal",
+    (v) => `${v} kbps`,
+    8,
+    320,
+    [128, 192, 256, 320],
+  );
 
   // Load persistent settings after sliders init
   setTimeout(async () => {
