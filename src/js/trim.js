@@ -4,6 +4,7 @@
 // Trim modal: video preview, timeline, audio tracks, apply/close.
 
 let trimItemId = null;
+let trimItemPath = null;
 let trimDuration = 0;
 let trimIn = 0;
 let trimOut = 0;
@@ -27,6 +28,7 @@ async function openTrimModal(id) {
   if (!item) return;
 
   trimItemId = id;
+  trimItemPath = item.path;
   trimIn = item.trimStart ? parseTimeJS(item.trimStart) : 0;
   trimOut = item.trimEnd ? parseTimeJS(item.trimEnd) : -1; // -1 = end (resolved after metadata)
   trimAudioTracks = item.audioTracks || [];

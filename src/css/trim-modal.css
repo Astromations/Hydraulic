@@ -45,12 +45,22 @@
 
 .trim-modal-title {
   flex: 1;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
   font-size: 14px;
   font-weight: 700;
   color: white;
+  cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.trim-modal-title:hover {
+  color: var(--accent);
+  text-decoration: underline;
 }
 
 .trim-modal-close {
