@@ -541,6 +541,7 @@ async function refreshTrimPreview() {
 
   const wasPlaying = !trimVideo.paused;
   const currentTime = trimVideo.currentTime;
+  const currentHeight = trimVideo.getBoundingClientRect().height;
   const oldPreview = trimPreviewTmp;
   const result = await invoke("get_mixed_preview_url", {
     filepath: item.path,
@@ -553,11 +554,15 @@ async function refreshTrimPreview() {
     return;
   }
   trimPreviewTmp = result.tmp;
+  if (currentHeight > 0) {
+    trimVideo.style.height = `${currentHeight}px`;
+  }
   trimVideo.src = result.url ? convertFileSrc(result.url) : "";
   trimVideo.load();
   trimVideo.addEventListener(
     "loadedmetadata",
     () => {
+      trimVideo.style.removeProperty("height");
       seekTrimVideo(currentTime);
       if (wasPlaying) trimVideo.play();
     },
