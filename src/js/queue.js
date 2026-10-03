@@ -209,7 +209,7 @@ function renderQueueItem(id, name, path) {
 </span>
       </button>
       <div class="qi-body">
-        <button class="qi-name qi-name-link" title="Reveal in explorer">${esc(name)}</button>
+        <button class="qi-name qi-name-link" title="Reveal in Explorer">${esc(name)}</button>
         <div class="qi-status-row" id="${id}-status">
           <span class="chip chip-waiting">Waiting</span>
         </div>
