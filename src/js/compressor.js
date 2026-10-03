@@ -384,7 +384,9 @@ async function renameFile(id) {
     const link = document.getElementById(`${id}-outlink`);
     if (link) {
       link.textContent = newName;
-      link.title = newPath;
+      link.classList.add("renamed");
+      link.dataset.customTooltip = newPath;
+      link.removeAttribute("title");
     }
   } catch (e) {
     showRenameErrorDialog("Rename failed: " + (e.message || e));
