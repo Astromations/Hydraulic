@@ -246,7 +246,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 100%;
+  max-width: 100%;
   height: 100%;
   border-radius: inherit;
   background: rgba(0, 0, 0, 0.5);
@@ -388,14 +388,17 @@
   text-overflow: ellipsis;
   max-width: 160px;
 }
+.qi-file-link.renamed {
+  padding: 4px 10px;
+}
 .qi-file-link:hover {
   color: #d8f6e3;
   background: rgba(35, 165, 90, 0.2);
   border-color: rgba(35, 165, 90, 0.48);
 }
 .qi-file-link .ui-icon {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 10px;
   transform: translateY(2px);
 }
 
@@ -593,7 +596,7 @@
   color: var(--brand);
   background: rgba(88, 101, 242, 0.15);
   border-radius: 4px;
-  padding: 1px 5px;
+  padding: 4px 10px;
   font-weight: 700;
   letter-spacing: 0.2px;
 }
