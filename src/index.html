@@ -903,23 +903,27 @@
 
         <div class="changelog-body" id="changelogBody">
           <p class="info-intro">
-            Too often do we find ourselves with clips too large to upload on
-            Discord. Hydraulic fixes that, allowing for clip preview, trimming
-            and compression to make sharing convenient and easy.
+            Preview, trim, and compress oversized clips for easier Discord
+            sharing.
           </p>
 
           <section class="info-section">
             <h3>Dependencies</h3>
             <ul class="info-list">
               <li>
-                <strong>FFmpeg</strong
+                <strong>FFmpeg v8.1</strong
                 ><span>Video processing and encoding</span>
               </li>
               <li>
-                <strong>Tauri</strong><span>Desktop application shell</span>
+                <strong>Tauri v2.10.3</strong
+                ><span>Desktop application shell</span>
               </li>
               <li>
-                <strong>Rust crates</strong
+                <strong>Rust v1.94.1</strong
+                ><span>Application language and toolchain</span>
+              </li>
+              <li>
+                <strong>Crates</strong
                 ><span>Tokio, Serde, Base64, Dirs and Which</span>
               </li>
             </ul>
@@ -927,10 +931,26 @@
 
           <section class="info-section">
             <h3>Licensing</h3>
-            <p class="info-copy">
-              Hydraulic is open source. The Rust dependencies are distributed
-              under MIT and Apache-2.0 licenses. FFmpeg is distributed under the
-              terms of the LGPL or GPL, depending on the build used.
+            <ul class="info-license-list">
+              <li><strong>Hydraulic</strong><span>MIT License</span></li>
+              <li>
+                <strong>Tauri + Rust Crates</strong
+                ><span>MIT and Apache-2.0</span>
+              </li>
+              <li>
+                <strong>FFmpeg</strong><span>LGPL or GPL, build-dependent</span>
+              </li>
+            </ul>
+            <p class="info-attribution">
+              UI icons:
+              <a
+                href="https://www.figma.com/community/file/1316822758717784787/ultimate-discord-library"
+                >Ultimate Discord Library</a
+              >
+              by Discord Staff and
+              <a href="https://koto.com/work?from=hydraulic">Koto Studios</a>.
+              Used under their original rights; Hydraulic is not affiliated with
+              Discord Inc.
             </p>
           </section>
         </div>
