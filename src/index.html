@@ -193,7 +193,11 @@
                 aria-label="Clear queue"
                 disabled
               >
-                <span class="ui-icon" data-icon="remove" aria-hidden="true"></span>
+                <span
+                  class="ui-icon"
+                  data-icon="remove"
+                  aria-hidden="true"
+                ></span>
                 Clear
               </button>
               <div
@@ -664,30 +668,47 @@
     <div class="trim-overlay" id="trimOverlay">
       <div class="trim-card">
         <div class="trim-modal-header">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            style="flex-shrink: 0; color: var(--text-muted)"
+          <button
+            class="trim-modal-menu-btn"
+            id="trimModalMenuBtn"
+            type="button"
+            onclick="toggleTrimItemMenu()"
+            aria-label="Choose clip to trim"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Choose clip to trim"
           >
-            <path
-              d="M6 9l6 6 6-6"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M6 9l6 6 6-6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
           <button
             class="trim-modal-title"
             id="trimModalTitle"
             onclick="revealSourceFile(trimItemPath)"
-            title="Reveal in explorer"
+            title="Reveal in Explorer"
           >
             Trim
           </button>
           <button class="trim-modal-close" onclick="closeTrimModal()">✕</button>
+          <div
+            class="trim-item-menu"
+            id="trimItemMenu"
+            role="menu"
+            aria-label="Queue clips"
+          ></div>
         </div>
 
         <!-- Video -->
@@ -874,7 +895,7 @@
               class="preview-title"
               id="previewTitle"
               onclick="revealSourceFile(previewItemPath)"
-              title="Reveal in explorer"
+              title="Reveal in Explorer"
             >
               Preview
             </button>
@@ -995,6 +1016,7 @@
                 <button
                   class="preview-icon-btn"
                   onclick="openPreviewInExternal()"
+                  data-custom-tooltip="External Player"
                 >
                   <span
                     class="ui-icon"
@@ -1011,6 +1033,7 @@
                     class="ui-icon"
                     data-icon="trim"
                     aria-hidden="true"
+                    data-custom-tooltip="Trim"
                   ></span>
                 </button>
                 <button
