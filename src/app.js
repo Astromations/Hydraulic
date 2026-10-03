@@ -126,4 +126,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     setStatus("FFmpeg missing — can't compress without it", "error");
     document.getElementById("compressBtn").disabled = true;
   }
+
+  const launchPaths = await invoke("get_launch_paths").catch(() => []);
+  if (Array.isArray(launchPaths) && launchPaths.length > 0) {
+    window.handleNativeDroppedPaths(launchPaths);
+  }
 });

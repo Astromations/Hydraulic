@@ -22,6 +22,7 @@ struct AppState {
     cancel_flag: Arc<AtomicBool>,
     /// Holds the currently running FFmpeg child process so it can be killed.
     active_proc: Arc<Mutex<Option<Child>>>,
+    launch_paths: Mutex<Vec<String>>,
 }
 
 // ─── Internal Helpers ────────────────────────────────────────────────────────
@@ -160,6 +161,27 @@ fn emit_native_dropped_paths(app: &AppHandle, paths: &[PathBuf]) {
     );
 }
 
+fn supported_video_paths(paths: impl IntoIterator<Item = String>) -> Vec<String> {
+    paths
+        .into_iter()
+        .filter(|path| {
+            let file = Path::new(path);
+            file.is_file()
+                && matches!(
+                    file.extension().and_then(|ext| ext.to_str()),
+                    Some("mp4" | "MP4" | "mkv" | "MKV" | "mov" | "MOV")
+                )
+        })
+        .collect()
+}
+
+fn focus_main_window(app: &AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.unminimize();
+        let _ = window.set_focus();
+    }
+}
+
 // ─── FFmpeg Pass Runner ───────────────────────────────────────────────────────
 
 /// Runs a single FFmpeg command, streaming progress via `progress_cb`.
@@ -261,6 +283,15 @@ fn run_pass(
 #[tauri::command]
 fn check_ffmpeg() -> bool {
     check_ffmpeg_available()
+}
+
+#[tauri::command]
+fn get_launch_paths(state: State<AppState>) -> Vec<String> {
+    state
+        .launch_paths
+        .lock()
+        .map(|mut paths| std::mem::take(&mut *paths))
+        .unwrap_or_default()
 }
 
 #[tauri::command]
@@ -1168,9 +1199,19 @@ fn do_compress(
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
+            let paths = supported_video_paths(argv.into_iter().skip(1));
+            if paths.is_empty() {
+                return;
+            }
+            focus_main_window(app);
+            let path_bufs = paths.into_iter().map(PathBuf::from).collect::<Vec<_>>();
+            emit_native_dropped_paths(app, &path_bufs);
+        }))
         .manage(AppState {
             cancel_flag: Arc::new(AtomicBool::new(false)),
             active_proc: Arc::new(Mutex::new(None)),
+            launch_paths: Mutex::new(supported_video_paths(std::env::args().skip(1))),
         })
         .on_window_event(|window, event| {
             if let tauri::WindowEvent::DragDrop(tauri::DragDropEvent::Drop { paths, .. }) = event {
@@ -1180,6 +1221,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             // FFmpeg
             check_ffmpeg,
+            get_launch_paths,
             get_thumbnail,
             get_audio_tracks,
             // Video serving
