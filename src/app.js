@@ -85,10 +85,18 @@ function bindWindowTitlebarControls() {
   });
 }
 
-function openProjectUrl() {
+function openExternalUrl(event, url) {
+  event?.preventDefault();
   invoke("open_url", {
-    url: "https://github.com/Astromations/Peak-Discord-Video-Compressor",
+    url,
   }).catch(() => {});
+}
+
+function openProjectUrl() {
+  openExternalUrl(
+    null,
+    "https://github.com/Astromations/Peak-Discord-Video-Compressor",
+  );
 }
 
 // ── Init ──────────────────────────────────────────────────────────
