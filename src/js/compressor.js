@@ -202,7 +202,7 @@ function onItemError(id, msg) {
   if (main) main.style.removeProperty("--row-progress");
   const sr = document.getElementById(`${id}-status`);
   if (sr)
-    sr.innerHTML = `<span class="chip chip-error">✗ Error</span><span style="font-size:10px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px" title="${esc(msg)}">${esc(msg)}</span>`;
+    sr.innerHTML = `<span class="chip chip-error">Error</span><span style="font-size:10px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px" title="${esc(msg)}">${esc(msg)}</span>`;
   document
     .querySelectorAll(`#${id} .qi-btn`)
     .forEach((b) => (b.disabled = false));
