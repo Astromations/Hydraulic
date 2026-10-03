@@ -112,8 +112,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }, 0);
 
-  buildChangelog();
-
   const ok = await invoke("check_ffmpeg");
   if (!ok) {
     document.getElementById("ffmpegWarning").classList.add("visible");

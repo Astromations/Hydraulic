@@ -863,7 +863,7 @@
     </div>
 
     <!-- ═══════════════════════════════════════
-     CHANGELOG MODAL
+    ABOUT MODAL
      ═══════════════════════════════════════ -->
     <div class="changelog-overlay" id="changelogOverlay">
       <div class="changelog-card">
@@ -882,7 +882,7 @@
               stroke-linecap="round"
             />
           </svg>
-          <h2>Changelog</h2>
+          <h2>About Hydraulic</h2>
           <div class="changelog-header-info">
             <button class="changelog-github-btn" onclick="openProjectUrl()">
               <svg
@@ -902,7 +902,37 @@
         </div>
 
         <div class="changelog-body" id="changelogBody">
-          <!-- populated by buildChangelog() in app.js -->
+          <p class="info-intro">
+            Too often do we find ourselves with clips too large to upload on
+            Discord. Hydraulic fixes that, allowing for clip preview, trimming
+            and compression to make sharing convenient and easy.
+          </p>
+
+          <section class="info-section">
+            <h3>Dependencies</h3>
+            <ul class="info-list">
+              <li>
+                <strong>FFmpeg</strong
+                ><span>Video processing and encoding</span>
+              </li>
+              <li>
+                <strong>Tauri</strong><span>Desktop application shell</span>
+              </li>
+              <li>
+                <strong>Rust crates</strong
+                ><span>Tokio, Serde, Base64, Dirs and Which</span>
+              </li>
+            </ul>
+          </section>
+
+          <section class="info-section">
+            <h3>Licensing</h3>
+            <p class="info-copy">
+              Hydraulic is open source. The Rust dependencies are distributed
+              under MIT and Apache-2.0 licenses. FFmpeg is distributed under the
+              terms of the LGPL or GPL, depending on the build used.
+            </p>
+          </section>
         </div>
       </div>
     </div>
