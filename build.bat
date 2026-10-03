@@ -11,18 +11,28 @@ if errorlevel 1 (
   exit /b 1
 )
 
-where ffmpeg >nul 2>&1
-if errorlevel 1 (
+for /f "delims=" %%I in ('where ffmpeg 2^>nul') do if not defined FFMPEG_SOURCE set "FFMPEG_SOURCE=%%I"
+if not defined FFMPEG_SOURCE (
   echo [ERROR] ffmpeg was not found in PATH.
   echo Install FFmpeg and ensure ffmpeg and ffprobe are available before building.
   pause
   exit /b 1
 )
 
-where ffprobe >nul 2>&1
-if errorlevel 1 (
+for /f "delims=" %%I in ('where ffprobe 2^>nul') do if not defined FFPROBE_SOURCE set "FFPROBE_SOURCE=%%I"
+if not defined FFPROBE_SOURCE (
   echo [ERROR] ffprobe was not found in PATH.
   echo Install FFmpeg and ensure ffmpeg and ffprobe are available before building.
+  pause
+  exit /b 1
+)
+
+echo [Peak] Staging bundled FFmpeg...
+if not exist "resources\ffmpeg" mkdir "resources\ffmpeg"
+copy /Y "%FFMPEG_SOURCE%" "resources\ffmpeg\ffmpeg.exe" >nul
+copy /Y "%FFPROBE_SOURCE%" "resources\ffmpeg\ffprobe.exe" >nul
+if errorlevel 1 (
+  echo [ERROR] Could not stage the FFmpeg executables.
   pause
   exit /b 1
 )

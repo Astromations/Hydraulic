@@ -34,8 +34,30 @@ fn null_device() -> &'static str {
     }
 }
 
+fn media_binary(program: &str) -> Option<PathBuf> {
+    let bundled_locations = [
+        std::env::current_exe()
+            .ok()
+            .and_then(|exe| exe.parent().map(|dir| dir.join("resources"))),
+        Some(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("resources")),
+    ];
+
+    for resource_dir in bundled_locations.into_iter().flatten() {
+        let path = resource_dir.join("ffmpeg").join(if cfg!(windows) {
+            format!("{}.exe", program)
+        } else {
+            program.to_string()
+        });
+        if path.is_file() {
+            return Some(path);
+        }
+    }
+
+    which::which(program).ok()
+}
+
 fn media_command(program: &str) -> Command {
-    let mut command = Command::new(program);
+    let mut command = Command::new(media_binary(program).unwrap_or_else(|| PathBuf::from(program)));
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
@@ -46,7 +68,7 @@ fn media_command(program: &str) -> Command {
 }
 
 fn check_ffmpeg_available() -> bool {
-    which::which("ffmpeg").is_ok() && which::which("ffprobe").is_ok()
+    media_binary("ffmpeg").is_some() && media_binary("ffprobe").is_some()
 }
 
 fn get_media_info(filepath: &str) -> Result<Value, String> {
