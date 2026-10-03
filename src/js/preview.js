@@ -163,6 +163,13 @@ function openPreviewInExternal() {
   invoke("open_in_media_player", { filepath: item.path }).catch(() => {});
 }
 
+async function removePreviewItem() {
+  if (!previewItemId) return;
+  const itemId = previewItemId;
+  await closePreviewModal();
+  removeFromQueue(itemId);
+}
+
 async function openPreviewTrimModal() {
   if (!previewItemId || typeof openTrimModal !== "function") return;
   const targetId = previewItemId;
