@@ -172,6 +172,48 @@
   margin: 0;
 }
 
+.info-license-list {
+  display: grid;
+  gap: 6px;
+  list-style: none;
+}
+
+.info-license-list li {
+  align-items: center;
+  display: flex;
+  font-size: 11px;
+  justify-content: space-between;
+  padding: 3px 0;
+}
+
+.info-license-list strong {
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+.info-license-list span {
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.info-attribution {
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1.5;
+  margin-top: 12px;
+  padding-top: 10px;
+}
+
+.info-attribution a {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.info-attribution a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 420px) {
   .info-list li {
     align-items: flex-start;
