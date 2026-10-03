@@ -639,6 +639,13 @@ function applyTrim() {
   closeTrimModal();
 }
 
+function removeTrimItem() {
+  if (!trimItemId) return;
+  const itemId = trimItemId;
+  closeTrimModal();
+  removeFromQueue(itemId);
+}
+
 function closeTrimModal() {
   clearTimeout(trimPreviewRefreshTimer);
   trimVideo.pause();

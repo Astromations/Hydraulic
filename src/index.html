@@ -799,10 +799,38 @@
             </button>
           </div>
           <div class="trim-transport-actions">
-            <button class="trim-btn-cancel" onclick="closeTrimModal()">
-              Cancel
+            <button
+              class="trim-btn-remove"
+              onclick="removeTrimItem()"
+              data-custom-tooltip="Remove"
+              aria-label="Remove clip from queue"
+            >
+              <span
+                class="ui-icon"
+                data-icon="remove"
+                aria-hidden="true"
+              ></span>
             </button>
-            <button class="trim-btn-apply" onclick="applyTrim()">Apply</button>
+            <button
+              class="trim-btn-cancel"
+              onclick="closeTrimModal()"
+              data-custom-tooltip="Cancel"
+              aria-label="Cancel"
+            >
+              <span
+                class="ui-icon"
+                data-icon="cancel"
+                aria-hidden="true"
+              ></span>
+            </button>
+            <button
+              class="trim-btn-apply"
+              onclick="applyTrim()"
+              data-custom-tooltip="Apply"
+              aria-label="Apply trim"
+            >
+              <span class="ui-icon" data-icon="check" aria-hidden="true"></span>
+            </button>
           </div>
         </div>
 

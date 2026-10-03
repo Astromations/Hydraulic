@@ -377,6 +377,9 @@
 }
 
 .trim-transport-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 7px 12px;
   border: none;
   border-radius: 6px;
@@ -386,6 +389,19 @@
   letter-spacing: 0.25px;
   cursor: pointer;
   transition: background 0.12s;
+}
+
+.trim-transport-actions .ui-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.trim-btn-remove {
+  background: rgba(237, 66, 69, 0.14);
+  color: #f06a6d;
+}
+.trim-btn-remove:hover {
+  background: rgba(237, 66, 69, 0.24);
 }
 
 .trim-btn-cancel {

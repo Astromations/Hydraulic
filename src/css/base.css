@@ -126,6 +126,12 @@ body {
 .ui-icon[data-icon="remove"] {
   --icon-url: url("../ui-icons/Remove.svg");
 }
+.ui-icon[data-icon="cancel"] {
+  --icon-url: url("../ui-icons/Cancel.svg");
+}
+.ui-icon[data-icon="check"] {
+  --icon-url: url("../ui-icons/Checkmark.svg");
+}
 .ui-icon[data-icon="link-to"] {
   --icon-url: url("../ui-icons/Linkto.svg");
 }
