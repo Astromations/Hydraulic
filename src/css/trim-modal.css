@@ -459,7 +459,7 @@
 
 .tl-grid {
   display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
+  grid-template-columns: 118px minmax(0, 1fr);
   gap: 10px;
   align-items: start;
 }
