@@ -358,6 +358,11 @@
   font-weight: 700;
   color: var(--text-normal);
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.trim-time-sep {
+  transform: translateY(2px);
+  padding: 0 5px;
 }
 .trim-time-group {
   display: inline-flex;
@@ -810,6 +815,7 @@
 .tl-labels {
   display: flex;
   align-items: center;
+  font-variant-numeric: tabular-nums;
   gap: 4px;
   margin: 0;
   font-size: 10px;
