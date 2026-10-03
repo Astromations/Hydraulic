@@ -25,6 +25,70 @@ const tlPlayhead = document.getElementById("tlPlayhead");
 const tlSelection = document.getElementById("tlSelection");
 const trimPrevBtn = document.getElementById("trimPrevBtn");
 const trimNextBtn = document.getElementById("trimNextBtn");
+const trimModalMenuBtn = document.getElementById("trimModalMenuBtn");
+const trimItemMenu = document.getElementById("trimItemMenu");
+
+function renderTrimItemMenu() {
+  if (!trimItemMenu) return;
+  trimItemMenu.innerHTML = "";
+
+  queue.forEach((item) => {
+    const button = document.createElement("button");
+    button.className = "trim-item-menu-entry";
+    button.type = "button";
+    button.setAttribute("role", "menuitem");
+    button.classList.toggle("active", item.id === trimItemId);
+    button.addEventListener("click", async () => {
+      closeTrimItemMenu();
+      await openTrimModal(item.id);
+    });
+
+    const thumb = document.createElement("span");
+    thumb.className = "trim-item-menu-thumb";
+    if (item.thumbnail) {
+      const image = document.createElement("img");
+      image.src = item.thumbnail;
+      image.alt = "";
+      thumb.appendChild(image);
+    } else {
+      thumb.innerHTML = thumbPlaceholder();
+      invoke("get_thumbnail", { filepath: item.path })
+        .then((uri) => {
+          item.thumbnail = uri || null;
+          if (uri && trimItemMenu.contains(button)) {
+            thumb.innerHTML = "";
+            const image = document.createElement("img");
+            image.src = uri;
+            image.alt = "";
+            thumb.appendChild(image);
+          }
+        })
+        .catch(() => {});
+    }
+
+    const title = document.createElement("span");
+    title.className = "trim-item-menu-title";
+    title.textContent = item.name;
+    button.append(thumb, title);
+    trimItemMenu.appendChild(button);
+  });
+}
+
+function openTrimItemMenu() {
+  renderTrimItemMenu();
+  trimItemMenu?.classList.add("open");
+  trimModalMenuBtn?.setAttribute("aria-expanded", "true");
+}
+
+function closeTrimItemMenu() {
+  trimItemMenu?.classList.remove("open");
+  trimModalMenuBtn?.setAttribute("aria-expanded", "false");
+}
+
+function toggleTrimItemMenu() {
+  if (trimItemMenu?.classList.contains("open")) closeTrimItemMenu();
+  else openTrimItemMenu();
+}
 
 async function openTrimModal(id) {
   const item = queue.find((i) => i.id === id);
@@ -37,6 +101,7 @@ async function openTrimModal(id) {
   trimAudioTracks = item.audioTracks || [];
   trimEnabledTracks = item.enabledTracks ? new Set(item.enabledTracks) : null;
   trimAudioVolumes = item.audioVolumes || [];
+  renderTrimItemMenu();
   updateTrimNavButtons();
 
   document.getElementById("trimModalTitle").textContent = item.name;
@@ -584,10 +649,12 @@ function closeTrimModal() {
     trimPreviewTmp = null;
   }
   trimItemId = null;
+  closeTrimItemMenu();
 }
 
 document.getElementById("trimOverlay").addEventListener("click", (e) => {
   if (e.target === document.getElementById("trimOverlay")) closeTrimModal();
+  else if (!e.target.closest(".trim-modal-header")) closeTrimItemMenu();
 });
 
 document.addEventListener("keydown", (e) => {
@@ -595,6 +662,10 @@ document.addEventListener("keydown", (e) => {
     return;
 
   if (e.key === "Escape") {
+    if (trimItemMenu?.classList.contains("open")) {
+      closeTrimItemMenu();
+      return;
+    }
     closeTrimModal();
   } else if (e.key === " ") {
     e.preventDefault();

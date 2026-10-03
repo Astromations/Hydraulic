@@ -94,12 +94,15 @@ function addToQueue(path) {
     enabledTracks: null,
     audioTracks: [],
     audioVolumes: [],
+    thumbnail: null,
   });
   renderQueueItem(id, name, path);
   setQueueDragEnabled(!isRunning);
   updateCompressBtn();
 
   invoke("get_thumbnail", { filepath: path }).then((uri) => {
+    const item = queue.find((queueItem) => queueItem.id === id);
+    if (item) item.thumbnail = uri || null;
     const t = document.querySelector(`#${id} .qi-thumb`);
     if (t)
       t.innerHTML = uri ? `<img src="${uri}" alt="" />` : thumbPlaceholder();
