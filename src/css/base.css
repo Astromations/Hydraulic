@@ -1,0 +1,149 @@
+/* ════════════════════════════════════════
+   BASE — Variables, Reset, Body
+   ════════════════════════════════════════ */
+:root {
+  --bg-base: #313338;
+  --bg-secondary: #2b2d31;
+  --bg-tertiary: #1e1f22;
+  --bg-float: #111214;
+  --bg-modifier: rgba(255, 255, 255, 0.06);
+  --text-normal: #dbdee1;
+  --text-muted: #949ba4;
+  --brand: #5865f2;
+  --brand-hover: #4752c4;
+  --brand-active: #3c45a5;
+  --positive: #23a55a;
+  --danger: #f23f42;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-lg: 14px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family:
+    "Gg Sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  background: var(--bg-base);
+  color: var(--text-normal);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+/* ── Misc ─────────────────────────────────────────────────────────── */
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+.thumb-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+*:focus-visible {
+  outline: none;
+}
+
+/* SVG assets are masks so their color follows the owning control. */
+.ui-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-url) center / contain no-repeat;
+  mask: var(--icon-url) center / contain no-repeat;
+}
+
+.ui-icon[data-icon="gpu"] {
+  --icon-url: url("../ui-icons/GPU.svg");
+}
+.ui-icon[data-icon="merge-audio"] {
+  --icon-url: url("../ui-icons/MergeAudio.svg");
+}
+.ui-icon[data-icon="2-pass"] {
+  --icon-url: url("../ui-icons/2Pass.svg");
+}
+.ui-icon[data-icon="folder"] {
+  --icon-url: url("../ui-icons/Folder.svg");
+}
+.ui-icon[data-icon="clips"] {
+  --icon-url: url("../ui-icons/Clips.svg");
+}
+.ui-icon[data-icon="play"] {
+  --icon-url: url("../ui-icons/Play.svg");
+}
+.ui-icon[data-icon="pause"] {
+  --icon-url: url("../ui-icons/Pause.svg");
+}
+.ui-icon[data-icon="seek"] {
+  --icon-url: url("../ui-icons/Seek.svg");
+}
+.ui-icon[data-icon="next-or-prior"] {
+  --icon-url: url("../ui-icons/NextorPrior.svg");
+}
+.ui-icon[data-icon="volume"] {
+  --icon-url: url("../ui-icons/Volume.svg");
+}
+.ui-icon[data-icon="external"] {
+  --icon-url: url("../ui-icons/External.svg");
+}
+.ui-icon[data-icon="trim"] {
+  --icon-url: url("../ui-icons/Trim.svg");
+}
+.ui-icon[data-icon="fullscreen"] {
+  --icon-url: url("../ui-icons/Fullscreen.svg");
+}
+.ui-icon[data-icon="exit-fullscreen"] {
+  --icon-url: url("../ui-icons/ExitFullscreen.svg");
+}
+.ui-icon[data-icon="rename"] {
+  --icon-url: url("../ui-icons/Rename2.svg");
+}
+.ui-icon[data-icon="remove"] {
+  --icon-url: url("../ui-icons/Remove.svg");
+}
+.ui-icon[data-icon="link-to"] {
+  --icon-url: url("../ui-icons/Linkto.svg");
+}
+.ui-icon[data-icon="list"] {
+  --icon-url: url("../ui-icons/List.svg");
+}
+.ui-icon[data-icon="grid"] {
+  --icon-url: url("../ui-icons/Grid.svg");
+}
+.ui-icon[data-icon="track-icon"] {
+  --icon-url: url("../ui-icons/Track.svg");
+}
+.ui-icon[data-icon="requeue"] {
+  --icon-url: url("../ui-icons/Requeue.svg");
+}
+.ui-icon[data-icon="skip"] {
+  --icon-url: url("../ui-icons/Skip.svg");
+}
+.ui-icon[data-icon="drag"] {
+  --icon-url: url("../ui-icons/Drag.svg");
+}

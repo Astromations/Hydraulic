@@ -1,0 +1,273 @@
+/* ════════════════════════════════════════
+   CONTROLS — Tooltips, Buttons, Status Bar
+   ════════════════════════════════════════ */
+
+/* ── Tooltip ──────────────────────────────────────────────────────── */
+
+.has-tooltip {
+  position: relative;
+}
+
+.has-tooltip .tooltip {
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%) translateY(3px);
+  background: #111214;
+  color: var(--text-normal);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+  padding: 6px 9px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 0.12s,
+    transform 0.12s;
+  z-index: 300;
+  /* prevent clipping outside viewport */
+  max-width: calc(100vw - 32px);
+}
+
+.has-tooltip:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.has-tooltip .tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #111214;
+}
+
+/* First child in controls-row — tooltip anchored to the LEFT edge to avoid left overflow */
+.controls-row > :first-child .tooltip {
+  left: 0;
+  transform: translateX(0) translateY(3px);
+}
+.controls-row > :first-child:hover .tooltip {
+  transform: translateX(0) translateY(0);
+}
+.controls-row > :first-child .tooltip::after {
+  left: 20px;
+  transform: none;
+}
+
+/* Last child (format wrap) — tooltip anchored to the RIGHT edge */
+.controls-row > :last-child .tooltip {
+  left: auto;
+  right: 0;
+  transform: translateX(0) translateY(3px);
+}
+.controls-row > :last-child:hover .tooltip {
+  transform: translateX(0) translateY(0);
+}
+.controls-row > :last-child .tooltip::after {
+  left: auto;
+  right: 16px;
+  transform: none;
+}
+
+/* In compact 2-column settings layout, each row has a left and right cell.
+   Anchor tooltips by column so they stay inside the app frame. */
+@container (max-width: 945px) {
+  .controls-row > :nth-child(odd) .tooltip {
+    left: 0;
+    right: auto;
+    transform: translateX(0) translateY(3px);
+  }
+
+  .controls-row > :nth-child(odd):hover .tooltip {
+    transform: translateX(0) translateY(0);
+  }
+
+  .controls-row > :nth-child(odd) .tooltip::after {
+    left: 20px;
+    right: auto;
+    transform: none;
+  }
+
+  .controls-row > :nth-child(even) .tooltip {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(3px);
+  }
+
+  .controls-row > :nth-child(even):hover .tooltip {
+    transform: translateX(0) translateY(0);
+  }
+
+  .controls-row > :nth-child(even) .tooltip::after {
+    left: auto;
+    right: 16px;
+    transform: none;
+  }
+}
+
+/* ── Small button ─────────────────────────────────────────────────── */
+
+.btn-sm {
+  padding: 5px 9px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--brand);
+  color: white;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.btn-sm:hover {
+  background: var(--brand-hover);
+}
+
+/* ── Compress button ──────────────────────────────────────────────── */
+
+.compress-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--brand);
+  color: white;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
+  flex-shrink: 0;
+  margin-bottom: 8px;
+}
+.compress-btn:hover:not(:disabled) {
+  background: var(--brand-hover);
+}
+.compress-btn:active:not(:disabled) {
+  background: var(--brand-active);
+}
+.compress-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cancel-btn {
+  display: none;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid rgba(242, 63, 66, 0.45);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(242, 63, 66, 0.14);
+  color: #ffb3b5;
+  transition: background 0.15s;
+  margin-bottom: 8px;
+}
+.cancel-btn.visible {
+  display: block;
+}
+.cancel-btn:hover:not(:disabled) {
+  background: rgba(242, 63, 66, 0.22);
+}
+.cancel-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.resume-btn {
+  display: none;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid rgba(35, 165, 90, 0.42);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(35, 165, 90, 0.14);
+  color: #9de3b8;
+  transition: background 0.15s;
+  margin-bottom: 8px;
+}
+.resume-btn.visible {
+  display: block;
+}
+.resume-btn:hover:not(:disabled) {
+  background: rgba(35, 165, 90, 0.22);
+}
+.resume-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ── Status bar ───────────────────────────────────────────────────── */
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.progress-track {
+  flex: 1;
+  height: 3px;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+  display: none;
+}
+.progress-track.visible {
+  display: block;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--brand);
+  border-radius: 2px;
+  width: 30%;
+  animation: indeterminate 1.4s ease infinite;
+  transform-origin: left;
+}
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%) scaleX(0.3);
+  }
+  50% {
+    transform: translateX(100%) scaleX(0.5);
+  }
+  100% {
+    transform: translateX(300%) scaleX(0.3);
+  }
+}
+
+.status-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.status-text.working {
+  color: var(--text-normal);
+}
+.status-text.success {
+  color: var(--positive);
+}
+.status-text.error {
+  color: var(--danger);
+}

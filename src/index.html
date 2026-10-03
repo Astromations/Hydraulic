@@ -1,0 +1,1056 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peak - Discord Video Compressor</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="Font/style.css" />
+  </head>
+  <body>
+    <div class="window-titlebar" id="windowTitlebar" data-tauri-drag-region>
+      <div
+        class="window-titlebar-left"
+        aria-hidden="true"
+        data-tauri-drag-region
+      ></div>
+
+      <div
+        class="window-titlebar-center"
+        aria-label="Peak window title"
+        data-tauri-drag-region
+      >
+        <img src="css/peak.png" alt="" class="window-titlebar-icon" />
+        <span class="window-titlebar-title"
+          >Peak - Discord Video Compressor</span
+        >
+      </div>
+
+      <div
+        class="window-titlebar-controls"
+        role="group"
+        aria-label="Window controls"
+      >
+        <button
+          class="window-ctrl-btn"
+          id="winMinBtn"
+          type="button"
+          aria-label="Minimize window"
+        >
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M1 5H9"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+        <button
+          class="window-ctrl-btn"
+          id="winMaxBtn"
+          type="button"
+          aria-label="Maximize or restore window"
+        >
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            aria-hidden="true"
+          >
+            <rect
+              x="1.75"
+              y="1.75"
+              width="6.5"
+              height="6.5"
+              stroke="currentColor"
+              stroke-width="1.2"
+            />
+          </svg>
+        </button>
+        <button
+          class="window-ctrl-btn close"
+          id="winCloseBtn"
+          type="button"
+          aria-label="Close window"
+        >
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M2 2L8 8M8 2L2 8"
+              stroke="currentColor"
+              stroke-width="1.4"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="app">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-icon">
+          <img
+            src="css/peak.png"
+            alt="Peak logo"
+            style="width: 100%; height: 100%; object-fit: contain"
+          />
+        </div>
+        <div class="header-text">
+          <h1>Peak - Discord Video Compressor</h1>
+          <p>
+            by
+            <a
+              href="https://github.com/Astromations"
+              style="text-decoration: none; color: inherit"
+              target="_blank"
+              >Astromations</a
+            >
+          </p>
+        </div>
+        <div class="header-actions">
+          <button class="header-icon-btn" onclick="openChangelog()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+              <path
+                d="M12 8v4M12 16h.01"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- FFmpeg warning -->
+      <div class="ffmpeg-warning" id="ffmpegWarning">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M12 9V13M12 17H12.01M10.29 3.86L1.82 18a2 2 0 001.73 3h16.9a2 2 0 001.73-3L13.71 3.86a2 2 0 00-3.42 0z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        FFmpeg not found — install it and add to PATH, then restart.
+      </div>
+
+      <!-- Body — splits into panels in wide layout -->
+      <div class="app-body">
+        <!-- Left panel: drop zone + queue -->
+        <div class="panel-left">
+          <!-- Drop zone -->
+          <div class="drop-zone" id="dropZone" onclick="browseFiles()">
+            <div class="drop-zone-icon">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M21 15V19a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"
+                  stroke="#949ba4"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <div class="drop-zone-text">
+              <h3>Add videos</h3>
+              <p>
+                Drag and drop or <span>browse files</span> — multiple supported
+              </p>
+            </div>
+          </div>
+
+          <div class="queue-toolbar">
+            <span class="queue-toolbar-label">Video Tray</span>
+            <div class="queue-toolbar-actions">
+              <button
+                class="queue-clear-btn"
+                id="clearQueueBtn"
+                type="button"
+                onclick="clearQueue()"
+                title="Clear queue"
+                aria-label="Clear queue"
+                disabled
+              >
+                <span
+                  class="ui-icon"
+                  data-icon="remove"
+                  aria-hidden="true"
+                ></span>
+                Clear
+              </button>
+              <div
+                class="tray-view-toggle"
+                role="group"
+                aria-label="Queue view mode"
+              >
+                <button
+                  class="tray-view-btn active"
+                  id="queueViewListBtn"
+                  onclick="setQueueView('list')"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="list"
+                    aria-hidden="true"
+                  ></span>
+                  List
+                </button>
+                <button
+                  class="tray-view-btn"
+                  id="queueViewGridBtn"
+                  onclick="setQueueView('grid')"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="grid"
+                    aria-hidden="true"
+                  ></span>
+                  Grid
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Queue -->
+          <div class="queue-wrap" id="queueWrap">
+            <div class="queue-empty" id="queueEmpty">No files added yet</div>
+          </div>
+        </div>
+        <!-- /panel-left -->
+
+        <div
+          class="panel-divider"
+          id="panelDivider"
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize video tray and settings panels"
+        ></div>
+
+        <!-- Right panel: settings + compress + status -->
+        <div class="panel-right">
+          <!-- Settings -->
+          <div class="settings">
+            <div class="settings-header">
+              <span class="section-label">Settings</span>
+              <button class="reset-btn" onclick="resetSettings()">
+                <svg
+                  width="50"
+                  height="50"
+                  viewBox="0 0 50 50"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M25 0C11.2125 0 0 11.2125 0 25H8.33333C8.33333 15.8083 15.8083 8.33332 25 8.33332C34.1917 8.33332 41.6668 15.8083 41.6668 25C41.6668 34.1917 34.1917 41.6667 25 41.6667C20.5082 41.6667 16.3958 39.8333 13.2875 36.7168L20.8332 29.1667H0V50L7.3375 42.6625C11.9958 47.35 18.2542 50 25 50C38.7875 50 50 38.7875 50 25C50 11.2167 38.7875 0 25 0Z"
+                    fill="white"
+                    fill-opacity="0.6"
+                  />
+                </svg>
+                <span>Reset defaults</span>
+              </button>
+            </div>
+
+            <div class="sliders">
+              <div class="slider-row">
+                <div class="slider-header">
+                  <span class="slider-label">Target Size</span>
+                  <label class="slider-value slider-value-edit">
+                    <input
+                      id="sizeVal"
+                      type="number"
+                      min="1"
+                      max="200"
+                      value="20"
+                      aria-label="Target size in megabytes"
+                    />
+                    <span>MB</span>
+                  </label>
+                </div>
+                <div class="slider-track-wrap">
+                  <input
+                    type="range"
+                    class="styled"
+                    id="sizeSlider"
+                    min="1"
+                    max="200"
+                    value="20"
+                    list="sizeMarks"
+                  />
+                  <div class="slider-marks" aria-hidden="true">
+                    <span class="slider-mark" data-value="20">20</span>
+                    <span class="slider-mark" data-value="50">50</span>
+                  </div>
+                </div>
+                <datalist id="sizeMarks">
+                  <option value="20" label="20 MB"></option>
+                  <option value="50" label="50 MB"></option>
+                </datalist>
+              </div>
+              <div class="slider-row">
+                <div class="slider-header">
+                  <span class="slider-label">Audio Bitrate</span>
+                  <label class="slider-value slider-value-edit">
+                    <input
+                      id="audioVal"
+                      type="number"
+                      min="8"
+                      max="320"
+                      value="128"
+                      aria-label="Audio bitrate in kilobits per second"
+                    />
+                    <span>kbps</span>
+                  </label>
+                </div>
+                <div class="slider-track-wrap">
+                  <input
+                    type="range"
+                    class="styled"
+                    id="audioSlider"
+                    min="8"
+                    max="320"
+                    value="128"
+                    list="audioMarks"
+                  />
+                  <div class="slider-marks" aria-hidden="true">
+                    <span class="slider-mark" data-value="128">128</span>
+                    <span class="slider-mark" data-value="192">192</span>
+                    <span class="slider-mark" data-value="256">256</span>
+                    <span class="slider-mark" data-value="320">320</span>
+                  </div>
+                </div>
+                <datalist id="audioMarks">
+                  <option value="128" label="128 kbps"></option>
+                  <option value="192" label="192 kbps"></option>
+                  <option value="256" label="256 kbps"></option>
+                  <option value="320" label="320 kbps"></option>
+                </datalist>
+              </div>
+            </div>
+
+            <div class="controls-row">
+              <!-- GPU — first child: tooltip anchored left to avoid clipping -->
+              <div
+                class="toggle-row has-tooltip"
+                onclick="toggleCb('gpuToggle')"
+              >
+                <span class="tooltip"
+                  >Use NVIDIA GPU encoding (NVENC).<br />Much faster, slightly
+                  lower quality.</span
+                >
+                <div class="toggle-info">
+                  <div class="toggle-info-label">
+                    <span
+                      class="ui-icon toggle-info-icon"
+                      data-icon="gpu"
+                      aria-hidden="true"
+                    ></span>
+                    <strong>GPU</strong>
+                  </div>
+                  <small>Faster compression</small>
+                </div>
+                <div class="toggle-switch">
+                  <input type="checkbox" id="gpuToggle" /><span
+                    class="toggle-track"
+                  ></span>
+                </div>
+              </div>
+
+              <div
+                class="toggle-row has-tooltip"
+                onclick="toggleCb('combineAudioToggle')"
+              >
+                <span class="tooltip"
+                  >Mix multiple audio tracks into one.<br />Turn off to keep all
+                  tracks separate.</span
+                >
+                <div class="toggle-info">
+                  <div class="toggle-info-label">
+                    <span
+                      class="ui-icon toggle-info-icon"
+                      data-icon="merge-audio"
+                      aria-hidden="true"
+                    ></span>
+                    <strong>Merge Audio</strong>
+                  </div>
+                  <small>Unify audio tracks</small>
+                </div>
+                <div class="toggle-switch">
+                  <input type="checkbox" id="combineAudioToggle" checked /><span
+                    class="toggle-track"
+                  ></span>
+                </div>
+              </div>
+
+              <div
+                class="toggle-row has-tooltip"
+                onclick="toggleCb('twoPassToggle')"
+              >
+                <span class="tooltip"
+                  >Analyse video first, then encode.<br />More accurate file
+                  size, takes longer.</span
+                >
+                <div class="toggle-info">
+                  <div class="toggle-info-label">
+                    <span
+                      class="ui-icon toggle-info-icon"
+                      data-icon="2-pass"
+                      aria-hidden="true"
+                    ></span>
+                    <strong>2-Pass</strong>
+                  </div>
+                  <small>Smaller file size</small>
+                </div>
+                <div class="toggle-switch">
+                  <input type="checkbox" id="twoPassToggle" checked /><span
+                    class="toggle-track"
+                  ></span>
+                </div>
+              </div>
+
+              <!-- Format — last child: tooltip anchored right -->
+              <div class="format-wrap">
+                <span class="format-label">Format</span>
+                <button
+                  class="fmt-select-btn"
+                  id="fmtBtn"
+                  onclick="toggleFmtMenu(event)"
+                >
+                  <span id="fmtBtnLabel">Original</span>
+                  <svg width="9" height="6" viewBox="0 0 9 6" fill="none">
+                    <path
+                      d="M1 1l3.5 3.5L8 1"
+                      stroke="#949ba4"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+                <div class="fmt-menu" id="fmtMenu">
+                  <div class="fmt-menu-header">Output Format</div>
+                  <div
+                    class="fmt-option selected"
+                    data-value="original"
+                    onclick="selectFmt(this)"
+                  >
+                    <div class="fmt-check">
+                      <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
+                        <path
+                          d="M1 3l2 2 4-4"
+                          stroke="white"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    Original<span class="fmt-desc">Keep source</span>
+                  </div>
+                  <div
+                    class="fmt-option"
+                    data-value="mp4"
+                    onclick="selectFmt(this)"
+                  >
+                    <div class="fmt-check">
+                      <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
+                        <path
+                          d="M1 3l2 2 4-4"
+                          stroke="white"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    MP4<span class="fmt-desc">H.264 · AAC</span>
+                  </div>
+                  <div
+                    class="fmt-option"
+                    data-value="mkv"
+                    onclick="selectFmt(this)"
+                  >
+                    <div class="fmt-check">
+                      <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
+                        <path
+                          d="M1 3l2 2 4-4"
+                          stroke="white"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    MKV<span class="fmt-desc">H.264 · AAC</span>
+                  </div>
+                  <div
+                    class="fmt-option"
+                    data-value="mov"
+                    onclick="selectFmt(this)"
+                  >
+                    <div class="fmt-check">
+                      <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
+                        <path
+                          d="M1 3l2 2 4-4"
+                          stroke="white"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    MOV<span class="fmt-desc">H.264 · AAC</span>
+                  </div>
+                  <div
+                    class="fmt-option"
+                    data-value="gif"
+                    onclick="selectFmt(this)"
+                  >
+                    <div class="fmt-check">
+                      <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
+                        <path
+                          d="M1 3l2 2 4-4"
+                          stroke="white"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    GIF<span class="fmt-desc">Animated · No audio</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="output-dir-section">
+              <div
+                class="output-dir-toggle has-tooltip"
+                onclick="toggleOutputDir()"
+              >
+                <div class="toggle-info">
+                  <div class="toggle-info-label">
+                    <span
+                      class="ui-icon toggle-info-icon"
+                      data-icon="folder"
+                      aria-hidden="true"
+                    ></span>
+                    <strong>Custom Output Folder</strong>
+                  </div>
+                  <small id="outputDirSubtitle"
+                    >Off — saves next to source file</small
+                  >
+                </div>
+                <div
+                  class="toggle-switch"
+                  onclick="
+                    event.stopPropagation();
+                    toggleOutputDir();
+                  "
+                >
+                  <input type="checkbox" id="outputDirToggle" />
+                  <span class="toggle-track"></span>
+                </div>
+              </div>
+              <div class="output-dir-picker" id="outputDirPicker">
+                <div class="dir-path" id="dirPathLabel">No folder selected</div>
+                <button class="btn-sm" onclick="pickDirectory()">Browse</button>
+              </div>
+            </div>
+
+            <div class="preview-mode-section">
+              <div class="preview-mode-head">
+                <div class="preview-mode-title">
+                  <span
+                    class="ui-icon toggle-info-icon"
+                    data-icon="clips"
+                    aria-hidden="true"
+                  ></span>
+                  <strong>Preview Player</strong>
+                </div>
+                <small>Choose how videos open when clicking a thumbnail</small>
+              </div>
+              <div
+                class="preview-mode-toggle"
+                role="group"
+                aria-label="Preview mode"
+              >
+                <button
+                  class="preview-mode-btn active"
+                  id="previewModeInternalBtn"
+                  onclick="setPreviewMode('internal', true)"
+                >
+                  In Peak
+                </button>
+                <button
+                  class="preview-mode-btn"
+                  id="previewModeExternalBtn"
+                  onclick="setPreviewMode('external', true)"
+                >
+                  Default Player
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- /settings -->
+
+          <!-- Compress button -->
+          <button
+            class="compress-btn"
+            id="compressBtn"
+            onclick="startQueue()"
+            disabled
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M13 2L3 14H12L11 22L21 10H12L13 2Z"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span id="compressBtnLabel">Compress</span>
+          </button>
+
+          <button class="cancel-btn" id="cancelBtn" onclick="cancelQueue()">
+            Cancel Session
+          </button>
+
+          <button
+            class="resume-btn"
+            id="resumeBtn"
+            onclick="restartCancelledCompression()"
+          >
+            Restart Cancelled Files
+          </button>
+
+          <!-- Status -->
+          <div class="status-bar">
+            <div class="progress-track" id="progressTrack">
+              <div class="progress-bar"></div>
+            </div>
+            <div class="status-text" id="statusText">
+              Add videos to get started
+            </div>
+          </div>
+        </div>
+        <!-- /panel-right -->
+      </div>
+      <!-- /app-body -->
+    </div>
+    <!-- /app -->
+
+    <!-- ═══════════════════════════════════════
+     TRIM MODAL
+     ═══════════════════════════════════════ -->
+    <div class="trim-overlay" id="trimOverlay">
+      <div class="trim-card">
+        <div class="trim-modal-header">
+          <button
+            class="trim-modal-menu-btn"
+            id="trimModalMenuBtn"
+            type="button"
+            onclick="toggleTrimItemMenu()"
+            aria-label="Choose clip to trim"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Choose clip to trim"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M6 9l6 6 6-6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          <button
+            class="trim-modal-title"
+            id="trimModalTitle"
+            onclick="revealSourceFile(trimItemPath)"
+            title="Reveal in Explorer"
+          >
+            Trim
+          </button>
+          <button class="trim-modal-close" onclick="closeTrimModal()">✕</button>
+          <div
+            class="trim-item-menu"
+            id="trimItemMenu"
+            role="menu"
+            aria-label="Queue clips"
+          ></div>
+        </div>
+
+        <!-- Video -->
+        <div class="trim-video-wrap">
+          <video
+            id="trimVideo"
+            preload="metadata"
+            onclick="toggleTrimPlay()"
+          ></video>
+          <div class="trim-video-error" id="trimVideoError">
+            <span>Video preview unavailable</span>
+          </div>
+          <div class="trim-play-overlay" id="trimPlayOverlay">
+            <div class="trim-play-overlay-icon" id="trimPlayOverlayIcon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                <path d="M5 3l14 9-14 9V3z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transport -->
+        <div class="trim-transport">
+          <div class="trim-time-group">
+            <span class="trim-time" id="trimCurrentTime">0:00.00</span>
+            <span class="trim-time-sep">/</span>
+            <span class="trim-time" id="trimTotalTime">–:––</span>
+          </div>
+          <div class="trim-transport-controls">
+            <button
+              class="trim-ctrl-btn trim-nav-btn previous"
+              id="trimPrevBtn"
+              onclick="trimPrevClip()"
+              title="Previous clip"
+            >
+              <span
+                class="ui-icon"
+                data-icon="next-or-prior"
+                aria-hidden="true"
+              ></span>
+            </button>
+            <button
+              class="trim-ctrl-btn trim-skip-btn previous"
+              onclick="skipVideo(-5)"
+              title="−5s"
+            >
+              <span class="ui-icon" data-icon="skip" aria-hidden="true"></span>
+            </button>
+            <button
+              class="trim-ctrl-btn trim-frame-btn previous"
+              onclick="stepTrimFrame(-1)"
+              title="Previous frame"
+            >
+              <span class="ui-icon" data-icon="seek" aria-hidden="true"></span>
+            </button>
+            <button
+              class="trim-ctrl-btn primary"
+              id="trimPlayBtn"
+              onclick="toggleTrimPlay()"
+            >
+              <span class="ui-icon" data-icon="play" aria-hidden="true"></span>
+            </button>
+            <button
+              class="trim-ctrl-btn trim-frame-btn"
+              onclick="stepTrimFrame(1)"
+              title="Next frame"
+            >
+              <span class="ui-icon" data-icon="seek" aria-hidden="true"></span>
+            </button>
+            <button
+              class="trim-ctrl-btn trim-skip-btn"
+              onclick="skipVideo(5)"
+              title="+5s"
+            >
+              <span class="ui-icon" data-icon="skip" aria-hidden="true"></span>
+            </button>
+            <button
+              class="trim-ctrl-btn trim-nav-btn"
+              id="trimNextBtn"
+              onclick="trimNextClip()"
+              title="Next clip"
+            >
+              <span
+                class="ui-icon"
+                data-icon="next-or-prior"
+                aria-hidden="true"
+              ></span>
+            </button>
+          </div>
+          <div class="trim-transport-actions">
+            <button class="trim-btn-cancel" onclick="closeTrimModal()">
+              Cancel
+            </button>
+            <button class="trim-btn-apply" onclick="applyTrim()">Apply</button>
+          </div>
+        </div>
+
+        <!-- Timeline and audio lanes -->
+        <div class="trim-timeline-section">
+          <div class="trim-timeline-header">
+            <span class="tl-header-title">Timeline</span>
+            <div class="tl-header-main">
+              <span class="trim-audio-note"
+                >Click a lane to include or mute it on export</span
+              >
+            </div>
+          </div>
+          <div class="tl-grid">
+            <div class="tl-track-info" id="tlTrackInfo"></div>
+            <div class="tl-track-column">
+              <div class="tl-ruler" id="tlRuler" aria-hidden="true"></div>
+              <div class="tl-track" id="tlTrack">
+                <div class="tl-bar"></div>
+                <div class="trim-track-list" id="trimTrackList"></div>
+                <div class="tl-selection" id="tlSelection"></div>
+                <div class="tl-handle" id="tlHandleIn" data-handle="in"></div>
+                <div class="tl-handle" id="tlHandleOut" data-handle="out"></div>
+                <div class="tl-playhead" id="tlPlayhead"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+     CHANGELOG MODAL
+     ═══════════════════════════════════════ -->
+    <div class="changelog-overlay" id="changelogOverlay">
+      <div class="changelog-card">
+        <div class="changelog-header">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            style="flex-shrink: 0; color: var(--brand)"
+          >
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15v-4m0-4h.01"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          <h2>Changelog</h2>
+          <div class="changelog-header-info">
+            <button class="changelog-github-btn" onclick="openProjectUrl()">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"
+                />
+              </svg>
+              <span>GitHub</span>
+            </button>
+          </div>
+          <button class="changelog-close" onclick="closeChangelog()">✕</button>
+        </div>
+
+        <div class="changelog-body" id="changelogBody">
+          <!-- populated by buildChangelog() in app.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+     THUMBNAIL PREVIEW MODAL
+     ═══════════════════════════════════════ -->
+    <div class="preview-overlay" id="previewOverlay">
+      <div
+        class="preview-card"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Video preview"
+      >
+        <div class="preview-header">
+          <div class="preview-title-wrap">
+            <button
+              class="preview-title"
+              id="previewTitle"
+              onclick="revealSourceFile(previewItemPath)"
+              title="Reveal in Explorer"
+            >
+              Preview
+            </button>
+            <div class="preview-subtitle">
+              All audio tracks mixed for preview
+            </div>
+          </div>
+          <button class="preview-close" onclick="closePreviewModal()">✕</button>
+        </div>
+
+        <div class="preview-player-shell" id="previewPlayerShell">
+          <video id="previewVideo" preload="metadata"></video>
+          <div class="preview-video-error" id="previewVideoError">
+            Preview unavailable
+          </div>
+          <button
+            class="preview-fs-close"
+            id="previewFsCloseBtn"
+            onclick="closePreviewModal()"
+          >
+            ✕
+          </button>
+
+          <div class="preview-controls">
+            <div class="preview-controls-row">
+              <div class="preview-controls-left">
+                <button
+                  class="preview-icon-btn"
+                  id="previewPrevBtn"
+                  onclick="previewPrevClip()"
+                  title="Previous clip"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="next-or-prior"
+                    aria-hidden="true"
+                  ></span>
+                </button>
+
+                <button
+                  class="preview-icon-btn"
+                  id="previewPlayBtn"
+                  onclick="togglePreviewPlay()"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="play"
+                    aria-hidden="true"
+                  ></span>
+                </button>
+
+                <button
+                  class="preview-icon-btn"
+                  id="previewNextBtn"
+                  onclick="previewNextClip()"
+                  title="Next clip"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="next-or-prior"
+                    aria-hidden="true"
+                  ></span>
+                </button>
+              </div>
+
+              <div class="preview-progress-wrap">
+                <span class="preview-time" id="previewElapsedTime">0:00</span>
+                <input
+                  type="range"
+                  id="previewSeek"
+                  class="preview-seek"
+                  min="0"
+                  max="100"
+                  value="0"
+                  step="0.1"
+                />
+                <span class="preview-time" id="previewDurationTime">0:00</span>
+              </div>
+
+              <div class="preview-controls-right">
+                <div class="preview-volume-wrap">
+                  <button
+                    class="preview-icon-btn"
+                    id="previewMuteBtn"
+                    onclick="togglePreviewMute()"
+                  >
+                    <span
+                      class="ui-icon"
+                      data-icon="volume"
+                      aria-hidden="true"
+                    ></span>
+                  </button>
+                  <input
+                    type="range"
+                    id="previewVolume"
+                    class="preview-volume"
+                    min="0"
+                    max="1"
+                    value="1"
+                    step="0.05"
+                  />
+                </div>
+
+                <button
+                  class="preview-icon-btn"
+                  onclick="openPreviewInExternal()"
+                  data-custom-tooltip="External Player"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="external"
+                    aria-hidden="true"
+                  ></span>
+                </button>
+                <button
+                  class="preview-icon-btn"
+                  id="previewTrimBtn"
+                  onclick="openPreviewTrimModal()"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="trim"
+                    aria-hidden="true"
+                    data-custom-tooltip="Trim"
+                  ></span>
+                </button>
+                <button
+                  class="preview-icon-btn"
+                  id="previewFullscreenBtn"
+                  onclick="togglePreviewFullscreen()"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="fullscreen"
+                    aria-hidden="true"
+                  ></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/tooltips.js"></script>
+    <script src="changelog.js"></script>
+    <script src="app.js"></script>
+    <script src="js/helpers.js"></script>
+    <script src="js/sliders.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/layout-resizer.js"></script>
+    <script src="js/queue.js"></script>
+    <script src="js/preview.js"></script>
+    <script src="js/compressor.js"></script>
+    <script src="js/trim.js"></script>
+    <script src="js/changelog.js"></script>
+  </body>
+</html>

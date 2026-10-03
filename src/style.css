@@ -1,0 +1,18 @@
+/* ════════════════════════════════════════
+   PEAK — Video Compressor  |  style.css
+   Entry point — imports all partials
+   ════════════════════════════════════════ */
+
+@import url("css/base.css");
+@import url("css/layout.css");
+@import url("css/titlebar.css");
+@import url("css/header.css");
+@import url("css/dropzone.css");
+@import url("css/queue.css");
+@import url("css/settings.css");
+@import url("css/controls.css");
+@import url("css/tooltip.css");
+@import url("css/preview-modal.css");
+@import url("css/trim-modal.css");
+@import url("css/changelog-modal.css");
+@import url("css/rename-modal.css");
