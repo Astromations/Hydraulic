@@ -367,7 +367,6 @@
   width: 0%;
 }
 .qi-eta {
-  font-family: "Gg Sans Mono", "SFMono-Regular", "Consolas", monospace;
   font-size: 10px;
   color: var(--text-muted);
   white-space: nowrap;
