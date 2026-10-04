@@ -43,6 +43,8 @@ copy /Y "Font\style.css" "src\Font\style.css" >nul
 copy /Y "Font\ggsans-Normal.woff2" "src\Font\ggsans-Normal.woff2" >nul
 copy /Y "Font\ggsans-Normal.woff" "src\Font\ggsans-Normal.woff" >nul
 copy /Y "Font\ggsans-Normal.ttf" "src\Font\ggsans-Normal.ttf" >nul
+copy /Y "Font\ggsans-Mono.woff2" "src\Font\ggsans-Mono.woff2" >nul
+copy /Y "Font\ggsans-Mono.ttf" "src\Font\ggsans-Mono.ttf" >nul
 if errorlevel 1 (
   echo [ERROR] Could not stage the custom font files.
   pause
