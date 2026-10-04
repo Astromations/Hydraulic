@@ -181,7 +181,7 @@ function onItemProgress(id, progress, eta) {
   }
 }
 
-function onItemDone(id, outputPath) {
+async function onItemDone(id, outputPath) {
   const item = queue.find((i) => i.id === id);
   if (item) item.status = "done";
   outputPaths[id] = outputPath;
@@ -189,10 +189,23 @@ function onItemDone(id, outputPath) {
   if (main) main.style.setProperty("--row-progress", "100%");
   const sr = document.getElementById(`${id}-status`);
   if (sr) {
-    const name = outputPath.split(/[/\\]/).pop();
     sr.innerHTML = `
       <span class="chip chip-done">Done</span>
       <button class="qi-file-link" id="${id}-outlink" onclick="openOutputFile('${id}')" title="${esc(outputPath)}"><span class="ui-icon" data-icon="link-to" aria-hidden="true"></span></button>`;
+  }
+  try {
+    const finalSize = await invoke("get_file_size", { filepath: outputPath });
+    const currentItem = queue.find((queueItem) => queueItem.id === id);
+    const chip = document.querySelector(`#${id}-status .chip-done`);
+    if (
+      currentItem?.status === "done" &&
+      outputPaths[id] === outputPath &&
+      chip
+    ) {
+      chip.textContent = `Done • ${fmtFileSize(finalSize)}`;
+    }
+  } catch (_) {
+    // Keep the completed chip usable if file metadata is unavailable.
   }
   const renameBtn = document.getElementById(`${id}-renamebtn`);
   if (renameBtn) renameBtn.disabled = false;

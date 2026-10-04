@@ -45,6 +45,19 @@ function fmtEta(secs) {
   return `ETA ${Math.floor(secs / 60)}m ${secs % 60}s`;
 }
 
+function fmtFileSize(bytes) {
+  if (!Number.isFinite(bytes) || bytes < 0) return "Unknown size";
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ["KB", "MB", "GB", "TB"];
+  let value = bytes;
+  let unit = -1;
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024;
+    unit++;
+  }
+  return `${value >= 10 ? value.toFixed(0) : value.toFixed(1)} ${units[unit]}`;
+}
+
 function setStatus(msg, type) {
   const el = document.getElementById("statusText");
   el.textContent = msg;

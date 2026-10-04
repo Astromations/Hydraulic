@@ -435,6 +435,13 @@ fn get_file_url(filepath: String) -> String {
     filepath
 }
 
+#[tauri::command]
+fn get_file_size(filepath: String) -> Result<u64, String> {
+    fs::metadata(filepath)
+        .map(|metadata| metadata.len())
+        .map_err(|error| format!("Failed to read output file metadata: {}", error))
+}
+
 #[derive(Serialize)]
 struct MixedPreviewResult {
     url: String,
@@ -1226,6 +1233,7 @@ fn main() {
             get_audio_tracks,
             // Video serving
             get_file_url,
+            get_file_size,
             get_mixed_preview_url,
             delete_temp_file,
             // Settings
