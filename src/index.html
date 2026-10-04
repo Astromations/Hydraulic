@@ -801,6 +801,35 @@
             </button>
           </div>
           <div class="trim-transport-actions">
+            <div class="trim-volume-wrap">
+              <button
+                class="trim-btn-volume"
+                id="trimVolumeBtn"
+                type="button"
+                aria-label="Adjust preview volume"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <span
+                  class="ui-icon"
+                  data-icon="volume"
+                  aria-hidden="true"
+                ></span>
+              </button>
+              <div class="trim-volume-popover">
+                <input
+                  type="range"
+                  id="trimVolume"
+                  class="trim-volume-slider"
+                  min="0"
+                  max="1"
+                  value="1"
+                  step="0.05"
+                  orient="vertical"
+                  aria-label="Preview volume"
+                />
+              </div>
+            </div>
             <button
               class="trim-btn-remove"
               onclick="removeTrimItem()"
@@ -944,21 +973,20 @@
               </li>
             </ul>
             <p class="info-attribution">
-              UI icons:
+              UI icons were sourced from the
               <a
                 href="https://www.figma.com/community/file/1316822758717784787/ultimate-discord-library"
                 target="_blank"
                 onclick="openExternalUrl(event, this.href)"
                 >Ultimate Discord Library</a
-              >
-              by Discord Staff and
+              >, originally created by Discord Staff and
               <a
                 href="https://koto.com/work?from=hydraulic"
                 target="_blank"
                 onclick="openExternalUrl(event, this.href)"
                 >Koto Studios</a
-              >. Used under their original rights; Hydraulic is not affiliated
-              with Discord Inc.
+              >. All assets are used under their original rights; Hydraulic is
+              not affiliated with Discord Inc.
             </p>
           </section>
         </div>
