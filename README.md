@@ -1,80 +1,61 @@
-# Peak - Discord Video Compressor
+<div align="center">
+  <img src="peak.png" alt="Hydraulic" width="128" height="128" />
+  <h1>Hydraulic</h1>
+  <p><strong>Discord Video Compressor</strong></p>
 
-A Discord-styled video compressor. Drop a video in, pick your target size, and get a compressed `.mp4` back.
+  <p>
+    <a href="https://github.com/Astromations/Hydraulic">
+      <img alt="Release" src="https://img.shields.io/github/v/release/Astromations/Hydraulic---Video-Compressor?style=for-the-badge" />
+    </a>
+    <img alt="Windows/macOS/Linux" src="https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-5865F2?style=for-the-badge" />
+    <img alt="Last update" src="https://img.shields.io/github/last-commit/Astromations/Hydraulic?label=Updated&style=for-the-badge" />
+    <img alt="License" src="https://img.shields.io/badge/License-Unlicensed-red?style=for-the-badge" />
+  </p>
+</div>
 
----
+Hydraulic is a lightweight desktop app for shrinking videos to a Discord-friendly size while keeping the output watchable and easy to share. Drag in a file, select a target size, and export a compressed MP4 in a few clicks.
 
-## Files
+[![Get the latest installer](https://img.shields.io/badge/Get%20latest%20installer-Releases-2ea44f?style=for-the-badge&logo=github)](https://github.com/Astromations/Hydraulic/releases)
 
-```
-main.py          ← Python backend (FFmpeg logic + pywebview API)
-index.html       ← Discord UI (HTML/CSS/JS)
-requirements.txt ← Python dependencies
-build.bat        ← One-click build to .exe (Windows)
-build.sh         ← Install script for Linux
-```
+## Features
 
----
+- Simple drag-and-drop workflow
+- Target-size compression for Discord uploads
+- FFmpeg-powered conversion for strong compression quality
+- Cross-platform desktop app built with Tauri
+- Exported files saved alongside the original with a compressed suffix
 
-## Running from source
+## Requirements
 
-1. **Install FFmpeg** and make sure `ffmpeg` and `ffprobe` are in your PATH.
-   - Windows
-     - Download: https://ffmpeg.org/download.html
-     - extract → add the `bin/` folder to PATH → restart terminal
-     - Useful tutorial: https://www.youtube.com/watch?v=6sim9aF3g2c&t
-   - Linux
-     - Arch: `sudo pacman -S ffmpeg`
-     - Ubuntu: `sudo apt install ffmpeg`
-     - Fedora: `sudo dnf install ffmpeg`
-2. **Install Python dependencies**
+- Windows, macOS, or Linux
+- FFmpeg bundled with the app for the packaged builds
+- A supported video file such as MP4, MOV, or MKV
 
-   ```
-   pip install -r requirements.txt
-   ```
+## Download
 
-3. **Run**
-   ```
-   python main.py
-   ```
+Installers are published on the project releases page:
 
----
+- https://github.com/Astromations/Hydraulic/releases
 
-## Building the .exe
-
-Double-click `build.bat`, or run it from a terminal:
-
-```
-build.bat
-```
-
-The Windows build copies `ffmpeg.exe` and `ffprobe.exe` into the installer, so users do not need to install FFmpeg separately. Your installer will appear in `target/release/bundle/`.
-
----
-
-## Building on Linux
-
-Run the provided build script from your terminal:
+## Build from source
 
 ```bash
-chmod +x build.sh
-./build.sh
+cargo tauri build
 ```
 
-This will:
-
-- Install GTK dependencies for your distro (apt, pacman, dnf, or zypper)
-- Set up a Python virtual environment
-- Install Python dependencies
-- Create a `peak` command you can run from anywhere
-
-**Warning:**
-The project folder must stay in place after building — the launcher points to it directly.
+This will generate a release build in the Tauri build output directory. The app bundles FFmpeg resources for the packaged installer so users do not need to install FFmpeg separately.
 
 ## Notes
 
-- The output file is saved next to the original, with `_compressed` added to the name.
-- GPU encoding (NVENC) requires an NVIDIA GPU. Uncheck it if you don't have one.
-- Audio bitrate defaults to 128 kbps — good for most Discord sharing.
+- Output files are saved next to the original with `_compressed` added to the filename.
+- If compression quality is poor for a particular source, lower the target size or disable GPU acceleration if your hardware does not support it.
+- This repository does not currently include a license file, so it is marked as Unlicensed in the project badges.
 
-`Ample help from Claude`
+## Project info
+
+- Name: Hydraulic
+- Icon: `peak.png`
+- OS: Windows / macOS / Linux
+- Release page: https://github.com/Astromations/Hydraulic---Video-Compressor/releases
+- Last update: 2026-10-04
+- License: Unlicensed
