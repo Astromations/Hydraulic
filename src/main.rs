@@ -9,10 +9,11 @@ use std::io::{BufRead, BufReader, Read};
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
 use std::sync::{
-    atomic::{AtomicBool, Ordering},
+    atomic::{AtomicBool, AtomicU64, Ordering},
     Arc, Mutex,
 };
-use std::time::Instant;
+use std::collections::HashSet;
+use std::time::{Duration, Instant, SystemTime};
 use tauri::{AppHandle, Manager, State};
 
 // ─── App State ───────────────────────────────────────────────────────────────
@@ -23,6 +24,94 @@ struct AppState {
     /// Holds the currently running FFmpeg child process so it can be killed.
     active_proc: Arc<Mutex<Option<Child>>>,
     launch_paths: Mutex<Vec<String>>,
+    temp_files: Arc<Mutex<HashSet<PathBuf>>>,
+}
+
+const TEMP_FILE_MAX_AGE: Duration = Duration::from_secs(30 * 60);
+const TEMP_SWEEP_INTERVAL: Duration = Duration::from_secs(10 * 60);
+
+static TEMP_FILE_COUNTER: AtomicU64 = AtomicU64::new(0);
+
+fn temp_file_path(prefix: &str, extension: &str) -> PathBuf {
+    let counter = TEMP_FILE_COUNTER.fetch_add(1, Ordering::Relaxed);
+    std::env::temp_dir().join(format!(
+        "{}_{}_{}_{}.{}",
+        prefix,
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|duration| duration.as_nanos())
+            .unwrap_or_default(),
+        counter,
+        extension
+    ))
+}
+
+fn register_temp_file(registry: &Arc<Mutex<HashSet<PathBuf>>>, path: &Path) {
+    if let Ok(mut files) = registry.lock() {
+        files.insert(path.to_path_buf());
+    }
+}
+
+fn unregister_temp_file(registry: &Arc<Mutex<HashSet<PathBuf>>>, path: &Path) {
+    if let Ok(mut files) = registry.lock() {
+        files.remove(path);
+    }
+}
+
+struct TempFileGuard {
+    registry: Arc<Mutex<HashSet<PathBuf>>>,
+    path: PathBuf,
+}
+
+impl TempFileGuard {
+    fn new(registry: Arc<Mutex<HashSet<PathBuf>>>, path: PathBuf) -> Self {
+        register_temp_file(&registry, &path);
+        Self { registry, path }
+    }
+}
+
+impl Drop for TempFileGuard {
+    fn drop(&mut self) {
+        unregister_temp_file(&self.registry, &self.path);
+    }
+}
+
+fn cleanup_temp_files(registry: &Arc<Mutex<HashSet<PathBuf>>>) {
+    let active_files = registry.lock().map(|files| files.clone()).unwrap_or_default();
+    let cutoff = SystemTime::now().checked_sub(TEMP_FILE_MAX_AGE);
+    let entries = match fs::read_dir(std::env::temp_dir()) {
+        Ok(entries) => entries,
+        Err(_) => return,
+    };
+
+    for entry in entries.flatten() {
+        let path = entry.path();
+        let is_owned = path
+            .file_name()
+            .and_then(|name| name.to_str())
+            .map(|name| {
+                name.starts_with("hydraulic_preview_") || name.starts_with("hydraulic_pass_")
+            })
+            .unwrap_or(false);
+        let is_active = active_files.iter().any(|active| {
+            path == *active
+                || path
+                    .to_string_lossy()
+                    .starts_with(active.to_string_lossy().as_ref())
+        });
+        if !is_owned || is_active {
+            continue;
+        }
+
+        let is_old = match (cutoff, fs::metadata(&path).and_then(|metadata| metadata.modified())) {
+            (Some(cutoff), Ok(modified)) => modified <= cutoff,
+            _ => false,
+        };
+        if is_old {
+            let _ = fs::remove_file(path);
+        }
+    }
 }
 
 // ─── Internal Helpers ────────────────────────────────────────────────────────
@@ -329,13 +418,7 @@ fn get_thumbnail(filepath: String) -> Option<String> {
         return None;
     }
 
-    let tmp_path = std::env::temp_dir().join(format!(
-        "hydraulic_thumb_{}.jpg",
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.subsec_nanos())
-            .unwrap_or(0)
-    ));
+    let tmp_path = temp_file_path("hydraulic_thumb", "jpg");
 
     for seek in ["00:00:01", "00:00:00"] {
         let _ = fs::remove_file(&tmp_path); // clean any leftover
@@ -450,6 +533,7 @@ struct MixedPreviewResult {
 
 #[tauri::command]
 fn get_mixed_preview_url(
+    state: State<AppState>,
     filepath: String,
     audio_volumes: Option<Vec<f64>>,
 ) -> MixedPreviewResult {
@@ -481,14 +565,7 @@ fn get_mixed_preview_url(
         .and_then(|e| e.to_str())
         .unwrap_or("mp4");
 
-    let tmp_path = std::env::temp_dir().join(format!(
-        "hydraulic_preview_{}.{}",
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.subsec_nanos())
-            .unwrap_or(0),
-        src_ext
-    ));
+    let tmp_path = temp_file_path("hydraulic_preview", src_ext);
 
     let filter_in: String = (0..n)
         .enumerate()
@@ -537,6 +614,7 @@ fn get_mixed_preview_url(
     if status.map(|s| s.success()).unwrap_or(false)
         && tmp_path.metadata().map(|m| m.len() > 0).unwrap_or(false)
     {
+        register_temp_file(&state.temp_files, &tmp_path);
         MixedPreviewResult {
             url: tmp_str.clone(),
             tmp: Some(tmp_str),
@@ -551,9 +629,11 @@ fn get_mixed_preview_url(
 }
 
 #[tauri::command]
-fn delete_temp_file(tmp_path: String) {
+fn delete_temp_file(state: State<AppState>, tmp_path: String) {
     if !tmp_path.is_empty() {
-        let _ = fs::remove_file(&tmp_path);
+        let path = PathBuf::from(&tmp_path);
+        unregister_temp_file(&state.temp_files, &path);
+        let _ = fs::remove_file(path);
     }
 }
 
@@ -779,6 +859,7 @@ fn compress(
 
     let cancel_flag = state.cancel_flag.clone();
     let active_proc = state.active_proc.clone();
+    let temp_files = state.temp_files.clone();
 
     std::thread::spawn(move || {
         match do_compress(
@@ -798,6 +879,7 @@ fn compress(
             audio_volumes.as_deref(),
             cancel_flag,
             active_proc,
+            temp_files,
         ) {
             Ok(output_file) => {
                 let id_json = serde_json::to_string(&item_id).unwrap_or_default();
@@ -838,6 +920,7 @@ fn do_compress(
     audio_volumes: Option<&[f64]>,
     cancel_flag: Arc<AtomicBool>,
     active_proc: Arc<Mutex<Option<Child>>>,
+    temp_files: Arc<Mutex<HashSet<PathBuf>>>,
 ) -> Result<String, String> {
     if !Path::new(input_file).is_file() {
         return Err(format!("File not found: {}", input_file));
@@ -1058,6 +1141,11 @@ fn do_compress(
         .join(format!("hydraulic_pass_{}", item_id))
         .to_string_lossy()
         .to_string();
+    let _passlog_guard = if two_pass && !use_gif {
+        Some(TempFileGuard::new(temp_files, PathBuf::from(&passlog)))
+    } else {
+        None
+    };
 
     let (p1_codec, p2_codec, s_codec): (Vec<String>, Vec<String>, Vec<String>) = if use_gif {
         (vec![], vec![], vec!["-c:v".into(), "gif".into()])
@@ -1204,6 +1292,9 @@ fn do_compress(
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 fn main() {
+    let temp_files = Arc::new(Mutex::new(HashSet::new()));
+    cleanup_temp_files(&temp_files);
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
@@ -1219,6 +1310,15 @@ fn main() {
             cancel_flag: Arc::new(AtomicBool::new(false)),
             active_proc: Arc::new(Mutex::new(None)),
             launch_paths: Mutex::new(supported_video_paths(std::env::args().skip(1))),
+            temp_files: temp_files.clone(),
+        })
+        .setup(move |_| {
+            let temp_files = temp_files.clone();
+            std::thread::spawn(move || loop {
+                std::thread::sleep(TEMP_SWEEP_INTERVAL);
+                cleanup_temp_files(&temp_files);
+            });
+            Ok(())
         })
         .on_window_event(|window, event| {
             if let tauri::WindowEvent::DragDrop(tauri::DragDropEvent::Drop { paths, .. }) = event {
