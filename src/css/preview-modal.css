@@ -197,6 +197,14 @@
     rgba(10, 10, 11, 0.72) 48%,
     rgba(0, 0, 0, 0) 100%
   );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s;
+}
+
+.preview-controls.visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .preview-controls .ui-icon {
