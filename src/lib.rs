@@ -479,6 +479,27 @@ fn delete_temp_file(tmp_path: String) {
     }
 }
 
+fn cleanup_preview_files() {
+    let temp_dir = std::env::temp_dir();
+    let entries = match fs::read_dir(temp_dir) {
+        Ok(entries) => entries,
+        Err(_) => return,
+    };
+
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_file()
+            && path
+                .file_name()
+                .and_then(|name| name.to_str())
+                .map(|name| name.starts_with("peak_preview_"))
+                .unwrap_or(false)
+        {
+            let _ = fs::remove_file(path);
+        }
+    }
+}
+
 // ─── Commands: File / System Operations ──────────────────────────────────────
 
 #[tauri::command]
@@ -1128,6 +1149,8 @@ fn do_compress(
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 pub fn run() {
+    cleanup_preview_files();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .manage(AppState {
@@ -1169,6 +1192,11 @@ pub fn run() {
             window_close,
             set_window_fullscreen,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running Peak");
+        .build(tauri::generate_context!())
+        .expect("error while building Peak")
+        .run(|_, event| {
+            if matches!(event, tauri::RunEvent::Exit { .. }) {
+                cleanup_preview_files();
+            }
+        })
 }
