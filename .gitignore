@@ -1,6 +1,4 @@
 target
-TODO.md
 *.spec
 *.exe
 *.zip
-Cargo.lock
