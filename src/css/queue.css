@@ -107,12 +107,13 @@
 }
 .queue-wrap::-webkit-scrollbar-track,
 .trim-card::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-secondary);
+  border-radius: 6px;
 }
 .queue-wrap::-webkit-scrollbar-thumb,
 .trim-card::-webkit-scrollbar-thumb {
   background: var(--bg-tertiary);
-  border-radius: 3px;
+  border-radius: 6px;
 }
 
 .queue-empty {
@@ -296,7 +297,7 @@
   font-family: inherit;
   text-align: left;
   cursor: pointer;
-  width: 100%;
+  max-width: 100%;
   transition: color 0.12s;
 }
 .qi-name-link:hover {
