@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  compressor.js
+// HYDRAULIC — Video Compressor  |  compressor.js
 // ════════════════════════════════════════
 // Queue runner, item state renderers, rename dialogs.
 

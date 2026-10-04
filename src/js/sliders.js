@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  sliders.js
+// HYDRAULIC — Video Compressor  |  sliders.js
 // ════════════════════════════════════════
 // Slider initialization and settings reset.
 
@@ -14,9 +14,7 @@ function initSlider(id, labelId, fmt, min, max, snapPoints = []) {
     const width = markerContainer.clientWidth;
     markers.forEach((marker) => {
       const value = parseFloat(marker.dataset.value);
-      const position = Math.round(
-        ((value - min) / (max - min)) * width,
-      );
+      const position = Math.round(((value - min) / (max - min)) * width);
       marker.style.transform = `translateX(${position}px) translateX(-50%)`;
     });
   }
