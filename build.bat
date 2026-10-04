@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-echo [Peak] Building Tauri app...
+echo [Hydraulic] Building Tauri app...
 
 where cargo >nul 2>&1
 if errorlevel 1 (
@@ -27,7 +27,7 @@ if not defined FFPROBE_SOURCE (
   exit /b 1
 )
 
-echo [Peak] Staging bundled FFmpeg...
+echo [Hydraulic] Staging bundled FFmpeg...
 if not exist "resources\ffmpeg" mkdir "resources\ffmpeg"
 copy /Y "%FFMPEG_SOURCE%" "resources\ffmpeg\ffmpeg.exe" >nul
 copy /Y "%FFPROBE_SOURCE%" "resources\ffmpeg\ffprobe.exe" >nul
@@ -37,7 +37,7 @@ if errorlevel 1 (
   exit /b 1
 )
 
-echo [Peak] Staging custom font...
+echo [Hydraulic] Staging custom font...
 if not exist "src\Font" mkdir "src\Font"
 copy /Y "Font\style.css" "src\Font\style.css" >nul
 copy /Y "Font\ggsans-Normal.woff2" "src\Font\ggsans-Normal.woff2" >nul

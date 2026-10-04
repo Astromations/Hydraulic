@@ -1,10 +1,10 @@
 [package]
-name = "Peak"
+name = "Hydraulic"
 version = "1.7.0"
 edition = "2021"
 
 [lib]
-name = "peak_lib"
+name = "hydraulic_lib"
 path = "src/lib.rs"
 crate-type = ["lib", "cdylib", "staticlib"]
 

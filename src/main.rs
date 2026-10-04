@@ -123,7 +123,7 @@ fn settings_file_path() -> PathBuf {
     } else {
         dirs::home_dir().unwrap_or_default()
     };
-    let dir = base.join("Peak");
+    let dir = base.join("Hydraulic");
     fs::create_dir_all(&dir).ok();
     dir.join("settings.json")
 }
@@ -330,7 +330,7 @@ fn get_thumbnail(filepath: String) -> Option<String> {
     }
 
     let tmp_path = std::env::temp_dir().join(format!(
-        "peak_thumb_{}.jpg",
+        "hydraulic_thumb_{}.jpg",
         std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.subsec_nanos())
@@ -423,7 +423,7 @@ fn get_audio_tracks(filepath: String) -> Vec<AudioTrack> {
 
 // ─── Commands: Video Serving ─────────────────────────────────────────────────
 //
-// In pywebview, Peak served videos via a local HTTP server. In Tauri, the
+// In pywebview, Hydraulic served videos via a local HTTP server. In Tauri, the
 // `asset://` protocol (via `convertFileSrc` on the JS side) handles this
 // natively with range-request support. These commands return raw paths; the
 // frontend calls `window.__TAURI__.core.convertFileSrc(path)` before using
@@ -482,7 +482,7 @@ fn get_mixed_preview_url(
         .unwrap_or("mp4");
 
     let tmp_path = std::env::temp_dir().join(format!(
-        "peak_preview_{}.{}",
+        "hydraulic_preview_{}.{}",
         std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.subsec_nanos())
@@ -1055,7 +1055,7 @@ fn do_compress(
     };
 
     let passlog = std::env::temp_dir()
-        .join(format!("peak_pass_{}", item_id))
+        .join(format!("hydraulic_pass_{}", item_id))
         .to_string_lossy()
         .to_string();
 
@@ -1258,5 +1258,5 @@ fn main() {
             set_window_fullscreen,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running Peak");
+        .expect("error while running Hydraulic");
 }

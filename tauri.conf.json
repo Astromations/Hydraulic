@@ -1,7 +1,7 @@
 {
-  "productName": "Peak",
-  "version": "1.6.0",
-  "identifier": "com.peak",
+  "productName": "Hydraulic",
+  "version": "2.0.0",
+  "identifier": "com.hydraulic",
 
   "build": {
     "frontendDist": "./src",
@@ -18,8 +18,8 @@
       {
         "ext": ["mp4", "mkv", "mov"],
         "mimeType": "video/*",
-        "name": "Peak",
-        "description": "Open video files with Peak"
+        "name": "Hydraulic",
+        "description": "Open video files with Hydraulic"
       }
     ],
     "icon": [
@@ -35,7 +35,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Peak - Discord Video Compressor",
+        "title": "Hydraulic - Discord Video Compressor",
         "width": 900,
         "height": 720,
         "minWidth": 600,
