@@ -7,7 +7,7 @@
     <a href="https://github.com/Astromations/Hydraulic">
       <img alt="Release" src="https://img.shields.io/github/v/release/Astromations/Hydraulic?style=for-the-badge" />
     </a>
-    <img alt="Windows/macOS/Linux" src="https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-5865F2?style=for-the-badge" />
+    <img alt="Windows only" src="https://img.shields.io/badge/OS-Windows%20Only-0078D6?style=for-the-badge" />
     <img alt="Last update" src="https://img.shields.io/github/last-commit/Astromations/Hydraulic?label=Updated&style=for-the-badge" />
     <img alt="License" src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
   </p>
@@ -27,7 +27,7 @@ Hydraulic is a lightweight desktop app for shrinking videos to a Discord-friendl
 
 ## Requirements
 
-- Windows, macOS, or Linux
+- Windows
 - FFmpeg bundled with the app for the packaged builds
 - A supported video file such as MP4, MOV, or MKV
 

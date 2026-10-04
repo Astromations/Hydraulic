@@ -91,8 +91,8 @@ document.addEventListener("click", () => {
 
 function saveSettings() {
   const settings = {
-    targetSize: document.getElementById("sizeSlider").value,
-    audioBitrate: document.getElementById("audioSlider").value,
+    targetSize: document.getElementById("sizeVal").value,
+    audioBitrate: document.getElementById("audioVal").value,
     gpu: document.getElementById("gpuToggle").checked,
     combineAudio: document.getElementById("combineAudioToggle").checked,
     twoPass: document.getElementById("twoPassToggle").checked,
@@ -109,10 +109,10 @@ function applySettings(settings) {
   if (!settings) return;
   try {
     // Sliders
-    document.getElementById("sizeSlider").value = settings.targetSize || 20;
-    document.getElementById("audioSlider").value = settings.audioBitrate || 128;
-    document.getElementById("sizeSlider").dispatchEvent(new Event("input"));
-    document.getElementById("audioSlider").dispatchEvent(new Event("input"));
+    document.getElementById("sizeVal").value = settings.targetSize || 20;
+    document.getElementById("audioVal").value = settings.audioBitrate || 128;
+    document.getElementById("sizeVal").dispatchEvent(new Event("change"));
+    document.getElementById("audioVal").dispatchEvent(new Event("change"));
     // Toggles
     document.getElementById("gpuToggle").checked = !!settings.gpu;
     document.getElementById("combineAudioToggle").checked =

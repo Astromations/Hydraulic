@@ -44,12 +44,16 @@ function initSlider(id, labelId, fmt, min, max, snapPoints = []) {
   const label = labelId && document.getElementById(labelId);
   if (label instanceof HTMLInputElement) {
     const updateFromLabel = () => {
-      const value = Math.min(
-        max,
-        Math.max(min, parseFloat(label.value) || min),
-      );
-      slider.value = value;
+      const rawValue = label.value.trim();
+      const value = Number(rawValue);
+      if (!/^[1-9]\d*$/.test(rawValue) || !Number.isSafeInteger(value)) {
+        label.value = slider.value;
+        return;
+      }
+
+      slider.value = Math.min(max, Math.max(min, value));
       slider.dispatchEvent(new Event("input", { bubbles: true }));
+      label.value = rawValue;
     };
     label.addEventListener("change", updateFromLabel);
     label.addEventListener("keydown", (event) => {
