@@ -124,21 +124,7 @@
         </div>
         <div class="header-actions">
           <button class="header-icon-btn" onclick="openChangelog()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-              <circle
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="2"
-              />
-              <path
-                d="M12 8v4M12 16h.01"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
+            <span class="ui-icon" data-icon="info" aria-hidden="true"></span>
           </button>
         </div>
       </div>
@@ -254,22 +240,21 @@
           <!-- Settings -->
           <div class="settings">
             <div class="settings-header">
-              <span class="section-label">Settings</span>
+              <span class="section-label">
+                <span
+                  class="ui-icon"
+                  data-icon="settings"
+                  aria-hidden="true"
+                ></span>
+                <p>Settings</p></span
+              >
               <button class="reset-btn" onclick="resetSettings()">
-                <svg
-                  width="50"
-                  height="50"
-                  viewBox="0 0 50 50"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M25 0C11.2125 0 0 11.2125 0 25H8.33333C8.33333 15.8083 15.8083 8.33332 25 8.33332C34.1917 8.33332 41.6668 15.8083 41.6668 25C41.6668 34.1917 34.1917 41.6667 25 41.6667C20.5082 41.6667 16.3958 39.8333 13.2875 36.7168L20.8332 29.1667H0V50L7.3375 42.6625C11.9958 47.35 18.2542 50 25 50C38.7875 50 50 38.7875 50 25C50 11.2167 38.7875 0 25 0Z"
-                    fill="white"
-                    fill-opacity="0.6"
-                  />
-                </svg>
-                <span>Reset defaults</span>
+                <span
+                  class="ui-icon"
+                  data-icon="requeue"
+                  aria-hidden="true"
+                ></span>
+                <p>Reset defaults</p>
               </button>
             </div>
 

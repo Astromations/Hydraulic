@@ -153,3 +153,9 @@ body {
 .ui-icon[data-icon="drag"] {
   --icon-url: url("../ui-icons/Drag.svg");
 }
+.ui-icon[data-icon="info"] {
+  --icon-url: url("../ui-icons/Info_Hollow.svg");
+}
+.ui-icon[data-icon="settings"] {
+  --icon-url: url("../ui-icons/Settings.svg");
+}
