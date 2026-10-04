@@ -9,10 +9,11 @@ use std::io::{BufRead, BufReader, Read};
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
 use std::sync::{
-    atomic::{AtomicBool, Ordering},
+    atomic::{AtomicBool, AtomicU64, Ordering},
     Arc, Mutex,
 };
-use std::time::Instant;
+use std::collections::HashSet;
+use std::time::{Duration, Instant, SystemTime};
 use tauri::{AppHandle, Manager, State};
 
 // ─── App State ───────────────────────────────────────────────────────────────
@@ -22,6 +23,95 @@ struct AppState {
     cancel_flag: Arc<AtomicBool>,
     /// Holds the currently running FFmpeg child process so it can be killed.
     active_proc: Arc<Mutex<Option<Child>>>,
+    launch_paths: Mutex<Vec<String>>,
+    temp_files: Arc<Mutex<HashSet<PathBuf>>>,
+}
+
+const TEMP_FILE_MAX_AGE: Duration = Duration::from_secs(30 * 60);
+const TEMP_SWEEP_INTERVAL: Duration = Duration::from_secs(10 * 60);
+
+static TEMP_FILE_COUNTER: AtomicU64 = AtomicU64::new(0);
+
+fn temp_file_path(prefix: &str, extension: &str) -> PathBuf {
+    let counter = TEMP_FILE_COUNTER.fetch_add(1, Ordering::Relaxed);
+    std::env::temp_dir().join(format!(
+        "{}_{}_{}_{}.{}",
+        prefix,
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|duration| duration.as_nanos())
+            .unwrap_or_default(),
+        counter,
+        extension
+    ))
+}
+
+fn register_temp_file(registry: &Arc<Mutex<HashSet<PathBuf>>>, path: &Path) {
+    if let Ok(mut files) = registry.lock() {
+        files.insert(path.to_path_buf());
+    }
+}
+
+fn unregister_temp_file(registry: &Arc<Mutex<HashSet<PathBuf>>>, path: &Path) {
+    if let Ok(mut files) = registry.lock() {
+        files.remove(path);
+    }
+}
+
+struct TempFileGuard {
+    registry: Arc<Mutex<HashSet<PathBuf>>>,
+    path: PathBuf,
+}
+
+impl TempFileGuard {
+    fn new(registry: Arc<Mutex<HashSet<PathBuf>>>, path: PathBuf) -> Self {
+        register_temp_file(&registry, &path);
+        Self { registry, path }
+    }
+}
+
+impl Drop for TempFileGuard {
+    fn drop(&mut self) {
+        unregister_temp_file(&self.registry, &self.path);
+    }
+}
+
+fn cleanup_temp_files(registry: &Arc<Mutex<HashSet<PathBuf>>>) {
+    let active_files = registry.lock().map(|files| files.clone()).unwrap_or_default();
+    let cutoff = SystemTime::now().checked_sub(TEMP_FILE_MAX_AGE);
+    let entries = match fs::read_dir(std::env::temp_dir()) {
+        Ok(entries) => entries,
+        Err(_) => return,
+    };
+
+    for entry in entries.flatten() {
+        let path = entry.path();
+        let is_owned = path
+            .file_name()
+            .and_then(|name| name.to_str())
+            .map(|name| {
+                name.starts_with("hydraulic_preview_") || name.starts_with("hydraulic_pass_")
+            })
+            .unwrap_or(false);
+        let is_active = active_files.iter().any(|active| {
+            path == *active
+                || path
+                    .to_string_lossy()
+                    .starts_with(active.to_string_lossy().as_ref())
+        });
+        if !is_owned || is_active {
+            continue;
+        }
+
+        let is_old = match (cutoff, fs::metadata(&path).and_then(|metadata| metadata.modified())) {
+            (Some(cutoff), Ok(modified)) => modified <= cutoff,
+            _ => false,
+        };
+        if is_old {
+            let _ = fs::remove_file(path);
+        }
+    }
 }
 
 // ─── Internal Helpers ────────────────────────────────────────────────────────
@@ -34,8 +124,30 @@ fn null_device() -> &'static str {
     }
 }
 
+fn media_binary(program: &str) -> Option<PathBuf> {
+    let bundled_locations = [
+        std::env::current_exe()
+            .ok()
+            .and_then(|exe| exe.parent().map(|dir| dir.join("resources"))),
+        Some(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("resources")),
+    ];
+
+    for resource_dir in bundled_locations.into_iter().flatten() {
+        let path = resource_dir.join("ffmpeg").join(if cfg!(windows) {
+            format!("{}.exe", program)
+        } else {
+            program.to_string()
+        });
+        if path.is_file() {
+            return Some(path);
+        }
+    }
+
+    which::which(program).ok()
+}
+
 fn media_command(program: &str) -> Command {
-    let mut command = Command::new(program);
+    let mut command = Command::new(media_binary(program).unwrap_or_else(|| PathBuf::from(program)));
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
@@ -46,7 +158,7 @@ fn media_command(program: &str) -> Command {
 }
 
 fn check_ffmpeg_available() -> bool {
-    which::which("ffmpeg").is_ok() && which::which("ffprobe").is_ok()
+    media_binary("ffmpeg").is_some() && media_binary("ffprobe").is_some()
 }
 
 fn get_media_info(filepath: &str) -> Result<Value, String> {
@@ -100,7 +212,7 @@ fn settings_file_path() -> PathBuf {
     } else {
         dirs::home_dir().unwrap_or_default()
     };
-    let dir = base.join("Peak");
+    let dir = base.join("Hydraulic");
     fs::create_dir_all(&dir).ok();
     dir.join("settings.json")
 }
@@ -136,6 +248,27 @@ fn emit_native_dropped_paths(app: &AppHandle, paths: &[PathBuf]) {
             payload
         ),
     );
+}
+
+fn supported_video_paths(paths: impl IntoIterator<Item = String>) -> Vec<String> {
+    paths
+        .into_iter()
+        .filter(|path| {
+            let file = Path::new(path);
+            file.is_file()
+                && matches!(
+                    file.extension().and_then(|ext| ext.to_str()),
+                    Some("mp4" | "MP4" | "mkv" | "MKV" | "mov" | "MOV")
+                )
+        })
+        .collect()
+}
+
+fn focus_main_window(app: &AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.unminimize();
+        let _ = window.set_focus();
+    }
 }
 
 // ─── FFmpeg Pass Runner ───────────────────────────────────────────────────────
@@ -242,6 +375,15 @@ fn check_ffmpeg() -> bool {
 }
 
 #[tauri::command]
+fn get_launch_paths(state: State<AppState>) -> Vec<String> {
+    state
+        .launch_paths
+        .lock()
+        .map(|mut paths| std::mem::take(&mut *paths))
+        .unwrap_or_default()
+}
+
+#[tauri::command]
 fn save_settings(settings: Value) -> bool {
     match serde_json::to_string(&settings) {
         Ok(s) => fs::write(settings_file_path(), s).is_ok(),
@@ -276,13 +418,7 @@ fn get_thumbnail(filepath: String) -> Option<String> {
         return None;
     }
 
-    let tmp_path = std::env::temp_dir().join(format!(
-        "peak_thumb_{}.jpg",
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.subsec_nanos())
-            .unwrap_or(0)
-    ));
+    let tmp_path = temp_file_path("hydraulic_thumb", "jpg");
 
     for seek in ["00:00:01", "00:00:00"] {
         let _ = fs::remove_file(&tmp_path); // clean any leftover
@@ -370,7 +506,7 @@ fn get_audio_tracks(filepath: String) -> Vec<AudioTrack> {
 
 // ─── Commands: Video Serving ─────────────────────────────────────────────────
 //
-// In pywebview, Peak served videos via a local HTTP server. In Tauri, the
+// In pywebview, Hydraulic served videos via a local HTTP server. In Tauri, the
 // `asset://` protocol (via `convertFileSrc` on the JS side) handles this
 // natively with range-request support. These commands return raw paths; the
 // frontend calls `window.__TAURI__.core.convertFileSrc(path)` before using
@@ -382,6 +518,13 @@ fn get_file_url(filepath: String) -> String {
     filepath
 }
 
+#[tauri::command]
+fn get_file_size(filepath: String) -> Result<u64, String> {
+    fs::metadata(filepath)
+        .map(|metadata| metadata.len())
+        .map_err(|error| format!("Failed to read output file metadata: {}", error))
+}
+
 #[derive(Serialize)]
 struct MixedPreviewResult {
     url: String,
@@ -390,6 +533,7 @@ struct MixedPreviewResult {
 
 #[tauri::command]
 fn get_mixed_preview_url(
+    state: State<AppState>,
     filepath: String,
     audio_volumes: Option<Vec<f64>>,
 ) -> MixedPreviewResult {
@@ -421,14 +565,7 @@ fn get_mixed_preview_url(
         .and_then(|e| e.to_str())
         .unwrap_or("mp4");
 
-    let tmp_path = std::env::temp_dir().join(format!(
-        "peak_preview_{}.{}",
-        std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.subsec_nanos())
-            .unwrap_or(0),
-        src_ext
-    ));
+    let tmp_path = temp_file_path("hydraulic_preview", src_ext);
 
     let filter_in: String = (0..n)
         .enumerate()
@@ -477,6 +614,7 @@ fn get_mixed_preview_url(
     if status.map(|s| s.success()).unwrap_or(false)
         && tmp_path.metadata().map(|m| m.len() > 0).unwrap_or(false)
     {
+        register_temp_file(&state.temp_files, &tmp_path);
         MixedPreviewResult {
             url: tmp_str.clone(),
             tmp: Some(tmp_str),
@@ -491,9 +629,11 @@ fn get_mixed_preview_url(
 }
 
 #[tauri::command]
-fn delete_temp_file(tmp_path: String) {
+fn delete_temp_file(state: State<AppState>, tmp_path: String) {
     if !tmp_path.is_empty() {
-        let _ = fs::remove_file(&tmp_path);
+        let path = PathBuf::from(&tmp_path);
+        unregister_temp_file(&state.temp_files, &path);
+        let _ = fs::remove_file(path);
     }
 }
 
@@ -719,6 +859,7 @@ fn compress(
 
     let cancel_flag = state.cancel_flag.clone();
     let active_proc = state.active_proc.clone();
+    let temp_files = state.temp_files.clone();
 
     std::thread::spawn(move || {
         match do_compress(
@@ -738,6 +879,7 @@ fn compress(
             audio_volumes.as_deref(),
             cancel_flag,
             active_proc,
+            temp_files,
         ) {
             Ok(output_file) => {
                 let id_json = serde_json::to_string(&item_id).unwrap_or_default();
@@ -778,6 +920,7 @@ fn do_compress(
     audio_volumes: Option<&[f64]>,
     cancel_flag: Arc<AtomicBool>,
     active_proc: Arc<Mutex<Option<Child>>>,
+    temp_files: Arc<Mutex<HashSet<PathBuf>>>,
 ) -> Result<String, String> {
     if !Path::new(input_file).is_file() {
         return Err(format!("File not found: {}", input_file));
@@ -995,9 +1138,14 @@ fn do_compress(
     };
 
     let passlog = std::env::temp_dir()
-        .join(format!("peak_pass_{}", item_id))
+        .join(format!("hydraulic_pass_{}", item_id))
         .to_string_lossy()
         .to_string();
+    let _passlog_guard = if two_pass && !use_gif {
+        Some(TempFileGuard::new(temp_files, PathBuf::from(&passlog)))
+    } else {
+        None
+    };
 
     let (p1_codec, p2_codec, s_codec): (Vec<String>, Vec<String>, Vec<String>) = if use_gif {
         (vec![], vec![], vec!["-c:v".into(), "gif".into()])
@@ -1144,11 +1292,33 @@ fn do_compress(
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 fn main() {
+    let temp_files = Arc::new(Mutex::new(HashSet::new()));
+    cleanup_temp_files(&temp_files);
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
+            let paths = supported_video_paths(argv.into_iter().skip(1));
+            if paths.is_empty() {
+                return;
+            }
+            focus_main_window(app);
+            let path_bufs = paths.into_iter().map(PathBuf::from).collect::<Vec<_>>();
+            emit_native_dropped_paths(app, &path_bufs);
+        }))
         .manage(AppState {
             cancel_flag: Arc::new(AtomicBool::new(false)),
             active_proc: Arc::new(Mutex::new(None)),
+            launch_paths: Mutex::new(supported_video_paths(std::env::args().skip(1))),
+            temp_files: temp_files.clone(),
+        })
+        .setup(move |_| {
+            let temp_files = temp_files.clone();
+            std::thread::spawn(move || loop {
+                std::thread::sleep(TEMP_SWEEP_INTERVAL);
+                cleanup_temp_files(&temp_files);
+            });
+            Ok(())
         })
         .on_window_event(|window, event| {
             if let tauri::WindowEvent::DragDrop(tauri::DragDropEvent::Drop { paths, .. }) = event {
@@ -1158,10 +1328,12 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             // FFmpeg
             check_ffmpeg,
+            get_launch_paths,
             get_thumbnail,
             get_audio_tracks,
             // Video serving
             get_file_url,
+            get_file_size,
             get_mixed_preview_url,
             delete_temp_file,
             // Settings
@@ -1186,5 +1358,5 @@ fn main() {
             set_window_fullscreen,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running Peak");
+        .expect("error while running Hydraulic");
 }

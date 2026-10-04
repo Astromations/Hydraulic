@@ -1,10 +1,10 @@
 [package]
-name = "Peak"
+name = "Hydraulic"
 version = "1.7.0"
 edition = "2021"
 
 [lib]
-name = "peak_lib"
+name = "hydraulic_lib"
 path = "src/lib.rs"
 crate-type = ["lib", "cdylib", "staticlib"]
 
@@ -14,6 +14,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri        = { version = "2", features = ["devtools", "protocol-asset"] }
 tauri-plugin-dialog = "2"
+tauri-plugin-single-instance = "2"
 serde        = { version = "1", features = ["derive"] }
 serde_json   = "1"
 tokio        = { version = "1", features = ["sync"] }

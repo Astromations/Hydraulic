@@ -97,7 +97,7 @@ fn settings_file_path() -> PathBuf {
     } else {
         dirs::home_dir().unwrap_or_default()
     };
-    let dir = base.join("Peak");
+    let dir = base.join("Hydraulic");
     fs::create_dir_all(&dir).ok();
     dir.join("settings.json")
 }
@@ -259,7 +259,7 @@ fn get_thumbnail(filepath: String) -> Option<String> {
     }
 
     let tmp_path = std::env::temp_dir().join(format!(
-        "peak_thumb_{}.jpg",
+        "hydraulic_thumb_{}.jpg",
         std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.subsec_nanos())
@@ -352,7 +352,7 @@ fn get_audio_tracks(filepath: String) -> Vec<AudioTrack> {
 
 // ─── Commands: Video Serving ─────────────────────────────────────────────────
 //
-// In pywebview, Peak served videos via a local HTTP server. In Tauri, the
+// In pywebview, Hydraulic served videos via a local HTTP server. In Tauri, the
 // `asset://` protocol (via `convertFileSrc` on the JS side) handles this
 // natively with range-request support. These commands return raw paths; the
 // frontend calls `window.__TAURI__.core.convertFileSrc(path)` before using
@@ -362,6 +362,13 @@ fn get_audio_tracks(filepath: String) -> Vec<AudioTrack> {
 fn get_file_url(filepath: String) -> String {
     // Return the raw path — JS wraps it with convertFileSrc()
     filepath
+}
+
+#[tauri::command]
+fn get_file_size(filepath: String) -> Result<u64, String> {
+    fs::metadata(filepath)
+        .map(|metadata| metadata.len())
+        .map_err(|error| format!("Failed to read output file metadata: {}", error))
 }
 
 #[derive(Serialize)]
@@ -404,7 +411,7 @@ fn get_mixed_preview_url(
         .unwrap_or("mp4");
 
     let tmp_path = std::env::temp_dir().join(format!(
-        "peak_preview_{}.{}",
+        "hydraulic_preview_{}.{}",
         std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.subsec_nanos())
@@ -476,6 +483,27 @@ fn get_mixed_preview_url(
 fn delete_temp_file(tmp_path: String) {
     if !tmp_path.is_empty() {
         let _ = fs::remove_file(&tmp_path);
+    }
+}
+
+fn cleanup_preview_files() {
+    let temp_dir = std::env::temp_dir();
+    let entries = match fs::read_dir(temp_dir) {
+        Ok(entries) => entries,
+        Err(_) => return,
+    };
+
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_file()
+            && path
+                .file_name()
+                .and_then(|name| name.to_str())
+                .map(|name| name.starts_with("hydraulic_preview_"))
+                .unwrap_or(false)
+        {
+            let _ = fs::remove_file(path);
+        }
     }
 }
 
@@ -979,7 +1007,7 @@ fn do_compress(
     };
 
     let passlog = std::env::temp_dir()
-        .join(format!("peak_pass_{}", item_id))
+        .join(format!("hydraulic_pass_{}", item_id))
         .to_string_lossy()
         .to_string();
 
@@ -1128,6 +1156,8 @@ fn do_compress(
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 pub fn run() {
+    cleanup_preview_files();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .manage(AppState {
@@ -1146,6 +1176,7 @@ pub fn run() {
             get_audio_tracks,
             // Video serving
             get_file_url,
+            get_file_size,
             get_mixed_preview_url,
             delete_temp_file,
             // Settings
@@ -1169,6 +1200,11 @@ pub fn run() {
             window_close,
             set_window_fullscreen,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running Peak");
+        .build(tauri::generate_context!())
+        .expect("error while building Hydraulic")
+        .run(|_, event| {
+            if matches!(event, tauri::RunEvent::Exit { .. }) {
+                cleanup_preview_files();
+            }
+        })
 }

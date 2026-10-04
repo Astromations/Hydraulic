@@ -27,6 +27,27 @@ const trimPrevBtn = document.getElementById("trimPrevBtn");
 const trimNextBtn = document.getElementById("trimNextBtn");
 const trimModalMenuBtn = document.getElementById("trimModalMenuBtn");
 const trimItemMenu = document.getElementById("trimItemMenu");
+const trimVolumeBtn = document.getElementById("trimVolumeBtn");
+const trimVolume = document.getElementById("trimVolume");
+const trimVolumePopover = document.querySelector(".trim-volume-popover");
+
+function setTrimVolume(value) {
+  const volume = Math.max(0, Math.min(1, parseFloat(value) || 0));
+  trimVideo.volume = volume;
+  trimVideo.muted = volume <= 0;
+  trimVolume.value = volume;
+  trimVolume.style.setProperty("--volume-progress", `${volume * 100}%`);
+}
+
+function toggleTrimVolume() {
+  const open = trimVolumePopover.classList.toggle("open");
+  trimVolumeBtn.setAttribute("aria-expanded", open);
+}
+
+function closeTrimVolume() {
+  trimVolumePopover.classList.remove("open");
+  trimVolumeBtn.setAttribute("aria-expanded", "false");
+}
 
 function renderTrimItemMenu() {
   if (!trimItemMenu) return;
@@ -94,6 +115,7 @@ async function openTrimModal(id) {
   const item = queue.find((i) => i.id === id);
   if (!item) return;
 
+  closeTrimVolume();
   trimItemId = id;
   trimItemPath = item.path;
   trimIn = item.trimStart ? parseTimeJS(item.trimStart) : 0;
@@ -185,6 +207,21 @@ trimVideo.addEventListener("timeupdate", () => {
 
 trimVideo.addEventListener("play", updatePlayBtn);
 trimVideo.addEventListener("pause", updatePlayBtn);
+trimVolumeBtn.addEventListener("click", (event) => {
+  event.stopPropagation();
+  toggleTrimVolume();
+});
+
+trimVolume.addEventListener("input", () => setTrimVolume(trimVolume.value));
+
+trimVideo.addEventListener("volumechange", () => {
+  if (trimVideo.muted) trimVolume.value = 0;
+  else trimVolume.value = trimVideo.volume;
+  trimVolume.style.setProperty(
+    "--volume-progress",
+    `${Math.max(0, Math.min(100, parseFloat(trimVolume.value) * 100 || 0))}%`,
+  );
+});
 
 function updatePlayheadPosition(time) {
   if (trimDuration > 0) {
@@ -541,6 +578,7 @@ async function refreshTrimPreview() {
 
   const wasPlaying = !trimVideo.paused;
   const currentTime = trimVideo.currentTime;
+  const currentHeight = trimVideo.getBoundingClientRect().height;
   const oldPreview = trimPreviewTmp;
   const result = await invoke("get_mixed_preview_url", {
     filepath: item.path,
@@ -553,11 +591,15 @@ async function refreshTrimPreview() {
     return;
   }
   trimPreviewTmp = result.tmp;
+  if (currentHeight > 0) {
+    trimVideo.style.height = `${currentHeight}px`;
+  }
   trimVideo.src = result.url ? convertFileSrc(result.url) : "";
   trimVideo.load();
   trimVideo.addEventListener(
     "loadedmetadata",
     () => {
+      trimVideo.style.removeProperty("height");
       seekTrimVideo(currentTime);
       if (wasPlaying) trimVideo.play();
     },
@@ -639,8 +681,16 @@ function applyTrim() {
   closeTrimModal();
 }
 
+function removeTrimItem() {
+  if (!trimItemId) return;
+  const itemId = trimItemId;
+  closeTrimModal();
+  removeFromQueue(itemId);
+}
+
 function closeTrimModal() {
   clearTimeout(trimPreviewRefreshTimer);
+  closeTrimVolume();
   trimVideo.pause();
   trimVideo.src = "";
   document.getElementById("trimOverlay").classList.remove("open");
@@ -655,6 +705,7 @@ function closeTrimModal() {
 document.getElementById("trimOverlay").addEventListener("click", (e) => {
   if (e.target === document.getElementById("trimOverlay")) closeTrimModal();
   else if (!e.target.closest(".trim-modal-header")) closeTrimItemMenu();
+  if (!e.target.closest(".trim-volume-wrap")) closeTrimVolume();
 });
 
 document.addEventListener("keydown", (e) => {

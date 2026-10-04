@@ -54,8 +54,8 @@
 }
 
 .queue-clear-btn:hover:not(:disabled) {
-  background: rgba(242, 63, 66, 0.12);
-  color: var(--danger);
+  background: var(--bg-modifier);
+  color: var(--text-normal);
 }
 
 .queue-clear-btn:disabled {
@@ -107,12 +107,13 @@
 }
 .queue-wrap::-webkit-scrollbar-track,
 .trim-card::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-secondary);
+  border-radius: 6px;
 }
 .queue-wrap::-webkit-scrollbar-thumb,
 .trim-card::-webkit-scrollbar-thumb {
   background: var(--bg-tertiary);
-  border-radius: 3px;
+  border-radius: 6px;
 }
 
 .queue-empty {
@@ -296,7 +297,7 @@
   font-family: inherit;
   text-align: left;
   cursor: pointer;
-  width: 100%;
+  max-width: 100%;
   transition: color 0.12s;
 }
 .qi-name-link:hover {
@@ -311,7 +312,7 @@
   align-items: center;
   gap: 6px;
   min-height: 20px;
-  padding: 4px;
+  /* padding: 4px; */
   width: fit-content;
   max-width: 100%;
 }
@@ -372,6 +373,7 @@
   white-space: nowrap;
   min-width: 52px;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .qi-file-link {
@@ -388,14 +390,17 @@
   text-overflow: ellipsis;
   max-width: 160px;
 }
+.qi-file-link.renamed {
+  padding: 4px 10px;
+}
 .qi-file-link:hover {
   color: #d8f6e3;
   background: rgba(35, 165, 90, 0.2);
   border-color: rgba(35, 165, 90, 0.48);
 }
 .qi-file-link .ui-icon {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 10px;
   transform: translateY(2px);
 }
 
@@ -450,8 +455,8 @@
   align-items: center;
   justify-content: center;
   transition:
-    background 0.1s,
-    color 0.1s;
+    background 0.2s,
+    color 0.2s;
   flex-shrink: 0;
 }
 .qi-btn:hover {
@@ -589,11 +594,13 @@
 }
 
 .qi-trim-badge {
-  font-size: 9px;
+  font-family: "Gg Sans Mono", "SFMono-Regular", "Consolas", monospace;
+  font-size: 10px;
   color: var(--brand);
   background: rgba(88, 101, 242, 0.15);
-  border-radius: 4px;
-  padding: 1px 5px;
+  border-radius: 7px;
+  padding: 4px 10px;
   font-weight: 700;
   letter-spacing: 0.2px;
+  font-variant-numeric: tabular-nums;
 }

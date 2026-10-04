@@ -85,10 +85,18 @@ function bindWindowTitlebarControls() {
   });
 }
 
-function openProjectUrl() {
+function openExternalUrl(event, url) {
+  event?.preventDefault();
   invoke("open_url", {
-    url: "https://github.com/Astromations/Peak-Discord-Video-Compressor",
+    url,
   }).catch(() => {});
+}
+
+function openProjectUrl() {
+  openExternalUrl(
+    null,
+    "https://github.com/Astromations/Peak-Discord-Video-Compressor",
+  );
 }
 
 // ── Init ──────────────────────────────────────────────────────────
@@ -112,12 +120,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }, 0);
 
-  buildChangelog();
-
   const ok = await invoke("check_ffmpeg");
   if (!ok) {
     document.getElementById("ffmpegWarning").classList.add("visible");
     setStatus("FFmpeg missing — can't compress without it", "error");
     document.getElementById("compressBtn").disabled = true;
+  }
+
+  const launchPaths = await invoke("get_launch_paths").catch(() => []);
+  if (Array.isArray(launchPaths) && launchPaths.length > 0) {
+    window.handleNativeDroppedPaths(launchPaths);
   }
 });

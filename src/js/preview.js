@@ -22,7 +22,9 @@ const previewFullscreenIcon = document.getElementById("previewFullscreenIcon");
 const previewPrevBtn = document.getElementById("previewPrevBtn");
 const previewNextBtn = document.getElementById("previewNextBtn");
 const previewFsCloseBtn = document.getElementById("previewFsCloseBtn");
+const previewControls = document.querySelector(".preview-controls");
 let previewFsCloseTimer = null;
+let previewControlsTimer = null;
 let previewClosing = false;
 let previewWindowFullscreen = false;
 const previewFrameDuration = 1 / 30;
@@ -118,6 +120,7 @@ async function closePreviewModal() {
   previewClosing = true;
 
   _hidePreviewFsClose();
+  _hidePreviewControls();
   await _exitPreviewFullscreenIfNeeded();
 
   previewVideo.pause();
@@ -161,6 +164,13 @@ function openPreviewInExternal() {
   const item = _findPreviewItem(previewItemId);
   if (!item) return;
   invoke("open_in_media_player", { filepath: item.path }).catch(() => {});
+}
+
+async function removePreviewItem() {
+  if (!previewItemId) return;
+  const itemId = previewItemId;
+  await closePreviewModal();
+  removeFromQueue(itemId);
 }
 
 async function openPreviewTrimModal() {
@@ -267,6 +277,24 @@ function _hidePreviewFsClose() {
   previewFsCloseBtn?.classList.remove("visible");
 }
 
+function _hidePreviewControls() {
+  if (previewControlsTimer) {
+    clearTimeout(previewControlsTimer);
+    previewControlsTimer = null;
+  }
+  previewControls?.classList.remove("visible");
+}
+
+function _showPreviewControls() {
+  if (!previewControls || !previewOverlay.classList.contains("open")) return;
+  previewControls.classList.add("visible");
+  if (previewControlsTimer) clearTimeout(previewControlsTimer);
+  previewControlsTimer = setTimeout(() => {
+    previewControls.classList.remove("visible");
+    previewControlsTimer = null;
+  }, 1000);
+}
+
 function _showPreviewFsClose() {
   const isFullscreen =
     previewWindowFullscreen ||
@@ -324,8 +352,14 @@ previewOverlay.addEventListener("click", (e) => {
   if (e.target === previewOverlay) closePreviewModal();
 });
 
-previewPlayerShell.addEventListener("mousemove", _showPreviewFsClose);
-previewPlayerShell.addEventListener("pointermove", _showPreviewFsClose);
+previewPlayerShell.addEventListener("mousemove", () => {
+  _showPreviewControls();
+  _showPreviewFsClose();
+});
+previewPlayerShell.addEventListener("pointermove", () => {
+  _showPreviewControls();
+  _showPreviewFsClose();
+});
 
 document.addEventListener("keydown", (e) => {
   if (!previewOverlay.classList.contains("open")) return;

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Peak - Discord Video Compressor</title>
+    <title>Hydraulic - Discord Video Compressor</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="Font/style.css" />
   </head>
@@ -22,7 +22,7 @@
       >
         <img src="css/peak.png" alt="" class="window-titlebar-icon" />
         <span class="window-titlebar-title"
-          >Peak - Discord Video Compressor</span
+          >Hydraulic - Discord Video Compressor</span
         >
       </div>
 
@@ -110,34 +110,21 @@
           />
         </div>
         <div class="header-text">
-          <h1>Peak - Discord Video Compressor</h1>
+          <h1>Hydraulic - Discord Video Compressor</h1>
           <p>
             by
             <a
               href="https://github.com/Astromations"
               style="text-decoration: none; color: inherit"
               target="_blank"
+              onclick="openExternalUrl(event, this.href)"
               >Astromations</a
             >
           </p>
         </div>
         <div class="header-actions">
           <button class="header-icon-btn" onclick="openChangelog()">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-              <circle
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="2"
-              />
-              <path
-                d="M12 8v4M12 16h.01"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
+            <span class="ui-icon" data-icon="info" aria-hidden="true"></span>
           </button>
         </div>
       </div>
@@ -176,7 +163,7 @@
             <div class="drop-zone-text">
               <h3>Add videos</h3>
               <p>
-                Drag and drop or <span>browse files</span> — multiple supported
+                Drag and drop or <span>browse files</span> — .mp4, .mkv, or .mov
               </p>
             </div>
           </div>
@@ -189,7 +176,7 @@
                 id="clearQueueBtn"
                 type="button"
                 onclick="clearQueue()"
-                title="Clear queue"
+                title="Clear Queue"
                 aria-label="Clear queue"
                 disabled
               >
@@ -199,6 +186,22 @@
                   aria-hidden="true"
                 ></span>
                 Clear
+              </button>
+              <button
+                class="queue-clear-btn"
+                id="requeueAllBtn"
+                type="button"
+                onclick="requeueAll()"
+                title="Requeue All"
+                aria-label="Requeue all"
+                disabled
+              >
+                <span
+                  class="ui-icon"
+                  data-icon="requeue"
+                  aria-hidden="true"
+                ></span>
+                Requeue
               </button>
               <div
                 class="tray-view-toggle"
@@ -253,22 +256,21 @@
           <!-- Settings -->
           <div class="settings">
             <div class="settings-header">
-              <span class="section-label">Settings</span>
+              <span class="section-label">
+                <span
+                  class="ui-icon"
+                  data-icon="settings"
+                  aria-hidden="true"
+                ></span>
+                <p>Settings</p></span
+              >
               <button class="reset-btn" onclick="resetSettings()">
-                <svg
-                  width="50"
-                  height="50"
-                  viewBox="0 0 50 50"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M25 0C11.2125 0 0 11.2125 0 25H8.33333C8.33333 15.8083 15.8083 8.33332 25 8.33332C34.1917 8.33332 41.6668 15.8083 41.6668 25C41.6668 34.1917 34.1917 41.6667 25 41.6667C20.5082 41.6667 16.3958 39.8333 13.2875 36.7168L20.8332 29.1667H0V50L7.3375 42.6625C11.9958 47.35 18.2542 50 25 50C38.7875 50 50 38.7875 50 25C50 11.2167 38.7875 0 25 0Z"
-                    fill="white"
-                    fill-opacity="0.6"
-                  />
-                </svg>
-                <span>Reset defaults</span>
+                <span
+                  class="ui-icon"
+                  data-icon="requeue"
+                  aria-hidden="true"
+                ></span>
+                <p>Reset defaults</p>
               </button>
             </div>
 
@@ -408,8 +410,8 @@
                 onclick="toggleCb('twoPassToggle')"
               >
                 <span class="tooltip"
-                  >Analyse video first, then encode.<br />More accurate file
-                  size, takes longer.</span
+                  >Two rounds of compression.<br />More accurate file size,
+                  takes longer.</span
                 >
                 <div class="toggle-info">
                   <div class="toggle-info-label">
@@ -601,7 +603,7 @@
                   id="previewModeInternalBtn"
                   onclick="setPreviewMode('internal', true)"
                 >
-                  In Peak
+                  In Hydraulic
                 </button>
                 <button
                   class="preview-mode-btn"
@@ -622,15 +624,11 @@
             onclick="startQueue()"
             disabled
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M13 2L3 14H12L11 22L21 10H12L13 2Z"
-                stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <span
+              class="ui-icon"
+              data-icon="compress"
+              aria-hidden="true"
+            ></span>
             <span id="compressBtnLabel">Compress</span>
           </button>
 
@@ -734,7 +732,7 @@
         <div class="trim-transport">
           <div class="trim-time-group">
             <span class="trim-time" id="trimCurrentTime">0:00.00</span>
-            <span class="trim-time-sep">/</span>
+            <span class="trim-time-sep">¦</span>
             <span class="trim-time" id="trimTotalTime">–:––</span>
           </div>
           <div class="trim-transport-controls">
@@ -799,10 +797,67 @@
             </button>
           </div>
           <div class="trim-transport-actions">
-            <button class="trim-btn-cancel" onclick="closeTrimModal()">
-              Cancel
+            <div class="trim-volume-wrap">
+              <button
+                class="trim-btn-volume"
+                id="trimVolumeBtn"
+                type="button"
+                aria-label="Adjust preview volume"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <span
+                  class="ui-icon"
+                  data-icon="volume"
+                  aria-hidden="true"
+                ></span>
+              </button>
+              <div class="trim-volume-popover">
+                <input
+                  type="range"
+                  id="trimVolume"
+                  class="trim-volume-slider"
+                  min="0"
+                  max="1"
+                  value="1"
+                  step="0.05"
+                  orient="vertical"
+                  aria-label="Preview volume"
+                />
+              </div>
+            </div>
+            <button
+              class="trim-btn-remove"
+              onclick="removeTrimItem()"
+              data-custom-tooltip="Remove"
+              aria-label="Remove clip from queue"
+            >
+              <span
+                class="ui-icon"
+                data-icon="remove"
+                aria-hidden="true"
+              ></span>
             </button>
-            <button class="trim-btn-apply" onclick="applyTrim()">Apply</button>
+            <button
+              class="trim-btn-cancel"
+              onclick="closeTrimModal()"
+              data-custom-tooltip="Cancel"
+              aria-label="Cancel"
+            >
+              <span
+                class="ui-icon"
+                data-icon="cancel"
+                aria-hidden="true"
+              ></span>
+            </button>
+            <button
+              class="trim-btn-apply"
+              onclick="applyTrim()"
+              data-custom-tooltip="Apply"
+              aria-label="Apply trim"
+            >
+              <span class="ui-icon" data-icon="check" aria-hidden="true"></span>
+            </button>
           </div>
         </div>
 
@@ -835,7 +890,7 @@
     </div>
 
     <!-- ═══════════════════════════════════════
-     CHANGELOG MODAL
+    ABOUT MODAL
      ═══════════════════════════════════════ -->
     <div class="changelog-overlay" id="changelogOverlay">
       <div class="changelog-card">
@@ -854,7 +909,7 @@
               stroke-linecap="round"
             />
           </svg>
-          <h2>Changelog</h2>
+          <h2>About Hydraulic</h2>
           <div class="changelog-header-info">
             <button class="changelog-github-btn" onclick="openProjectUrl()">
               <svg
@@ -874,7 +929,62 @@
         </div>
 
         <div class="changelog-body" id="changelogBody">
-          <!-- populated by buildChangelog() in app.js -->
+          <p class="info-intro">
+            Preview, trim, and compress oversized clips for easier Discord
+            sharing.
+          </p>
+
+          <section class="info-section">
+            <h3>Dependencies</h3>
+            <ul class="info-list">
+              <li>
+                <strong>FFmpeg v8.1</strong
+                ><span>Video processing and encoding</span>
+              </li>
+              <li>
+                <strong>Tauri v2.10.3</strong
+                ><span>Desktop application shell</span>
+              </li>
+              <li>
+                <strong>Rust v1.94.1</strong
+                ><span>Application language and toolchain</span>
+              </li>
+              <li>
+                <strong>Crates</strong
+                ><span>Tokio, Serde, Base64, Dirs and Which</span>
+              </li>
+            </ul>
+          </section>
+
+          <section class="info-section">
+            <h3>Licensing</h3>
+            <ul class="info-license-list">
+              <li><strong>Hydraulic</strong><span>MIT License</span></li>
+              <li>
+                <strong>Tauri + Rust Crates</strong
+                ><span>MIT and Apache-2.0</span>
+              </li>
+              <li>
+                <strong>FFmpeg</strong><span>LGPL or GPL, build-dependent</span>
+              </li>
+            </ul>
+            <p class="info-attribution">
+              UI icons were sourced from the
+              <a
+                href="https://www.figma.com/community/file/1316822758717784787/ultimate-discord-library"
+                target="_blank"
+                onclick="openExternalUrl(event, this.href)"
+                >Ultimate Discord Library</a
+              >, originally created by Discord Staff and
+              <a
+                href="https://koto.com/work?from=hydraulic"
+                target="_blank"
+                onclick="openExternalUrl(event, this.href)"
+                >Koto Studios</a
+              >. All assets are used under their original rights; Hydraulic is
+              not affiliated with Discord Inc.
+            </p>
+          </section>
         </div>
       </div>
     </div>
@@ -999,6 +1109,18 @@
                   />
                 </div>
 
+                <button
+                  class="preview-icon-btn"
+                  onclick="removePreviewItem()"
+                  data-custom-tooltip="Remove"
+                  aria-label="Remove clip from queue"
+                >
+                  <span
+                    class="ui-icon"
+                    data-icon="remove"
+                    aria-hidden="true"
+                  ></span>
+                </button>
                 <button
                   class="preview-icon-btn"
                   onclick="openPreviewInExternal()"

@@ -101,7 +101,7 @@ function saveSettings() {
     format: currentFormat,
     previewMode: previewMode,
   };
-  localStorage.setItem("peakSettings", JSON.stringify(settings));
+  localStorage.setItem("hydraulicSettings", JSON.stringify(settings));
   invoke("save_settings", { settings }).catch(() => {});
 }
 
@@ -163,7 +163,7 @@ async function loadSettings() {
   }
 
   if (!settings || Object.keys(settings).length === 0) {
-    const saved = localStorage.getItem("peakSettings");
+    const saved = localStorage.getItem("hydraulicSettings");
     if (saved) {
       try {
         settings = JSON.parse(saved);

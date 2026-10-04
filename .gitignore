@@ -1,8 +1,6 @@
-.venv
-build
-dist
 target
 TODO.md
 *.spec
 *.exe
 *.zip
+Cargo.lock

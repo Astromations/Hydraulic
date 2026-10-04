@@ -126,6 +126,12 @@ body {
 .ui-icon[data-icon="remove"] {
   --icon-url: url("../ui-icons/Remove.svg");
 }
+.ui-icon[data-icon="cancel"] {
+  --icon-url: url("../ui-icons/Cancel.svg");
+}
+.ui-icon[data-icon="check"] {
+  --icon-url: url("../ui-icons/Checkmark.svg");
+}
 .ui-icon[data-icon="link-to"] {
   --icon-url: url("../ui-icons/Linkto.svg");
 }
@@ -146,4 +152,13 @@ body {
 }
 .ui-icon[data-icon="drag"] {
   --icon-url: url("../ui-icons/Drag.svg");
+}
+.ui-icon[data-icon="info"] {
+  --icon-url: url("../ui-icons/Info_Hollow.svg");
+}
+.ui-icon[data-icon="settings"] {
+  --icon-url: url("../ui-icons/Settings.svg");
+}
+.ui-icon[data-icon="compress"] {
+  --icon-url: url("../ui-icons/Compress.svg");
 }

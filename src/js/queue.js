@@ -8,6 +8,9 @@ let queueViewMode = "list";
 let dragSourceId = null;
 let dragTargetId = null;
 let dragPlaceBefore = false;
+const thumbnailJobs = [];
+let activeThumbnailJobs = 0;
+const maxThumbnailJobs = 2;
 
 async function browseFiles() {
   if (isRunning) return;
@@ -20,7 +23,7 @@ async function browseFiles() {
   }
   // Normalise: some backends return null/undefined on cancel instead of []
   if (!Array.isArray(paths)) return;
-  for (const p of paths) if (p) addToQueue(p);
+  addPathsToQueue(paths);
 }
 
 const dz = document.getElementById("dropZone");
@@ -28,9 +31,7 @@ const videoExts = /\.(mp4|mkv|mov)$/i;
 
 function handleDroppedPaths(paths) {
   if (isRunning || !Array.isArray(paths)) return;
-  for (const p of paths) {
-    if (typeof p === "string" && videoExts.test(p)) addToQueue(p);
-  }
+  addPathsToQueue(paths);
 }
 
 window.handleNativeDroppedPaths = (paths) => {
@@ -50,6 +51,7 @@ async function handleDroppedDataTransfer(dataTransfer) {
   // If browser dataTransfer is empty, Tauri drop listeners handle file paths.
   if (files.length === 0) return;
 
+  const paths = [];
   for (const f of files) {
     let fullPath = f.path && f.path !== f.name ? f.path : null;
 
@@ -61,8 +63,9 @@ async function handleDroppedDataTransfer(dataTransfer) {
       }
     }
 
-    if (fullPath && videoExts.test(fullPath)) addToQueue(fullPath);
+    if (fullPath && videoExts.test(fullPath)) paths.push(fullPath);
   }
+  addPathsToQueue(paths);
 }
 
 dz.addEventListener("dragover", (e) => {
@@ -78,9 +81,23 @@ dz.addEventListener("drop", async (e) => {
 });
 
 // ── Queue management ──────────────────────────────────────────────
-function addToQueue(path) {
+function addPathsToQueue(paths) {
+  let added = false;
+  for (const path of paths) {
+    if (typeof path === "string" && videoExts.test(path)) {
+      added = addToQueue(path, false) || added;
+    }
+  }
+  if (added) {
+    setQueueDragEnabled(!isRunning);
+    updateCompressBtn();
+  }
+}
+
+function addToQueue(path, refresh = true) {
   const normalizedPath = path.toLowerCase();
-  if (queue.some((item) => item.path.toLowerCase() === normalizedPath)) return;
+  if (queue.some((item) => item.path.toLowerCase() === normalizedPath))
+    return false;
 
   const id = `qi-${++idCounter}`;
   const name = path.split(/[/\\]/).pop();
@@ -97,16 +114,38 @@ function addToQueue(path) {
     thumbnail: null,
   });
   renderQueueItem(id, name, path);
-  setQueueDragEnabled(!isRunning);
-  updateCompressBtn();
+  if (refresh) {
+    setQueueDragEnabled(!isRunning);
+    updateCompressBtn();
+  }
+  thumbnailJobs.push({ id, path });
+  pumpThumbnailJobs();
+  return true;
+}
 
-  invoke("get_thumbnail", { filepath: path }).then((uri) => {
-    const item = queue.find((queueItem) => queueItem.id === id);
-    if (item) item.thumbnail = uri || null;
-    const t = document.querySelector(`#${id} .qi-thumb`);
-    if (t)
-      t.innerHTML = uri ? `<img src="${uri}" alt="" />` : thumbPlaceholder();
-  });
+function pumpThumbnailJobs() {
+  while (activeThumbnailJobs < maxThumbnailJobs && thumbnailJobs.length > 0) {
+    const job = thumbnailJobs.shift();
+    activeThumbnailJobs++;
+    invoke("get_thumbnail", { filepath: job.path })
+      .then((uri) => {
+        const item = queue.find((queueItem) => queueItem.id === job.id);
+        if (item) item.thumbnail = uri || null;
+        const t = document.querySelector(`#${job.id} .qi-thumb`);
+        if (t)
+          t.innerHTML = uri
+            ? `<img src="${uri}" alt="" />`
+            : thumbPlaceholder();
+      })
+      .catch(() => {
+        const t = document.querySelector(`#${job.id} .qi-thumb`);
+        if (t) t.innerHTML = thumbPlaceholder();
+      })
+      .finally(() => {
+        activeThumbnailJobs--;
+        pumpThumbnailJobs();
+      });
+  }
 }
 
 function removeFromQueue(id) {
@@ -129,6 +168,8 @@ function updateQueueEmpty() {
     queue.length === 0 ? "flex" : "none";
   const clearBtn = document.getElementById("clearQueueBtn");
   if (clearBtn) clearBtn.disabled = isRunning || queue.length === 0;
+  const requeueAllBtn = document.getElementById("requeueAllBtn");
+  if (requeueAllBtn) requeueAllBtn.disabled = isRunning || queue.length === 0;
 }
 
 function updateCompressBtn() {
@@ -205,8 +246,8 @@ function renderQueueItem(id, name, path) {
       <button class="qi-thumb-hit" onclick="previewQueueItem('${id}')">
         <div class="qi-thumb"><div class="thumb-spinner"></div></div>
         <span class="qi-thumb-play" aria-hidden="true">
-<span class="ui-icon" data-icon="play" aria-label="Play"></span></span
-</span>
+          <span class="ui-icon" data-icon="play" aria-label="Play"></span>
+        </span>
       </button>
       <div class="qi-body">
         <button class="qi-name qi-name-link" title="Reveal in Explorer">${esc(name)}</button>
