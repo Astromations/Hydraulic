@@ -354,13 +354,16 @@
 }
 
 .trim-time {
+  font-family: "Gg Sans Mono", "SFMono-Regular", "Consolas", monospace;
   font-size: 12px;
   font-weight: 700;
   color: var(--text-normal);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 .trim-time-sep {
+  font-family: "Gg Sans Mono", "SFMono-Regular", "Consolas", monospace;
   transform: translateY(2px);
   padding: 0 5px;
 }
@@ -372,6 +375,12 @@
 }
 .trim-time-sep {
   color: var(--text-muted);
+}
+
+.tl-labels,
+.tl-ruler {
+  font-family: "Gg Sans Mono", "SFMono-Regular", "Consolas", monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 .trim-transport-actions {
@@ -818,7 +827,7 @@
   font-variant-numeric: tabular-nums;
   gap: 4px;
   margin: 0;
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-muted);
   padding: 0 2px;
 }
@@ -828,7 +837,8 @@
   height: 22px;
   margin-bottom: -8px;
   color: var(--text-muted);
-  font-family: "Consolas", "Courier New", monospace;
+  font-family:
+    "Gg Sans Mono", "SFMono-Regular", "Consolas", "Courier New", monospace;
   font-size: 9px;
   user-select: none;
 }

@@ -308,11 +308,14 @@
 }
 
 .preview-time {
+  font-family: "Gg Sans Mono", "SFMono-Regular", "Consolas", monospace;
   color: #f2f3f5;
   font-size: 12px;
   font-weight: 600;
   flex-shrink: 0;
   min-width: 32px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
 .preview-volume-wrap {

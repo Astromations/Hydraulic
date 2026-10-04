@@ -367,11 +367,13 @@
   width: 0%;
 }
 .qi-eta {
+  font-family: "Gg Sans Mono", "SFMono-Regular", "Consolas", monospace;
   font-size: 10px;
   color: var(--text-muted);
   white-space: nowrap;
   min-width: 52px;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .qi-file-link {
@@ -592,6 +594,7 @@
 }
 
 .qi-trim-badge {
+  font-family: "Gg Sans Mono", "SFMono-Regular", "Consolas", monospace;
   font-size: 10px;
   color: var(--brand);
   background: rgba(88, 101, 242, 0.15);
@@ -599,4 +602,5 @@
   padding: 4px 10px;
   font-weight: 700;
   letter-spacing: 0.2px;
+  font-variant-numeric: tabular-nums;
 }
