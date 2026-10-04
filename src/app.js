@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  app.js
+// HYDRAULIC — Video Compressor  |  app.js
 // ════════════════════════════════════════
 // Entry point: shared state and initialisation.
 //
