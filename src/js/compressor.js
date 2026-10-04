@@ -94,6 +94,13 @@ function requeueItem(id) {
   updateCompressBtn();
 }
 
+function requeueAll() {
+  if (isRunning) return;
+  queue
+    .filter((item) => item.status !== "waiting")
+    .forEach((item) => requeueItem(item.id));
+}
+
 function processNext() {
   if (cancelRequested) {
     finishCancelledSession();

@@ -168,6 +168,8 @@ function updateQueueEmpty() {
     queue.length === 0 ? "flex" : "none";
   const clearBtn = document.getElementById("clearQueueBtn");
   if (clearBtn) clearBtn.disabled = isRunning || queue.length === 0;
+  const requeueAllBtn = document.getElementById("requeueAllBtn");
+  if (requeueAllBtn) requeueAllBtn.disabled = isRunning || queue.length === 0;
 }
 
 function updateCompressBtn() {
