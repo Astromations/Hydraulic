@@ -159,3 +159,6 @@ body {
 .ui-icon[data-icon="settings"] {
   --icon-url: url("../ui-icons/Settings.svg");
 }
+.ui-icon[data-icon="compress"] {
+  --icon-url: url("../ui-icons/Compress.svg");
+}
