@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  app.js
+// HYDRAULIC — Video Compressor  |  app.js
 // ════════════════════════════════════════
 // Entry point: shared state and initialisation.
 //
@@ -93,10 +93,7 @@ function openExternalUrl(event, url) {
 }
 
 function openProjectUrl() {
-  openExternalUrl(
-    null,
-    "https://github.com/Astromations/Peak-Discord-Video-Compressor",
-  );
+  openExternalUrl(null, "https://github.com/Astromations/Hydraulic");
 }
 
 // ── Init ──────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  settings.js
+// HYDRAULIC — Video Compressor  |  settings.js
 // ════════════════════════════════════════
 // Toggle controls, output directory, and format dropdown.
 

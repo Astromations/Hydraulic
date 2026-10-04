@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  preview.js
+// HYDRAULIC — Video Compressor  |  preview.js
 // ════════════════════════════════════════
 // Thumbnail preview modal with Discord-like controls.
 

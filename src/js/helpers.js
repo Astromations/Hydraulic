@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  helpers.js
+// HYDRAULIC — Video Compressor  |  helpers.js
 // ════════════════════════════════════════
 // Utility / formatting functions used across the app.
 

@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  trim.js
+// HYDRAULIC — Video Compressor  |  trim.js
 // ════════════════════════════════════════
 // Trim modal: video preview, timeline, audio tracks, apply/close.
 

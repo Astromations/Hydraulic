@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  changelog-modal.js
+// HYDRAULIC — Video Compressor  |  changelog-modal.js
 // ════════════════════════════════════════
 // Changelog modal: build, open, close.
 

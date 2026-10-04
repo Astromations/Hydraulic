@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  queue.js
+// HYDRAULIC — Video Compressor  |  queue.js
 // ════════════════════════════════════════
 // Queue management, file browsing, and drag-drop.
 

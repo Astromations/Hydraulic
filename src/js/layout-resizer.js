@@ -1,5 +1,5 @@
 // ════════════════════════════════════════
-// PEAK — Video Compressor  |  layout-resizer.js
+// HYDRAULIC — Video Compressor  |  layout-resizer.js
 // ════════════════════════════════════════
 // Draggable divider between tray and settings panels.
 
