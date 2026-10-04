@@ -93,10 +93,7 @@ function openExternalUrl(event, url) {
 }
 
 function openProjectUrl() {
-  openExternalUrl(
-    null,
-    "https://github.com/Astromations/Peak-Discord-Video-Compressor",
-  );
+  openExternalUrl(null, "https://github.com/Astromations/Hydraulic");
 }
 
 // ── Init ──────────────────────────────────────────────────────────
