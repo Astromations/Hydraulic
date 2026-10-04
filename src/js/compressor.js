@@ -126,8 +126,8 @@ function processNext() {
   invoke("compress", {
     itemId: next.id,
     filepath: next.path,
-    targetSizeMb: parseInt(document.getElementById("sizeSlider").value),
-    audioKbps: parseInt(document.getElementById("audioSlider").value),
+    targetSizeMb: parseInt(document.getElementById("sizeVal").value, 10),
+    audioKbps: parseInt(document.getElementById("audioVal").value, 10),
     useGpu: document.getElementById("gpuToggle").checked,
     combineAudio: document.getElementById("combineAudioToggle").checked,
     twoPass: document.getElementById("twoPassToggle").checked,
