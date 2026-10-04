@@ -5,11 +5,11 @@
 
   <p>
     <a href="https://github.com/Astromations/Hydraulic">
-      <img alt="Release" src="https://img.shields.io/github/v/release/Astromations/Hydraulic---Video-Compressor?style=for-the-badge" />
+      <img alt="Release" src="https://img.shields.io/github/v/release/Astromations/Hydraulic?style=for-the-badge" />
     </a>
     <img alt="Windows/macOS/Linux" src="https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-5865F2?style=for-the-badge" />
     <img alt="Last update" src="https://img.shields.io/github/last-commit/Astromations/Hydraulic?label=Updated&style=for-the-badge" />
-    <img alt="License" src="https://img.shields.io/badge/License-Unlicensed-red?style=for-the-badge" />
+    <img alt="License" src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
   </p>
 </div>
 
@@ -49,13 +49,4 @@ This will generate a release build in the Tauri build output directory. The app 
 
 - Output files are saved next to the original with `_compressed` added to the filename.
 - If compression quality is poor for a particular source, lower the target size or disable GPU acceleration if your hardware does not support it.
-- This repository does not currently include a license file, so it is marked as Unlicensed in the project badges.
-
-## Project info
-
-- Name: Hydraulic
-- Icon: `peak.png`
-- OS: Windows / macOS / Linux
-- Release page: https://github.com/Astromations/Hydraulic---Video-Compressor/releases
-- Last update: 2026-10-04
-- License: Unlicensed
+- This project is distributed under the MIT License.
