@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="peak.png" alt="Hydraulic" width="128" height="128" />
-  <h1>Hydraulic</h1>
-  <p><strong>Discord Video Compressor</strong></p>
+  <img src="./src/css/hydraulic.png" alt="Hydraulic" width="156" height="156" />
+  <h1>Hydraulic - Discord Video Compressor</h1> 
+  
 
   <p>
     <a href="https://github.com/Astromations/Hydraulic">
@@ -19,7 +19,7 @@
 
 Hydraulic is a lightweight desktop app for viewing, trimming and compressing gaming clips for easier sharing to Discord. For all those who don't use Medal or Steelseries, compressing clips can be a hassle, trimming them even more so. Hydraulic brings the clip managing functionality of those apps to all your clips.
 
-It's essentially a pretty ffmpeg wrapper built in rust.
+It's essentially a pretty FFmpeg wrapper.
 
 [![Get the latest installer](https://img.shields.io/badge/Get%20latest%20installer-Releases-2ea44f?style=for-the-badge&logo=github)](https://github.com/Astromations/Hydraulic/releases)
 
@@ -52,7 +52,7 @@ Installers are published on the project releases page:
 Run this command in PowerShell to download the installer from the latest GitHub release and start it with administrator permission:
 
 ```powershell
-iwr https://raw.githubusercontent.com/Astromations/Peak---Video-Compressor/rust/install.ps1 -UseBasicParsing | iex
+iwr -useb https://raw.githubusercontent.com/Astromations/Hydraulic/refs/heads/main/install.ps1 | iex
 ```
 
 To use a local installer instead, download `install.ps1` and pass the installer path as the first argument:
