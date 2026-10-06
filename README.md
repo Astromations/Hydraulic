@@ -17,7 +17,7 @@
 
 ## 👀 About
 
-Hydraulic is a lightweight desktop app for viewing, trimming and compressing gaming clips for easier sharing to Discord. For all those who don't use Medal or Steelseries, compressing clips can be a hassle, trimming them even more so. Hydraulic brings the clip managing functionality of those apps to all your clips.
+Hydraulic is a lightweight desktop app for viewing, trimming and compressing gaming clips for easier sharing to Discord. Hydraulic brings the clip managing functionality of apps like Medal and SteelSeries GG to all your clips.
 
 It's essentially a pretty FFmpeg wrapper.
 
