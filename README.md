@@ -1,7 +1,7 @@
 <div align="center">
   <img src="./src/css/hydraulic.png" alt="Hydraulic" width="156" height="156" />
-  <h1>Hydraulic</h1>
-  <p><strong>Discord Video Compressor</strong></p>
+  <h1>Hydraulic - Discord Video Compressor</h1> 
+  
 
   <p>
     <a href="https://github.com/Astromations/Hydraulic">
@@ -19,7 +19,7 @@
 
 Hydraulic is a lightweight desktop app for viewing, trimming and compressing gaming clips for easier sharing to Discord. For all those who don't use Medal or Steelseries, compressing clips can be a hassle, trimming them even more so. Hydraulic brings the clip managing functionality of those apps to all your clips.
 
-It's essentially a pretty ffmpeg wrapper built in rust.
+It's essentially a pretty FFmpeg wrapper.
 
 [![Get the latest installer](https://img.shields.io/badge/Get%20latest%20installer-Releases-2ea44f?style=for-the-badge&logo=github)](https://github.com/Astromations/Hydraulic/releases)
 
