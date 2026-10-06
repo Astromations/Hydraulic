@@ -667,10 +667,10 @@
             id="trimModalMenuBtn"
             type="button"
             onclick="toggleTrimItemMenu()"
-            aria-label="Choose clip to trim"
+            aria-label="Choose Clip"
             aria-haspopup="true"
             aria-expanded="false"
-            title="Choose clip to trim"
+            title="Choose Clip"
           >
             <svg
               width="14"
@@ -710,6 +710,7 @@
           <video
             id="trimVideo"
             preload="metadata"
+            oncontextmenu="return false;"
             onclick="toggleTrimPlay()"
           ></video>
           <div class="trim-video-error" id="trimVideoError">
@@ -1013,7 +1014,11 @@
         </div>
 
         <div class="preview-player-shell" id="previewPlayerShell">
-          <video id="previewVideo" preload="metadata"></video>
+          <video
+            id="previewVideo"
+            preload="metadata"
+            oncontextmenu="return false;"
+          ></video>
           <div class="preview-video-error" id="previewVideoError">
             Preview unavailable
           </div>

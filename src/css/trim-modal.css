@@ -179,6 +179,7 @@
   flex: 1;
   padding: 0;
   border: none;
+  max-width: fit-content;
   background: transparent;
   text-align: left;
   font-size: 14px;
@@ -211,6 +212,7 @@
   transition:
     background 0.12s,
     color 0.12s;
+  margin-left: auto;
 }
 .trim-modal-close:hover {
   background: rgba(242, 63, 66, 0.18);

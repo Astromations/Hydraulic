@@ -86,11 +86,14 @@ function requeueItem(id) {
   const sr = document.getElementById(`${id}-status`);
   if (sr) sr.innerHTML = `<span class="chip chip-waiting">Waiting</span>`;
   const renameBtn = document.getElementById(`${id}-renamebtn`);
-  if (renameBtn) renameBtn.disabled = true;
+  if (renameBtn) {
+    renameBtn.disabled = true;
+    renameBtn.dataset.customTooltip = "Rename";
+    renameBtn.setAttribute("aria-label", "Rename");
+  }
   document
     .querySelectorAll(`#${id} .qi-btn`)
     .forEach((button) => (button.disabled = false));
-  if (renameBtn) renameBtn.disabled = true;
   updateCompressBtn();
 }
 
@@ -126,6 +129,7 @@ function processNext() {
   invoke("compress", {
     itemId: next.id,
     filepath: next.path,
+    outputName: next.outputName || null,
     targetSizeMb: parseInt(document.getElementById("sizeVal").value, 10),
     audioKbps: parseInt(document.getElementById("audioVal").value, 10),
     useGpu: document.getElementById("gpuToggle").checked,
@@ -208,7 +212,11 @@ async function onItemDone(id, outputPath) {
     // Keep the completed chip usable if file metadata is unavailable.
   }
   const renameBtn = document.getElementById(`${id}-renamebtn`);
-  if (renameBtn) renameBtn.disabled = false;
+  if (renameBtn) {
+    renameBtn.disabled = false;
+    renameBtn.dataset.customTooltip = "Rename Export";
+    renameBtn.setAttribute("aria-label", "Rename Export");
+  }
   document
     .querySelectorAll(`#${id} .qi-btn`)
     .forEach((b) => (b.disabled = false));
@@ -265,13 +273,13 @@ function revealSourceFile(path) {
 }
 
 // ── Rename dialogs ────────────────────────────────────────────────
-function showRenameDialog(defaultStem, ext) {
+function showRenameDialog(defaultStem, ext, dialogTitle) {
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
     overlay.className = "rename-overlay";
     overlay.innerHTML = `
-      <div class="rename-card" role="dialog" aria-modal="true" aria-label="Rename output file">
-        <div class="rename-header">Rename output file</div>
+      <div class="rename-card" role="dialog" aria-modal="true" aria-label="${esc(dialogTitle)}">
+        <div class="rename-header">${esc(dialogTitle)}</div>
         <div class="rename-body">
           <label class="rename-label" for="renameInput">New filename</label>
           <div class="rename-input-wrap">
@@ -341,6 +349,59 @@ function showRenameDialog(defaultStem, ext) {
   });
 }
 
+async function renameQueueItem(id) {
+  if (isRunning) return;
+  const item = queue.find((queueItem) => queueItem.id === id);
+  if (!item || item.status !== "waiting") return;
+
+  const sourceName = item.path.split(/[/\\]/).pop();
+  const dotIdx = sourceName.lastIndexOf(".");
+  const sourceStem = dotIdx > 0 ? sourceName.substring(0, dotIdx) : sourceName;
+  const sourceExt = dotIdx > 0 ? sourceName.substring(dotIdx) : "";
+  const currentStem = item.outputName || sourceStem;
+  const newStem = await showRenameDialog(
+    currentStem,
+    sourceExt,
+    "Rename Source File",
+  );
+  if (!newStem || newStem === currentStem) return;
+
+  const newName = newStem + sourceExt;
+  try {
+    const newPath = await invoke("rename_file", {
+      oldPath: item.path,
+      newName,
+    });
+    if (!newPath) {
+      showRenameErrorDialog(
+        "Could not rename the original file. A file with that name may already exist.",
+      );
+      return;
+    }
+    item.path = newPath;
+    item.outputName = newStem;
+    item.name = newName;
+  } catch (e) {
+    showRenameErrorDialog("Rename failed: " + (e.message || e));
+    return;
+  }
+
+  const nameButton = document.querySelector(`#${id} .qi-name-link`);
+  if (nameButton) {
+    nameButton.textContent = item.name;
+    nameButton.title = "Reveal in Explorer";
+  }
+}
+
+function renameItem(id) {
+  const item = queue.find((queueItem) => queueItem.id === id);
+  if (item?.status === "waiting") {
+    renameQueueItem(id);
+  } else {
+    renameFile(id);
+  }
+}
+
 function showRenameErrorDialog(message) {
   const overlay = document.createElement("div");
   overlay.className = "rename-overlay";
@@ -385,7 +446,7 @@ async function renameFile(id) {
   const ext = dotIdx > 0 ? oldName.substring(dotIdx) : "";
   const stem = dotIdx > 0 ? oldName.substring(0, dotIdx) : oldName;
 
-  const newStem = await showRenameDialog(stem, ext);
+  const newStem = await showRenameDialog(stem, ext, "Rename output file");
   if (!newStem || newStem === stem) return;
 
   const newName = newStem + ext;
