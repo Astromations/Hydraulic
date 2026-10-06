@@ -13,8 +13,8 @@
   if (!appBody || !panelLeft || !panelRight || !divider) return;
 
   let dragging = false;
-  const minLeft = 230;
-  const minRight = 360;
+  const minLeft = 290;
+  const minRight = 335;
   const dividerWidth = 10;
 
   function isWideLayout() {
