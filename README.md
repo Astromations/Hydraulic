@@ -54,13 +54,6 @@ Run this command in PowerShell to download the installer from the latest GitHub 
 iwr -useb https://raw.githubusercontent.com/Astromations/Hydraulic/refs/heads/main/install.ps1 | iex
 ```
 
-To use a local installer instead, download `install.ps1` and pass the installer path as the first argument:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1 .\Hydraulic_2.0.0_x64-setup.exe
-```
-
-The script prefers a local `.exe` or `.msi` beside it. If none is present, it downloads the latest Windows `.exe` or `.msi` release asset to a temporary folder, launches it, and removes the temporary file afterward.
 
 ## 🧱 Build from Source
 
