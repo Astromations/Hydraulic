@@ -52,7 +52,7 @@ Installers are published on the project releases page:
 Download `install.ps1` and a Windows installer (`.exe` or `.msi`) from the same release, place them in the same folder, and run PowerShell from that folder:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1
+iwr -useb https://raw.githubusercontent.com/Astromations/Hydraulic/refs/heads/main/install.ps1 | iex
 ```
 
 To use an installer stored elsewhere, pass its path as the first argument:
