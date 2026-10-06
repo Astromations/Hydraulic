@@ -842,6 +842,7 @@ fn compress(
     state: State<AppState>,
     item_id: String,
     filepath: String,
+    output_name: Option<String>,
     target_size_mb: f64,
     audio_kbps: u32,
     use_gpu: bool,
@@ -866,6 +867,7 @@ fn compress(
             &app,
             &item_id,
             &filepath,
+            output_name.as_deref(),
             target_size_mb,
             audio_kbps,
             use_gpu,
@@ -907,6 +909,7 @@ fn do_compress(
     app: &AppHandle,
     item_id: &str,
     input_file: &str,
+    output_name: Option<&str>,
     target_size_mb: f64,
     audio_kbps: u32,
     use_gpu: bool,
@@ -998,10 +1001,13 @@ fn do_compress(
     }
 
     // ── Output path ──────────────────────────────────────────────────────────
-    let stem = Path::new(input_file)
+    let source_stem = Path::new(input_file)
         .file_stem()
         .and_then(|s| s.to_str())
         .unwrap_or("output");
+    let stem = output_name
+        .filter(|name| !name.is_empty())
+        .unwrap_or(source_stem);
     let base_name = format!("{}_compressed{}", stem, out_ext);
     let out_dir = output_dir
         .filter(|d| Path::new(d).is_dir())

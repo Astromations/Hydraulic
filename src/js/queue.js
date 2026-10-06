@@ -105,6 +105,7 @@ function addToQueue(path, refresh = true) {
     id,
     path,
     name,
+    outputName: "",
     status: "waiting",
     trimStart: "",
     trimEnd: "",
@@ -256,7 +257,7 @@ function renderQueueItem(id, name, path) {
         </div>
       </div>
       <div class="qi-actions">
-        <button class="qi-btn rename" id="${id}-renamebtn" onclick="renameFile('${id}')" title="Rename Export" disabled>
+        <button class="qi-btn rename" id="${id}-renamebtn" onclick="renameItem('${id}')" title="Rename" aria-label="Rename">
           <span class="ui-icon" data-icon="rename" aria-label="Rename"></span>
         </button>
         <button class="qi-btn requeue" id="${id}-requeuebtn" onclick="requeueItem('${id}')" title="Requeue" aria-label="Re-export">
@@ -269,7 +270,10 @@ function renderQueueItem(id, name, path) {
 
   const handle = el.querySelector(".qi-drag-handle");
   const nameButton = el.querySelector(".qi-name-link");
-  nameButton?.addEventListener("click", () => revealSourceFile(path));
+  nameButton?.addEventListener("click", () => {
+    const item = queue.find((queueItem) => queueItem.id === id);
+    revealSourceFile(item?.path || path);
+  });
 
   const startDrag = (e) => {
     if (isRunning) {
