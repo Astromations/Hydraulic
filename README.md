@@ -49,19 +49,19 @@ Installers are published on the project releases page:
 
 ### Windows PowerShell installer
 
-Download `install.ps1` and a Windows installer (`.exe` or `.msi`) from the same release, place them in the same folder, and run PowerShell from that folder:
+Run this command in PowerShell to download the installer from the latest GitHub release and start it with administrator permission:
 
 ```powershell
 iwr -useb https://raw.githubusercontent.com/Astromations/Hydraulic/refs/heads/main/install.ps1 | iex
 ```
 
-To use an installer stored elsewhere, pass its path as the first argument:
+To use a local installer instead, download `install.ps1` and pass the installer path as the first argument:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\install.ps1 .\Hydraulic_2.0.0_x64-setup.exe
 ```
 
-The script chooses the newest `.exe` or `.msi` beside it when no path is supplied and requests administrator permission to launch the installer.
+The script prefers a local `.exe` or `.msi` beside it. If none is present, it downloads the latest Windows `.exe` or `.msi` release asset to a temporary folder, launches it, and removes the temporary file afterward.
 
 ## 🧱 Build from Source
 

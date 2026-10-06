@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Component Id="ContextMenuRegistryEntries" Guid="*">
+        <RegistryKey Root="HKCR" Key="SystemFileAssociations\.mp4\shell\Hydraulic" Action="createAndRemoveOnUninstall">
+          <RegistryValue Type="string" Name="MUIVerb" Value="Compress with Hydraulic" />
+          <RegistryKey Key="command">
+            <RegistryValue Type="string" Value="&quot;[INSTALLFOLDER]Hydraulic.exe&quot; &quot;%1&quot;" KeyPath="yes" />
+          </RegistryKey>
+        </RegistryKey>
+        <RegistryKey Root="HKCR" Key="SystemFileAssociations\.mkv\shell\Hydraulic" Action="createAndRemoveOnUninstall">
+          <RegistryValue Type="string" Name="MUIVerb" Value="Compress with Hydraulic" />
+          <RegistryKey Key="command">
+            <RegistryValue Type="string" Value="&quot;[INSTALLFOLDER]Hydraulic.exe&quot; &quot;%1&quot;" />
+          </RegistryKey>
+        </RegistryKey>
+        <RegistryKey Root="HKCR" Key="SystemFileAssociations\.mov\shell\Hydraulic" Action="createAndRemoveOnUninstall">
+          <RegistryValue Type="string" Name="MUIVerb" Value="Compress with Hydraulic" />
+          <RegistryKey Key="command">
+            <RegistryValue Type="string" Value="&quot;[INSTALLFOLDER]Hydraulic.exe&quot; &quot;%1&quot;" />
+          </RegistryKey>
+        </RegistryKey>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Wix>
