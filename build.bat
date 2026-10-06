@@ -51,7 +51,7 @@ if errorlevel 1 (
   exit /b 1
 )
 
-cargo tauri build
+cargo tauri build -- --no-default-features
 if errorlevel 1 (
   echo.
   echo [ERROR] Tauri build failed.

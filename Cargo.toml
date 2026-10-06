@@ -9,11 +9,15 @@ name = "hydraulic_lib"
 path = "src/lib.rs"
 crate-type = ["lib", "cdylib", "staticlib"]
 
+[features]
+default = ["devtools"]
+devtools = ["tauri/devtools"]
+
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri        = { version = "2", features = ["devtools", "protocol-asset"] }
+tauri        = { version = "2", features = ["protocol-asset"] }
 tauri-plugin-dialog = "2"
 tauri-plugin-single-instance = "2"
 serde        = { version = "1", features = ["derive"] }
