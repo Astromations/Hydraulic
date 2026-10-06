@@ -59,6 +59,27 @@ window.tauriEvent = {
   },
 };
 
+const ALLOWED = new Set([]);
+
+window.addEventListener(
+  "keydown",
+  (e) => {
+    const key = e.key.toLowerCase();
+    const mod = e.ctrlKey || e.metaKey;
+
+    const isFunctionKey = /^f\d{1,2}$/.test(key); // F1-F12 (F5 reload, F12 devtools, F3 find...)
+    const isHistoryNav =
+      e.altKey && (key === "arrowleft" || key === "arrowright");
+    const isBlockedCombo = mod && !ALLOWED.has(key); // Ctrl/Cmd+P, R, S, U, F, G, D, shift-combos, etc.
+
+    if (isFunctionKey || isHistoryNav || isBlockedCombo) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  },
+  { capture: true },
+); // capture phase so you see it before anything else
+
 function bindWindowTitlebarControls() {
   const minBtn = document.getElementById("winMinBtn");
   const maxBtn = document.getElementById("winMaxBtn");
