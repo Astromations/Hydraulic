@@ -19,7 +19,7 @@
   background: #2b2d31;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.35);
   transform: translateY(4px) scale(0.985);
   opacity: 0;
   transition:
