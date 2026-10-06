@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="peak.png" alt="Hydraulic" width="128" height="128" />
+  <img src="./src/css/hydraulic.png" alt="Hydraulic" width="156" height="156" />
   <h1>Hydraulic</h1>
   <p><strong>Discord Video Compressor</strong></p>
 
