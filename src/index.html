@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hydraulic - Discord Video Compressor</title>
+    <title>Hydraulic</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="Font/style.css" />
   </head>
@@ -21,7 +21,9 @@
         data-tauri-drag-region
       >
         <img src="css/hydraulic.png" alt="" class="window-titlebar-icon" />
-        <span class="window-titlebar-title">Hydraulic</span>
+        <span class="window-titlebar-title"
+          >Hydraulic - Discord Video Compressor</span
+        >
       </div>
 
       <div
@@ -108,9 +110,9 @@
           />
         </div>
         <div class="header-text">
-          <h1>Hydraulic - Discord Video Compressor</h1>
+          <h1>Hydraulic</h1>
           <p>
-            by
+            Preview, trim, and compress videos for easier Discord sharing, by
             <a
               href="https://github.com/Astromations"
               style="text-decoration: none; color: inherit"
@@ -892,22 +894,23 @@
     <div class="changelog-overlay" id="changelogOverlay">
       <div class="changelog-card">
         <div class="changelog-header">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            style="flex-shrink: 0; color: var(--brand)"
-          >
-            <path
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15v-4m0-4h.01"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </svg>
+          <span class="ui-icon" data-icon="info" aria-hidden="true"></span>
           <h2>About Hydraulic</h2>
           <div class="changelog-header-info">
+            <button
+              class="changelog-github-btn"
+              id="changelogGithubBtn"
+              type="button"
+              onclick="openLatestRelease()"
+              title="Update status"
+            >
+              <span
+                class="ui-icon"
+                data-icon="download"
+                aria-hidden="true"
+              ></span>
+              <span>Check for updates</span>
+            </button>
             <button class="changelog-github-btn" onclick="openProjectUrl()">
               <svg
                 width="14"
@@ -956,7 +959,10 @@
           <section class="info-section">
             <h3>Licensing</h3>
             <ul class="info-license-list">
-              <li><strong>Hydraulic</strong><span>MIT License</span></li>
+              <li>
+                <strong>Hydraulic <span id="appVersion">...</span></strong
+                ><span>MIT License</span>
+              </li>
               <li>
                 <strong>Tauri + Rust Crates</strong
                 ><span>MIT and Apache-2.0</span>

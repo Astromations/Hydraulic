@@ -759,6 +759,11 @@ fn resolve_dropped_path(filename: String) -> Option<String> {
 // ─── Commands: Window Controls ───────────────────────────────────────────────
 
 #[tauri::command]
+fn get_app_version(app: AppHandle) -> String {
+    app.package_info().version.to_string()
+}
+
+#[tauri::command]
 fn window_minimize(app: AppHandle) -> bool {
     app.get_webview_window("main")
         .map(|w| w.minimize().is_ok())
@@ -1358,6 +1363,7 @@ fn main() {
             open_file_dialog,
             pick_directory,
             // Window controls
+            get_app_version,
             window_minimize,
             window_toggle_maximize,
             window_close,
