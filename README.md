@@ -43,7 +43,8 @@ Hydraulic is a lightweight desktop app for viewing, trimming and compressing gam
 
 ### ✂️ Open Clips Directly in Hydraulic
 
-<img width="867" height="749" alt="image" src="https://github.com/user-attachments/assets/9ab297e9-dbea-4265-8c4d-a6e63e150f2b" />
+<img width="855" height="648" alt="image" src="https://github.com/user-attachments/assets/b4060209-dc40-4ee5-bcbc-07ab7e269f9c" />
+
 
 ## 🔽 Download
 
