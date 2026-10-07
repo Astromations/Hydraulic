@@ -51,7 +51,7 @@ Installers are published on the project releases page:
 
 - https://github.com/Astromations/Hydraulic/releases
 
-### Windows PowerShell installer
+### Windows PowerShell Installer [Untested]
 
 Run this command in PowerShell to download the installer from the latest GitHub release and start it with administrator permission:
 
