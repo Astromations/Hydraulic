@@ -26,7 +26,8 @@ Hydraulic is a lightweight desktop app for viewing, trimming and compressing gam
 
 ### 🔼 Drag & 🫳 Drop to Add Clips to Queue
 
-<img width="1125" height="900" alt="image" src="https://github.com/user-attachments/assets/d777ced6-d4c5-45e8-9180-1c1f56dd5e7c" />
+<img width="1125" height="900" alt="image" src="https://github.com/user-attachments/assets/116d9034-64e0-4228-af46-d5e2265fda61" />
+
 
 
 ### 📺 Preview Clips Before Compressing
