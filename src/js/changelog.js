@@ -57,7 +57,7 @@ async function checkForUpdates() {
       : null;
 
     setUpdateStatus(
-      latestRelease?.isNewer ? "Update Avaiable" : "On Latest",
+      latestRelease?.isNewer ? "Update" : "On Latest",
       latestRelease?.isNewer ? "update-available" : "",
       latestRelease?.isNewer ? "Open latest release" : "On latest release",
     );

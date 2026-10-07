@@ -82,6 +82,13 @@
 #changelogGithubBtn {
   display: none;
 }
+
+.changelog-github-btn .ui-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--positive);
+}
+
 .changelog-github-btn:hover {
   background: rgba(88, 101, 242, 0.15);
   border-color: rgba(88, 101, 242, 0.4);
