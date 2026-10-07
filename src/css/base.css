@@ -162,3 +162,6 @@ body {
 .ui-icon[data-icon="compress"] {
   --icon-url: url("../ui-icons/Compress.svg");
 }
+.ui-icon[data-icon="download"] {
+  --icon-url: url("../ui-icons/Download.svg");
+}

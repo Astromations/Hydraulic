@@ -40,6 +40,13 @@
   flex-shrink: 0;
 }
 
+.changelog-header .ui-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--brand);
+}
+
 .changelog-header h2 {
   flex: 1;
   font-size: 14px;
@@ -51,7 +58,7 @@
   display: flex;
   align-items: center;
   margin-left: auto;
-  margin-right: 6px;
+  gap: 10px;
 }
 
 .changelog-github-btn {
@@ -72,10 +79,30 @@
     border-color 0.15s;
   white-space: nowrap;
 }
+#changelogGithubBtn {
+  display: none;
+}
+
+.changelog-github-btn .ui-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--positive);
+}
+
 .changelog-github-btn:hover {
   background: rgba(88, 101, 242, 0.15);
   border-color: rgba(88, 101, 242, 0.4);
   color: var(--brand);
+}
+.changelog-github-btn.update-available {
+  display: flex;
+  color: var(--positive);
+  border-color: rgba(35, 165, 90, 0.4);
+}
+.changelog-github-btn.update-available:hover {
+  background: rgba(35, 165, 90, 0.15);
+  border-color: rgba(35, 165, 90, 0.65);
+  color: var(--positive);
 }
 .changelog-github-btn svg {
   flex-shrink: 0;
@@ -114,6 +141,10 @@
   font-size: 13px;
   line-height: 1.6;
   margin-bottom: 22px;
+}
+.info-intro a:hover {
+  transition: color 0.12s;
+  color: var(--brand) !important;
 }
 
 .info-section + .info-section {

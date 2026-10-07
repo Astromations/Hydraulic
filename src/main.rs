@@ -217,6 +217,31 @@ fn settings_file_path() -> PathBuf {
     dir.join("settings.json")
 }
 
+fn default_output_dir_for_home(home: &Path) -> PathBuf {
+    let dir = home.join("Videos").join("Hydraulic");
+    fs::create_dir_all(&dir).ok();
+    dir
+}
+
+#[tauri::command]
+fn get_default_output_dir() -> String {
+    let home = dirs::home_dir().unwrap_or_else(|| {
+        std::env::var_os("USERPROFILE")
+            .map(PathBuf::from)
+            .unwrap_or_else(|| PathBuf::from("."))
+    });
+    default_output_dir_for_home(&home)
+        .to_string_lossy()
+        .to_string()
+}
+
+#[test]
+fn default_output_dir_uses_videos_hydraulic() {
+    let home = PathBuf::from("C:/Users/TestUser");
+    let dir = default_output_dir_for_home(&home);
+    assert_eq!(dir, home.join("Videos").join("Hydraulic"));
+}
+
 /// Evaluate JS in the main window — mirrors Python's `window.evaluate_js()`.
 /// Used to fire the existing `onItemDone / onItemCancelled / onItemError` callbacks
 /// without requiring any frontend changes.
@@ -757,6 +782,11 @@ fn resolve_dropped_path(filename: String) -> Option<String> {
 }
 
 // ─── Commands: Window Controls ───────────────────────────────────────────────
+
+#[tauri::command]
+fn get_app_version(app: AppHandle) -> String {
+    app.package_info().version.to_string()
+}
 
 #[tauri::command]
 fn window_minimize(app: AppHandle) -> bool {
@@ -1345,6 +1375,7 @@ fn main() {
             // Settings
             save_settings,
             load_settings,
+            get_default_output_dir,
             // Compression
             compress,
             cancel_compression,
@@ -1358,6 +1389,7 @@ fn main() {
             open_file_dialog,
             pick_directory,
             // Window controls
+            get_app_version,
             window_minimize,
             window_toggle_maximize,
             window_close,
