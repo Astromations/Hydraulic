@@ -142,6 +142,10 @@
   line-height: 1.6;
   margin-bottom: 22px;
 }
+.info-intro a:hover {
+  transition: color 0.12s;
+  color: var(--brand) !important;
+}
 
 .info-section + .info-section {
   margin-top: 22px;
