@@ -22,15 +22,47 @@ function setPreviewMode(mode, persist = false) {
   if (persist && typeof saveSettings === "function") saveSettings();
 }
 
+async function ensureDefaultCustomOutDir() {
+  if (customOutDir) {
+    return customOutDir;
+  }
+
+  try {
+    const dir = await invoke("get_default_output_dir");
+    if (dir) {
+      customOutDir = dir;
+      const label = document.getElementById("dirPathLabel");
+      if (label) {
+        label.textContent = dir;
+        label.classList.add("set");
+      }
+      const subtitle = document.getElementById("outputDirSubtitle");
+      if (subtitle) {
+        subtitle.textContent = shortPath(dir);
+      }
+    }
+    return customOutDir;
+  } catch (e) {
+    console.warn("Failed to resolve default custom output folder:", e);
+    return null;
+  }
+}
+
 let _outputDirToggling = false;
-function toggleOutputDir() {
+async function toggleOutputDir() {
   if (_outputDirToggling) return;
   _outputDirToggling = true;
   setTimeout(() => {
     _outputDirToggling = false;
   }, 50);
+
   const cb = document.getElementById("outputDirToggle");
   cb.checked = !cb.checked;
+
+  if (cb.checked && !customOutDir) {
+    await ensureDefaultCustomOutDir();
+  }
+
   document
     .getElementById("outputDirPicker")
     .classList.toggle("visible", cb.checked);
@@ -173,6 +205,15 @@ async function loadSettings() {
     }
   }
 
+  if (settings && settings.outputDirEnabled && !settings.customOutDir) {
+    try {
+      settings.customOutDir = await invoke("get_default_output_dir");
+      customOutDir = settings.customOutDir;
+    } catch (e) {
+      console.warn("Failed to resolve default custom output folder:", e);
+    }
+  }
+
   applySettings(settings);
 }
 
@@ -194,8 +235,8 @@ selectFmt = function (el) {
 };
 
 const toggleOutputDirOrig = toggleOutputDir;
-toggleOutputDir = function () {
-  toggleOutputDirOrig.call(this);
+toggleOutputDir = async function () {
+  await toggleOutputDirOrig.call(this);
   saveSettings();
 };
 
